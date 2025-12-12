@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,6 +22,7 @@ import frc.robot.controls.TwoStickDriveXboxOp;
 import frc.robot.controls.XboxDrive;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.QuestNavSubsystem;
 import frc.robot.subsystems.TestSubsystem;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,7 +31,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
-
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * Constants.Controls.Deadzone)
@@ -43,20 +44,13 @@ public class RobotContainer {
     private final SendableChooser<String> controlSchemeChooser = new SendableChooser<>();
     private ControllerSchemeIO selectedControls;
 
+    private final SendableChooser<String> sysIDChooser = new SendableChooser<>();
+
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final TestSubsystem testSubsystem = new TestSubsystem(drivetrain);
+    public final QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d());
 
     public RobotContainer() {
-        /*
-         * TODO:
-         * - System Check
-         * - Questnav
-         * - modular?
-         * - sysid routines
-         * - Logging usb
-         * - Constants
-         */
-
         configureBindings();
     }
 
@@ -74,18 +68,25 @@ public class RobotContainer {
                 break;
         }
     }
-
     private void configureBindings() {
+        SignalLogger.setPath("/media/sda1/logs/testlogs/");
+
         // Controls
         controlSchemeChooser.setDefaultOption("Xbox Drive", "XboxDrive");
         controlSchemeChooser.addOption("Two Stick Drive", "TwoStickDrive");
         controlSchemeChooser.addOption("Two Stick + Xbox", "TwoStickDriveXboxOp");
 
+        sysIDChooser.setDefaultOption("Translation", "m_sysIdRoutineTranslation");
+        sysIDChooser.addOption("Rotation", "m_sysIdRoutineRotation");
+        sysIDChooser.addOption("Steer", "m_sysIdRoutineSteer");
+
         SmartDashboard.putData("Control Scheme", controlSchemeChooser);
+        SmartDashboard.putData("SysID", sysIDChooser);
 
         selectedControls = new XboxDrive(0);
 
         controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
+        sysIDChooser.onChange(selected -> drivetrain.setSysIdRoutine(selected));
 
         // Swerve
         drivetrain.setDefaultCommand(
@@ -103,10 +104,10 @@ public class RobotContainer {
 
         // // Run SysId routines when holding back/start and X/Y.
         // // Note that each routine should be run exactly once in a single log.
-        selectedControls.Back().and(selectedControls.Y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        selectedControls.Back().and(selectedControls.X()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        selectedControls.Menu().and(selectedControls.Y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        selectedControls.Menu().and(selectedControls.X()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        selectedControls.Back().and(selectedControls.Y()).toggleOnTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        selectedControls.Back().and(selectedControls.X()).toggleOnTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        selectedControls.Menu().and(selectedControls.Y()).toggleOnTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        selectedControls.Menu().and(selectedControls.X()).toggleOnTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         selectedControls.A().onTrue(startLogging());
         selectedControls.B().onTrue(stopLogging());
@@ -118,17 +119,14 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
-    public Command checkSwerve() {
-        return testSubsystem.commands.checkSwerve();
-    }
-
     public Command stopLogging() {
-        return Commands.runOnce(() -> SignalLogger.stop());
+        SmartDashboard.putBoolean("Logging?", false);
+        return Commands.runOnce(SignalLogger::stop);
     }
 
     public Command startLogging() {
-        SignalLogger.setPath("/media/sda1/testlogs/");
-        return Commands.runOnce(() -> SignalLogger.start());
+        SmartDashboard.putBoolean("Logging?", true);
+        return Commands.runOnce(SignalLogger::start);
     }
 
     public Command getAutonomousCommand() {
