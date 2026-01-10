@@ -10,6 +10,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.generated.TunerConstants;
 
 public class Constants {
     public class Swerve {
@@ -17,6 +18,9 @@ public class Constants {
         public static final int[] steerMotors = { 1, 2, 3, 4 };
         public static final int[] driveMotors = { 5, 6, 7, 8 };
         public static final int[] canCoders = { 10, 11, 12, 13 };
+
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
     }
 
     public class Controls {

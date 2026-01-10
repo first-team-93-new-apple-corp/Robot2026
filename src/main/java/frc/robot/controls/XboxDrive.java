@@ -22,17 +22,17 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public double InputLeft() {
-        return deadzone(-Xbox.getLeftY());
+        return deadzone(-Xbox.getLeftY()) * Constants.Swerve.MaxSpeed;
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-Xbox.getLeftX());
+        return deadzone(-Xbox.getLeftX()) * Constants.Swerve.MaxSpeed;
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-Xbox.getRightX());
+        return deadzone(-Xbox.getRightX()) * Constants.Swerve.MaxAngularRate;
     }
 
 

@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -12,6 +14,7 @@ import gg.questnav.questnav.QuestNav;
 public class QuestNavSubsystem extends SubsystemBase {
     private CommandSwerveDrivetrain drivetrain;
     private QuestNav quest;
+    private boolean poseSet = false;
 
     // http://10.0.93.200:5801/
 
@@ -29,6 +32,13 @@ public class QuestNavSubsystem extends SubsystemBase {
 
         // Send the reset operation
         quest.setPose(questPose);
+    }
+
+    public void setPose(Pose3d newRobotPose) {
+        Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
+        quest.setPose(questPose);
+        poseSet = true;
+
     }
 
     @Override
@@ -62,6 +72,15 @@ public class QuestNavSubsystem extends SubsystemBase {
         public Command resetQuestPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
                 Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
+                quest.setPose(questPose);
+            });
+        }
+
+        public Command resetQuestPose(Pose2d newRobotPose) {
+            return Commands.runOnce(() -> {
+                Pose3d newRobotPose3d = new Pose3d(newRobotPose.getX(), newRobotPose.getY(), 0,
+                        new Rotation3d(newRobotPose.getRotation().getDegrees(), 0, 0));
+                Pose3d questPose = newRobotPose3d.transformBy(Constants.Quest.RobotToQuest);
                 quest.setPose(questPose);
             });
         }
