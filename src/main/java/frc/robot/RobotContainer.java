@@ -6,8 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems.CommandSwerveDrivetrain;
 
 public class RobotContainer {
+  private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
   public RobotContainer() {
     configureBindings();
   }
