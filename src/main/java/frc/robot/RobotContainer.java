@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeCommands;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -39,6 +41,8 @@ public class RobotContainer {
     private final CommandXboxController xBoxController = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -70,7 +74,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        xBoxController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        xBoxController.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
         xBoxController.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))
         ));
@@ -88,6 +92,11 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         
+        xBoxController.a().onTrue(m_IntakeSubsystem.Commands.intake());
+        xBoxController.a().onFalse(m_IntakeSubsystem.Commands.stop());
+
+        xBoxController.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+        xBoxController.x().onFalse(m_IntakeSubsystem.Commands.stop());
     }
 
     public Command getAutonomousCommand() {
