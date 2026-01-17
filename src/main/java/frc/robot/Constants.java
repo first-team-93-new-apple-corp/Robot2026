@@ -5,6 +5,10 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+
 //import com.pathplanner.lib.path.PathConstraints;
 
 // import edu.wpi.first.math.geometry.Pose2d;
@@ -13,6 +17,33 @@ import static edu.wpi.first.units.Units.*;
 // import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
+    
+    //    public class Inputs {
+    //    public class Cameras {
+    //        public record Camera(String CamName, Transform3d camTransform) {
+    //        }
+//
+    //        public static Camera FrontCam = new Camera("FrontCam",
+    //                new Transform3d(new Translation3d(Inches.of(12.5), Inches.of(-11.125), Inches.of(11.25)),
+    //                        new Rotation3d(Degrees.of(0), Degrees.of(-10), Degrees.of(0))));
+    //        public static Camera RearCam = new Camera("RearCam",
+    //                new Transform3d(new Translation3d(Inches.of(-12.5), Inches.of(11.125), Inches.of(11.25)),
+    //                        new Rotation3d(Degrees.of(0), Degrees.of(20), Degrees.of(180))));
+    //        public static Camera AlgaeCam = new Camera("AlgaeCam",
+    //                new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5), Inches.of(10.75)),
+    //                        new Rotation3d(Degrees.of(0), Degrees.of(5), Degrees.of(0))));
+    //        public static Camera AlgaeCam2 = new Camera("AlgaeCam2",
+    //                new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5), Inches.of(9.5)),
+    //                        new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0))));
+    //    }   
+//
+    //    public enum CameraPipeline {
+    //        AprilTag,
+    //        Coral
+    //    }
+//
+    //}
+
     public class Drivetrain {
         
          public static final int FL_Drive = 1;
