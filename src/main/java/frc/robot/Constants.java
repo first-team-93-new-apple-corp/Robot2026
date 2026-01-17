@@ -88,4 +88,50 @@ public class Constants {
             public static final int Right_Stick_X = 2;
         }
     }
+
+    public class F310_X {
+        public static final int A = 1;
+        public static final int B = 2;
+        public static final int X = 3;
+        public static final int Y = 4;
+        public static final int LeftShoulderButton = 5;
+        public static final int RightShoulderButton = 6;
+        public static final int Back = 7;
+        public static final int Start = 8;
+        public static final int LeftStick = 9;
+        public static final int RightStick = 10;
+
+        public class Axis {
+            public static final int POV_Y = 1;
+            public static final int POV_X = 0;
+            public static final int LT = 2;
+            public static final int RT = 3;
+            public static final int Left_Stick_Y = 1;
+            public static final int Left_Stick_X = 0;
+            public static final int Right_Stick_Y = 5;
+            public static final int Right_Stick_X = 4;
+        }
+    }
+
+    public class xbox {
+        public static final int A = 1;
+        public static final int B = 2;
+        public static final int X = 3;
+        public static final int Y = 4;
+        public static final int LeftShoulderButton = 5;
+        public static final int RightShoulderButton = 6;
+        public static final int Window = 7;
+        public static final int Menu = 8;
+        public static final int LeftPaddle = 9;
+        public static final int RightPaddle = 10;
+
+        public class Axis {
+            public static final int LT = 2;
+            public static final int RT = 3;
+            public static final int Left_Stick_Y = 1;
+            public static final int Left_Stick_X = 0;
+            public static final int Right_Stick_Y = 5;
+            public static final int Right_Stick_X = 4;
+        }
+    }
 }
