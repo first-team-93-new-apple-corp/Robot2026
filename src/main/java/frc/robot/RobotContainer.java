@@ -36,7 +36,7 @@ public class RobotContainer {
     private final CommandJoystick leftJoystick = new CommandJoystick(0);
     private final CommandJoystick rightJoystick = new CommandJoystick(1);
     
-    //private final CommandXboxController xBoxController = new CommandXboxController(2);
+    private final CommandXboxController xBoxController = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -57,9 +57,9 @@ public class RobotContainer {
         //);
         drivetrain.setDefaultCommand( // For Joysticks
             drivetrain.applyRequest(() -> 
-            drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Should drive forward with negative Y(forward)
-            .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Should drive left with negative X (left)
-            .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) //Should drive counterclockwise with negative X (left)
+            drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y(forward)
+            .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) //Drive counterclockwise with negative X (left)
             )
         );
 
