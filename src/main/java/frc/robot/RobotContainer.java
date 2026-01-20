@@ -6,138 +6,115 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Set;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.controls.ControllerSchemeIO;
-import frc.robot.controls.TwoStickDrive;
-import frc.robot.controls.TwoStickDriveXboxOp;
-import frc.robot.controls.XboxDrive;
+
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.QuestNavSubsystem;
-import frc.robot.subsystems.TestSubsystem;
-import frc.robot.subsystems.auto.AutoDirector;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.IntakeCommands;
 
 public class RobotContainer {
-    //Swerve
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+    /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(Constants.Swerve.MaxSpeed);
+    private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    // Controls
-    private final SendableChooser<String> controlSchemeChooser = new SendableChooser<>();
-    private ControllerSchemeIO selectedControls;
+    private final CommandJoystick leftJoystick = new CommandJoystick(0);
+    private final CommandJoystick rightJoystick = new CommandJoystick(1);
+    
+    private final CommandXboxController xBoxController = new CommandXboxController(2);
 
-    // SysID
-    private final SendableChooser<String> sysIDChooser = new SendableChooser<>();
-
-    // Subystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final TestSubsystem testSubsystem = new TestSubsystem(drivetrain);
-    public final QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d());
 
-    // Auto
-    public final AutoDirector autoDirector = new AutoDirector();
+    public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
     public RobotContainer() {
         configureBindings();
     }
 
-    private void updateControlScheme(String selected) {
-        switch (selected) {
-            case "TwoStickDrive":
-                selectedControls = new TwoStickDrive(0, 1, 2);
-                break;
-            case "TwoStickDriveXboxOp":
-                selectedControls = new TwoStickDriveXboxOp(0, 1, 2);
-                break;
-            case "XboxDrive":
-            default:
-                selectedControls = new XboxDrive(0);
-                break;
-        }
-    }
-
     private void configureBindings() {
-        SignalLogger.setPath("/media/sda1/logs/testlogs/");
+        // Note that X is defined as forward according to WPILib convention,
+        // and Y is defined as to the left according to WPILib convention.
+        //drivetrain.setDefaultCommand( // For Xbox Controller
+            // Drivetrain will execute this command periodically
+            //drivetrain.applyRequest(() ->
+                //drive.withVelocityX(-xBoxController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                  //  .withVelocityY(-xBoxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                  //  .withRotationalRate(-xBoxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+           // )
+        //);
+        drivetrain.setDefaultCommand( // For Joysticks
+            drivetrain.applyRequest(() -> 
+            drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y(forward)
+            .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) //Drive counterclockwise with negative X (left)
+            )
+        );
 
-        // Controls
-        controlSchemeChooser.setDefaultOption("Xbox Drive", "XboxDrive");
-        controlSchemeChooser.addOption("Two Stick Drive", "TwoStickDrive");
-        controlSchemeChooser.addOption("Two Stick + Xbox", "TwoStickDriveXboxOp");
-
-        SmartDashboard.putData("Control Scheme", controlSchemeChooser);
-
-        selectedControls = new XboxDrive(0);
-
-        controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
-
-        // Swerve
-        drivetrain.setDefaultCommand(
-                drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft())
-                        .withVelocityY(selectedControls.DriveUp())
-                        .withRotationalRate(selectedControls.DriveTheta())));
-
-        selectedControls.Seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        selectedControls.Brake().whileTrue(drivetrain.commands.applyRequest(() -> brake));
-
+        // Idle while the robot is disabled. This ensures the configured
+        // neutral mode is applied to the drive motors while disabled.
+        final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
-                drivetrain.commands.applyRequest(() -> brake).ignoringDisable(true));
+            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
+        );
 
-        // Set brownot voltage
-        RobotController.setBrownoutVoltage(Volts.of(6));
+        xBoxController.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        xBoxController.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))
+        ));
 
-        // SysID
-        sysIDChooser.setDefaultOption("Translation", "m_sysIdRoutineTranslation");
-        sysIDChooser.addOption("Rotation", "m_sysIdRoutineRotation");
-        sysIDChooser.addOption("Steer", "m_sysIdRoutineSteer");
-        sysIDChooser.onChange(selected -> drivetrain.sysID.setSysIdRoutine(selected));
-        SmartDashboard.putData("SysID", sysIDChooser);
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+        xBoxController.back().and(xBoxController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        xBoxController.back().and(xBoxController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        xBoxController.start().and(xBoxController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        xBoxController.start().and(xBoxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        selectedControls.Back().and(selectedControls.Y())
-                .toggleOnTrue(drivetrain.commands.sysIdDynamic(Direction.kForward));
-        selectedControls.Back().and(selectedControls.X())
-                .toggleOnTrue(drivetrain.commands.sysIdDynamic(Direction.kReverse));
-        selectedControls.Menu().and(selectedControls.Y())
-                .toggleOnTrue(drivetrain.commands.sysIdQuasistatic(Direction.kForward));
-        selectedControls.Menu().and(selectedControls.X())
-                .toggleOnTrue(drivetrain.commands.sysIdQuasistatic(Direction.kReverse));
-
-        selectedControls.A().onTrue(startLogging());
-        selectedControls.B().onTrue(stopLogging());
+        // Reset the field-centric heading on left bumper press.
+        xBoxController.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-    }
 
-    public Command stopLogging() {
-        SmartDashboard.putBoolean("Logging?", false);
-        return Commands.runOnce(SignalLogger::stop);
-    }
+        
+        xBoxController.a().onTrue(m_IntakeSubsystem.Commands.intake());
+        xBoxController.a().onFalse(m_IntakeSubsystem.Commands.stop());
 
-    public Command startLogging() {
-        SmartDashboard.putBoolean("Logging?", true);
-        return Commands.runOnce(SignalLogger::start);
+        xBoxController.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+        xBoxController.x().onFalse(m_IntakeSubsystem.Commands.stop());
     }
 
     public Command getAutonomousCommand() {
-        return Commands.defer(() -> autoDirector.selection().command(),
-                Set.of(drivetrain, questNav));
-
+        // Simple drive forward auton
+        final var idle = new SwerveRequest.Idle();
+        return Commands.sequence(
+            // Reset our field centric heading to match the robot
+            // facing away from our alliance station wall (0 deg).
+            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+            // Then slowly drive forward (away from us) for 5 seconds.
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(0.5)
+                    .withVelocityY(0)
+                    .withRotationalRate(0)
+            )
+            .withTimeout(5.0),
+            // Finally idle for the rest of auton
+            drivetrain.applyRequest(() -> idle)
+        );
     }
 }
