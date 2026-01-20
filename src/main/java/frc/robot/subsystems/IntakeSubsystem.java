@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.DutyCycleOut;
+// import com.ctre.phoenix6.controls.DutyCycleOut;
 
 public class IntakeSubsystem extends SubsystemBase{
 
@@ -25,11 +25,11 @@ public class IntakeSubsystem extends SubsystemBase{
         }
 
         public Command intake() {
-            return runOnce(() -> setSpeed(-0.2));
+            return runOnce(() -> setSpeed(-0.6));
         }
 
         public Command outtake() {
-            return runOnce(() -> setSpeed(0.2));
+            return runOnce(() -> setSpeed(0.6));
         }
         
     }
