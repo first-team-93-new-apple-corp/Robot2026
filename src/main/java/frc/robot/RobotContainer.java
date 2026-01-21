@@ -24,8 +24,10 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
+                                                                                        // speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -38,13 +40,13 @@ public class RobotContainer {
 
     private final CommandJoystick leftJoystick = new CommandJoystick(0);
     private final CommandJoystick rightJoystick = new CommandJoystick(1);
-    
+
     private final CommandXboxController xBoxController = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-    
+
     public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
     public RobotContainer() {
@@ -54,33 +56,35 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        //drivetrain.setDefaultCommand( // For Xbox Controller
-            // Drivetrain will execute this command periodically
-            //drivetrain.applyRequest(() ->
-                //drive.withVelocityX(-xBoxController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                  //  .withVelocityY(-xBoxController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                  //  .withRotationalRate(-xBoxController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-           // )
-        //);
+        // drivetrain.setDefaultCommand( // For Xbox Controller
+        // Drivetrain will execute this command periodically
+        // drivetrain.applyRequest(() ->
+        // drive.withVelocityX(-xBoxController.getLeftY() * MaxSpeed) // Drive forward
+        // with negative Y (forward)
+        // .withVelocityY(-xBoxController.getLeftX() * MaxSpeed) // Drive left with
+        // negative X (left)
+        // .withRotationalRate(-xBoxController.getRightX() * MaxAngularRate) // Drive
+        // counterclockwise with negative X (left)
+        // )
+        // );
         drivetrain.setDefaultCommand( // For Joysticks
-            drivetrain.applyRequest(() -> 
-            drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y(forward)
-            .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) //Drive counterclockwise with negative X (left)
-            )
-        );
+                drivetrain.applyRequest(() -> drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with
+                                                                                                   // negative
+                                                                                                   // Y(forward)
+                        .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with
+                                                                                    // negative X (left)
+                ));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         xBoxController.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        xBoxController.leftBumper().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))
-        ));
+        xBoxController.leftBumper().whileTrue(drivetrain.applyRequest(() -> point
+                .withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -94,7 +98,6 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        
         xBoxController.b().onTrue(m_IntakeSubsystem.Commands.intake());
         xBoxController.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
@@ -112,18 +115,15 @@ public class RobotContainer {
         // Simple drive forward auton
         final var idle = new SwerveRequest.Idle();
         return Commands.sequence(
-            // Reset our field centric heading to match the robot
-            // facing away from our alliance station wall (0 deg).
-            drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-            // Then slowly drive forward (away from us) for 5 seconds.
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(0.5)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            )
-            .withTimeout(5.0),
-            // Finally idle for the rest of auton
-            drivetrain.applyRequest(() -> idle)
-        );
+                // Reset our field centric heading to match the robot
+                // facing away from our alliance station wall (0 deg).
+                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+                // Then slowly drive forward (away from us) for 5 seconds.
+                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+                        .withVelocityY(0)
+                        .withRotationalRate(0))
+                        .withTimeout(5.0),
+                // Finally idle for the rest of auton
+                drivetrain.applyRequest(() -> idle));
     }
 }
