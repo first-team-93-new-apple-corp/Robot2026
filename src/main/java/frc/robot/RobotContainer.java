@@ -104,11 +104,11 @@ public class RobotContainer {
         xBoxController.x().onTrue(m_IntakeSubsystem.Commands.outtake());
         xBoxController.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        xBoxController.y().onTrue(m_ClimberSubsystem.Commands.Retract());
-        xBoxController.y().onFalse(m_ClimberSubsystem.Commands.Stop());
+        xBoxController.povUp().onTrue(m_ClimberSubsystem.Commands.manualRetract());
+        xBoxController.povUp().onFalse(m_ClimberSubsystem.Commands.Stop());
 
-        xBoxController.a().onTrue(m_ClimberSubsystem.Commands.Extend());
-        xBoxController.a().onFalse(m_ClimberSubsystem.Commands.Stop());
+        xBoxController.povDown().onTrue(m_ClimberSubsystem.Commands.manualExtend());
+        xBoxController.povDown().onFalse(m_ClimberSubsystem.Commands.Stop());
     }
 
     public Command getAutonomousCommand() {
