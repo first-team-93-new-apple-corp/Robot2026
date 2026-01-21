@@ -17,52 +17,56 @@ import edu.wpi.first.math.geometry.Translation3d;
 // import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
-    
-    //    public class Inputs {
-    //    public class Cameras {
-    //        public record Camera(String CamName, Transform3d camTransform) {
-    //        }
-//
-    //        public static Camera FrontCam = new Camera("FrontCam",
-    //                new Transform3d(new Translation3d(Inches.of(12.5), Inches.of(-11.125), Inches.of(11.25)),
-    //                        new Rotation3d(Degrees.of(0), Degrees.of(-10), Degrees.of(0))));
-    //        public static Camera RearCam = new Camera("RearCam",
-    //                new Transform3d(new Translation3d(Inches.of(-12.5), Inches.of(11.125), Inches.of(11.25)),
-    //                        new Rotation3d(Degrees.of(0), Degrees.of(20), Degrees.of(180))));
-    //        public static Camera AlgaeCam = new Camera("AlgaeCam",
-    //                new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5), Inches.of(10.75)),
-    //                        new Rotation3d(Degrees.of(0), Degrees.of(5), Degrees.of(0))));
-    //        public static Camera AlgaeCam2 = new Camera("AlgaeCam2",
-    //                new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5), Inches.of(9.5)),
-    //                        new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0))));
-    //    }   
-//
-    //    public enum CameraPipeline {
-    //        AprilTag,
-    //        Coral
-    //    }
-//
-    //}
+
+    // public class Inputs {
+    // public class Cameras {
+    // public record Camera(String CamName, Transform3d camTransform) {
+    // }
+    //
+    // public static Camera FrontCam = new Camera("FrontCam",
+    // new Transform3d(new Translation3d(Inches.of(12.5), Inches.of(-11.125),
+    // Inches.of(11.25)),
+    // new Rotation3d(Degrees.of(0), Degrees.of(-10), Degrees.of(0))));
+    // public static Camera RearCam = new Camera("RearCam",
+    // new Transform3d(new Translation3d(Inches.of(-12.5), Inches.of(11.125),
+    // Inches.of(11.25)),
+    // new Rotation3d(Degrees.of(0), Degrees.of(20), Degrees.of(180))));
+    // public static Camera AlgaeCam = new Camera("AlgaeCam",
+    // new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5),
+    // Inches.of(10.75)),
+    // new Rotation3d(Degrees.of(0), Degrees.of(5), Degrees.of(0))));
+    // public static Camera AlgaeCam2 = new Camera("AlgaeCam2",
+    // new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5),
+    // Inches.of(9.5)),
+    // new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0))));
+    // }
+    //
+    // public enum CameraPipeline {
+    // AprilTag,
+    // Coral
+    // }
+    //
+    // }
 
     public class Drivetrain {
-        
-         public static final int FL_Drive = 1;
-         public static final int FR_Drive = 2;
-         public static final int BL_Drive = 3;
-         public static final int BR_Drive = 4;
 
-         public static final int FL_Steer = 5;
-         public static final int FR_Steer = 6;
-         public static final int BL_Steer = 7;
-         public static final int BR_Steer = 8;
+        public static final int FL_Drive = 1;
+        public static final int FR_Drive = 2;
+        public static final int BL_Drive = 3;
+        public static final int BR_Drive = 4;
 
-         public static final int FL_Cancoder = 21;
-         public static final int FR_Cancoder = 22;
-         public static final int BL_Cancoder = 23;
-         public static final int BR_Cancoder = 24;
+        public static final int FL_Steer = 5;
+        public static final int FR_Steer = 6;
+        public static final int BL_Steer = 7;
+        public static final int BR_Steer = 8;
+
+        public static final int FL_Cancoder = 21;
+        public static final int FR_Cancoder = 22;
+        public static final int BL_Cancoder = 23;
+        public static final int BR_Cancoder = 24;
 
     }
-    
+
     public class Thrustmaster {
         public static final int Trigger = 1;
         public static final int Center_Button = 2;
@@ -88,7 +92,7 @@ public class Constants {
             public static final int Bottom_Right = 10;
         }
 
-        public class Axis{
+        public class Axis {
             public static final int y = 1;
             public static final int x = 0;
             public static final int rotate = 2;
@@ -164,5 +168,10 @@ public class Constants {
             public static final int Right_Stick_Y = 5;
             public static final int Right_Stick_X = 4;
         }
+    }
+
+    public class ClimberConstants {
+        public static final double climberSpeed = .5;
+
     }
 }

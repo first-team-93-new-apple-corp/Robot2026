@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.IntakeCommands;
+import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -43,6 +44,8 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+    
+    public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -75,7 +78,7 @@ public class RobotContainer {
         );
 
         xBoxController.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        xBoxController.b().whileTrue(drivetrain.applyRequest(() ->
+        xBoxController.leftBumper().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))
         ));
 
@@ -92,11 +95,17 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         
-        xBoxController.a().onTrue(m_IntakeSubsystem.Commands.intake());
-        xBoxController.a().onFalse(m_IntakeSubsystem.Commands.stop());
+        xBoxController.b().onTrue(m_IntakeSubsystem.Commands.intake());
+        xBoxController.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
         xBoxController.x().onTrue(m_IntakeSubsystem.Commands.outtake());
         xBoxController.x().onFalse(m_IntakeSubsystem.Commands.stop());
+
+        xBoxController.y().onTrue(m_ClimberSubsystem.Commands.Retract());
+        xBoxController.y().onFalse(m_ClimberSubsystem.Commands.Stop());
+
+        xBoxController.a().onTrue(m_ClimberSubsystem.Commands.Extend());
+        xBoxController.a().onFalse(m_ClimberSubsystem.Commands.Stop());
     }
 
     public Command getAutonomousCommand() {
