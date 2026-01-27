@@ -49,12 +49,12 @@ public class TwoStickDrive implements ControllerSchemeIO {
     public Trigger Seed() {
         return LeftStick.button(12);
     }
-
+   
     @Override
     public Trigger Brake()  {
         return RightStick.trigger();
     }
-
+    
     @Override
     public Trigger Menu() {
         throw new UnsupportedOperationException("Not available on this control scheme!");

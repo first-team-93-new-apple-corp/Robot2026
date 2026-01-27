@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.Swerve;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.NTSubsystem;
 import frc.robot.Subsystems.QuestNavSubsystem;
@@ -65,11 +66,11 @@ public class RobotContainer {
     SmartDashboard.putData("Control Scheme", controlSchemeChooser);
 
     selectedControls = new XboxDrive(0);
-
+    selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
     drivetrain
-        .setDefaultCommand(drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft())
-            .withVelocityY(selectedControls.DriveUp()).withRotationalRate(selectedControls.DriveTheta())));
+        .setDefaultCommand(drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft()*Swerve.MaxSpeed)
+            .withVelocityY(selectedControls.DriveUp()).withRotationalRate(selectedControls.DriveTheta()*Swerve.MaxAngularRate)));
   }
 
   public Command getAutonomousCommand() {

@@ -61,7 +61,6 @@ public class QuestNavSubsystem extends SubsystemBase {
 
                 // Transform by the mount pose to get your robot pose
                 Pose3d robotPose = questPose.transformBy(Constants.Quest.RobotToQuest.inverse());
-
                 // Add the measurement to our estimator
                 drivetrain.addVisionMeasurement(robotPose.toPose2d(), timestamp, Constants.Quest.QUESTNAV_STD_DEVS);
             }
@@ -84,5 +83,7 @@ public class QuestNavSubsystem extends SubsystemBase {
                 quest.setPose(questPose);
             });
         }
-    }
+        
+    }   
 }
+
