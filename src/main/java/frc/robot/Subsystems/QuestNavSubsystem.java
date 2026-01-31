@@ -11,16 +11,17 @@ import frc.robot.Constants;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
+
 public class QuestNavSubsystem extends SubsystemBase {
     private CommandSwerveDrivetrain drivetrain;
     private QuestNav quest;
-    private boolean poseSet = false;
 
     // http://10.0.93.200:5801/
 
     public QuestCommands commands = new QuestCommands();
+    private NTSubsystem networkTables;
 
-    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, Pose3d startingPose) {
+    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, Pose3d startingPose, NTSubsystem networkTables) {
         this.drivetrain = drivetrain;
         quest = new QuestNav();
 
@@ -32,13 +33,13 @@ public class QuestNavSubsystem extends SubsystemBase {
 
         // Send the reset operation
         quest.setPose(questPose);
+
+        this.networkTables = networkTables;
     }
 
     public void setPose(Pose3d newRobotPose) {
         Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
         quest.setPose(questPose);
-        poseSet = true;
-
     }
 
     @Override
@@ -47,6 +48,8 @@ public class QuestNavSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
+
+        
 
         if (quest.isTracking()) {
             // Get the latest pose data frames from the Quest
@@ -64,8 +67,12 @@ public class QuestNavSubsystem extends SubsystemBase {
 
                 // Add the measurement to our estimator
                 drivetrain.addVisionMeasurement(robotPose.toPose2d(), timestamp, Constants.Quest.QUESTNAV_STD_DEVS);
+
+                networkTables.pose.updateQuestPose(questPose);
+                networkTables.pose.updateRobotPose(robotPose);
             }
         }
+
     }
 
     public class QuestCommands {
@@ -73,7 +80,8 @@ public class QuestNavSubsystem extends SubsystemBase {
             return Commands.runOnce(() -> {
                 Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
                 quest.setPose(questPose);
-            });
+                
+            }).andThen(Commands.print("Reset Quest Pose!"));
         }
 
         public Command resetQuestPose(Pose2d newRobotPose) {
@@ -81,6 +89,7 @@ public class QuestNavSubsystem extends SubsystemBase {
                 Pose3d newRobotPose3d = new Pose3d(newRobotPose.getX(), newRobotPose.getY(), 0,
                         new Rotation3d(newRobotPose.getRotation().getDegrees(), 0, 0));
                 Pose3d questPose = newRobotPose3d.transformBy(Constants.Quest.RobotToQuest);
+                
                 quest.setPose(questPose);
             });
         }

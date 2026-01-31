@@ -41,9 +41,9 @@ public class Constants {
                 new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
 
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(
-                0.01, // Trust down to 2cm in X direction
-                0.01, // Trust down to 2cm in Y direction
-                0.035 // Trust down to 2 degrees rotational
+                0.01,
+                0.01,
+                0.035
         );
     }
 }
