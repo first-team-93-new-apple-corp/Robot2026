@@ -22,7 +22,13 @@ public class ShooterMath {
     }
 
     public double angleToAlign(double x1, double hubX, double y1, double hubY, double currAngle) {
-        return currAngle - Math.atan(Math.abs(hubX - y1) / Math.abs(hubY - x1));
+        if (y1 > hubY) {
+            return Math.PI+Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
+        }
+        if (y1 < hubY) {
+            return Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
+        }
+        return null;
     }
 
     public static double calculateDeterminantValue(double[][] matrix) {
@@ -72,5 +78,7 @@ public class ShooterMath {
         }
         return matrix;
     }
+
+    
 }
 
