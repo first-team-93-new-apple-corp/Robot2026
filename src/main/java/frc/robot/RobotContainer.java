@@ -52,7 +52,7 @@ public class RobotContainer {
   private void updateControlScheme(String selected) {
     switch (selected) {
     case "TwoStickDrive":
-      selectedControls = new TwoStickDrive(0, 1, 2);
+      selectedControls = new TwoStickDrive(0, 1);
       break;
     case "TwoStickDriveXboxOp":
       selectedControls = new TwoStickDriveXboxOp(0, 1, 2);
@@ -66,21 +66,26 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Controls
-    controlSchemeChooser.setDefaultOption("Xbox Drive", "XboxDrive");
-    controlSchemeChooser.addOption("Two Stick Drive", "TwoStickDrive");
+    controlSchemeChooser.addOption("Xbox Drive", "XboxDrive");
+    controlSchemeChooser.setDefaultOption("Two Stick Drive", "TwoStickDrive");
     controlSchemeChooser.addOption("Two Stick + Xbox", "TwoStickDriveXboxOp");
 
     SmartDashboard.putData("Control Scheme", controlSchemeChooser);
 
-    selectedControls = new XboxDrive(0);
-    selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    selectedControls = new TwoStickDrive(0, 1);
+    selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(questNav.commands.resetQuestPose(new Pose2d())));
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
     drivetrain.setDefaultCommand(drivetrain.commands.applyRequest(() -> drive
-        .withVelocityX(selectedControls.DriveLeft() * Swerve.MaxSpeed).withVelocityY(selectedControls.DriveUp())
+        .withVelocityX(selectedControls.DriveLeft() * Swerve.MaxSpeed).withVelocityY(selectedControls.DriveUp() * Swerve.MaxSpeed)
         .withRotationalRate(selectedControls.DriveTheta() * Swerve.MaxAngularRate)));
+    
   }
 
   public Command getAutonomousCommand() {
     return Commands.defer(() -> auto.selection().command(), Set.of(drivetrain, questNav));
+  }
+  public void periodic() {
+    networkTables.updateRobotPose(drivetrain.getState().Pose);
+    networkTables.updateQuestPose(new Pose3d(drivetrain.getState().Pose).transformBy(Constants.Quest.RobotToQuest));
   }
 }

@@ -12,10 +12,9 @@ public class TwoStickDrive implements ControllerSchemeIO {
     public CommandJoystick RightStick;
     public CommandXboxController operatorController;
 
-    public TwoStickDrive(int LeftPort, int RightPort, int opPort) {
+    public TwoStickDrive(int LeftPort, int RightPort) {
         LeftStick = new CommandJoystick(LeftPort);
         RightStick = new CommandJoystick(RightPort);
-        operatorController = new CommandXboxController(opPort);
     }
 
     public double deadzone(double value) {

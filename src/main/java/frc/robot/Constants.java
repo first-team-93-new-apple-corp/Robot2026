@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -45,5 +46,9 @@ public class Constants {
                 0.01, // Trust down to 2cm in Y direction
                 0.035 // Trust down to 2 degrees rotational
         );
+    }
+    public class Auto {
+        public static final record AutoSector(Pose2d initPose, Pose2d finalPose) {
+        }
     }
 }

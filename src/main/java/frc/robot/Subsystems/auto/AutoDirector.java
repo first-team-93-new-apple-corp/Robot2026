@@ -39,6 +39,7 @@ public class AutoDirector {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
         // Autos.add([Auto]);
         Autos.add(TestShooting());
+        Autos.add(TestAuto());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
         }
@@ -60,5 +61,12 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
 
         return new Auto("TestShooting", tracker, new Pose2d());
+    }
+    public Auto TestAuto() {
+        List<Command> list = new ArrayList<>();
+        list.add(Commands.print("Testing Auto"));
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
+
+        return new Auto("TestAuto", tracker, new Pose2d());
     }
 }
