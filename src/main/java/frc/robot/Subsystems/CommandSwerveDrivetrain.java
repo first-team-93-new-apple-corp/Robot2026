@@ -37,7 +37,7 @@ import frc.robot.TunerConstants.TunerSwerveDrivetrain;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-    
+
     // Simulation
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
@@ -61,36 +61,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        configureAuto();
     }
 
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
-            double odometryUpdateFrequency,
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        configureAuto();
+
     }
 
-    public CommandSwerveDrivetrain(
-            SwerveDrivetrainConstants drivetrainConstants,
-            double odometryUpdateFrequency,
-            Matrix<N3, N1> odometryStandardDeviation,
-            Matrix<N3, N1> visionStandardDeviation,
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
+            Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
                 modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        configureAuto();
     }
 
     public void configureAuto() {
@@ -104,20 +102,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         // Configure AutoBuilder last
-        AutoBuilder.configure(
-                () -> getState().Pose,
-                this::resetPose,
-                () -> getState().Speeds,
-                (speeds, feedforwards) -> setControl(
-                        autoRequest.withSpeeds(speeds)),
+        AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
+                (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)),
 
-                new PPHolonomicDriveController(
-                        // TODO: Tune PID constants
-                        new PIDConstants(10, 0.0, 0.1),
-                        new PIDConstants(7, 0.0, 0.0)),
-                config, // The robot configuration
+                new PPHolonomicDriveController(new PIDConstants(8, 0.0, 0.01), new PIDConstants(5, 0.0, 0.0)), config, // The
+                                                                                                                       // robot
+                                                                                                                       // configuration
                 () -> {
-                    // Boolean supplie r that controls when the path will be mirrored for the red
+                    // Boolean supplier that controls when the path will be mirrored for the red
                     // alliance
                     // This will flip the path being followed to the red side of the field.
                     // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
@@ -127,70 +119,61 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         return alliance.get() == DriverStation.Alliance.Red;
                     }
                     return false;
-                },
-                this // Reference to this subsystem to set requirements
+                }, this // Reference to this subsystem to set requirements
         );
     }
 
     public class SysID implements Subsystem {
-        private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-                new SysIdRoutine.Config(
-                        null, // Use default ramp rate (1 V/s)
-                        Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                        null, // Use default timeout (10 s)
-                        // Log state with SignalLogger class
-                        state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-                new SysIdRoutine.Mechanism(
-                        output -> setControl(m_translationCharacterization.withVolts(output)),
-                        null,
+        private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(new SysIdRoutine.Config(null, // Use
+                                                                                                              // default
+                                                                                                              // ramp
+                                                                                                              // rate (1
+                                                                                                              // V/s)
+                Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+                null, // Use default timeout (10 s)
+                // Log state with SignalLogger class
+                state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+                new SysIdRoutine.Mechanism(output -> setControl(m_translationCharacterization.withVolts(output)), null,
                         this));
 
-        private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-                new SysIdRoutine.Config(
-                        null, // Use default ramp rate (1 V/s)
-                        Volts.of(7), // Use dynamic voltage of 7 V
-                        null, // Use default timeout (10 s)
-                        // Log state with SignalLogger class
-                        state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
-                new SysIdRoutine.Mechanism(
-                        volts -> setControl(m_steerCharacterization.withVolts(volts)),
-                        null,
-                        this));
+        private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(new SysIdRoutine.Config(null, // Use default
+                                                                                                        // ramp rate (1
+                                                                                                        // V/s)
+                Volts.of(7), // Use dynamic voltage of 7 V
+                null, // Use default timeout (10 s)
+                // Log state with SignalLogger class
+                state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+                new SysIdRoutine.Mechanism(volts -> setControl(m_steerCharacterization.withVolts(volts)), null, this));
 
-        private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-                new SysIdRoutine.Config(
-                        /* This is in radians per second², but SysId only supports "volts per second" */
-                        Volts.of(Math.PI / 6).per(Second),
-                        /* This is in radians per second, but SysId only supports "volts" */
-                        Volts.of(Math.PI),
-                        null, // Use default timeout (10 s)
-                        // Log state with SignalLogger class
-                        state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
-                new SysIdRoutine.Mechanism(
-                        output -> {
-                            /* output is actually radians per second, but SysId only supports "volts" */
-                            setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                            /* also log the requested output for SysId */
-                            SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-                        },
-                        null,
-                        this));
+        private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(new SysIdRoutine.Config(
+                /* This is in radians per second², but SysId only supports "volts per second" */
+                Volts.of(Math.PI / 6).per(Second),
+                /* This is in radians per second, but SysId only supports "volts" */
+                Volts.of(Math.PI), null, // Use default timeout (10 s)
+                // Log state with SignalLogger class
+                state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+                new SysIdRoutine.Mechanism(output -> {
+                    /* output is actually radians per second, but SysId only supports "volts" */
+                    setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                    /* also log the requested output for SysId */
+                    SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                }, null, this));
 
         /* The SysId routine to test */
         private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
         public void setSysIdRoutine(String routine) {
             switch (routine) {
-                default:
-                case "m_sysIdRoutineTranslation":
-                    m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
-                    break;
-                case "m_sysIdRoutineRotation":
-                    m_sysIdRoutineToApply = m_sysIdRoutineRotation;
-                    break;
-                case "m_sysIdRoutineSteer":
-                    m_sysIdRoutineToApply = m_sysIdRoutineSteer;
-                    break;
+            default:
+            case "m_sysIdRoutineTranslation":
+                m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+                break;
+            case "m_sysIdRoutineRotation":
+                m_sysIdRoutineToApply = m_sysIdRoutineRotation;
+                break;
+            case "m_sysIdRoutineSteer":
+                m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+                break;
             }
         }
     }
@@ -229,10 +212,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
-                setOperatorPerspectiveForward(
-                        allianceColor == Alliance.Red
-                                ? kRedAlliancePerspectiveRotation
-                                : kBlueAlliancePerspectiveRotation);
+                setOperatorPerspectiveForward(allianceColor == Alliance.Red ? kRedAlliancePerspectiveRotation
+                        : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
         }
@@ -244,9 +225,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     @Override
-    public void addVisionMeasurement(
-            Pose2d visionRobotPoseMeters,
-            double timestampSeconds,
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);

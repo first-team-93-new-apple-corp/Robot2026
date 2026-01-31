@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import gg.questnav.questnav.PoseFrame;
@@ -14,31 +15,39 @@ import gg.questnav.questnav.QuestNav;
 public class QuestNavSubsystem extends SubsystemBase {
     private CommandSwerveDrivetrain drivetrain;
     private QuestNav quest;
-    private boolean poseSet = false;
 
     // http://10.0.93.200:5801/
 
     public QuestCommands commands = new QuestCommands();
+    private NTSubsystem networkTables;
 
-    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, Pose3d startingPose) {
+    private Pose2d questPose2d;
+    private Pose3d questPose3d;
+
+    private Pose2d robotPose2d;
+    private Pose3d robotPose3d;
+
+    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, Pose3d startingPose, NTSubsystem networkTables) {
         this.drivetrain = drivetrain;
         quest = new QuestNav();
 
         // Assume this is the requested reset pose
-        Pose3d robotPose = startingPose;
+        robotPose3d = startingPose;
 
         // Transform by the offset to get the Quest pose
-        Pose3d questPose = robotPose.transformBy(Constants.Quest.RobotToQuest);
+        questPose3d = robotPose3d.transformBy(Constants.Quest.RobotToQuest);
 
         // Send the reset operation
-        quest.setPose(questPose);
+        quest.setPose(questPose3d);
+
+        this.networkTables = networkTables;
+
+        quest.setVersionCheckEnabled(false);
     }
 
     public void setPose(Pose3d newRobotPose) {
         Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
         quest.setPose(questPose);
-        poseSet = true;
-
     }
 
     @Override
@@ -46,6 +55,7 @@ public class QuestNavSubsystem extends SubsystemBase {
         quest.commandPeriodic();
 
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
+        SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
 
         if (quest.isTracking()) {
@@ -55,16 +65,21 @@ public class QuestNavSubsystem extends SubsystemBase {
             // Loop over the pose data frames and send them to the pose estimator
             for (PoseFrame questFrame : questFrames) {
                 // Get the pose of the Quest
-                Pose3d questPose = questFrame.questPose3d();
+                questPose3d = questFrame.questPose3d();
+                questPose2d = questPose3d.toPose2d();
                 // Get timestamp for when the data was sent
                 double timestamp = questFrame.dataTimestamp();
 
                 // Transform by the mount pose to get your robot pose
-                Pose3d robotPose = questPose.transformBy(Constants.Quest.RobotToQuest.inverse());
+                robotPose3d = questPose3d.transformBy(Constants.Quest.RobotToQuest.inverse());
+                robotPose2d = robotPose3d.toPose2d();
+
                 // Add the measurement to our estimator
-                drivetrain.addVisionMeasurement(robotPose.toPose2d(), timestamp, Constants.Quest.QUESTNAV_STD_DEVS);
+                drivetrain.addVisionMeasurement(robotPose2d, timestamp, Constants.Quest.QUESTNAV_STD_DEVS);
+
             }
         }
+
     }
 
     public class QuestCommands {
@@ -72,7 +87,8 @@ public class QuestNavSubsystem extends SubsystemBase {
             return Commands.runOnce(() -> {
                 Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest);
                 quest.setPose(questPose);
-            });
+
+            }).andThen(Commands.print("Reset Quest Pose!"));
         }
 
         public Command resetQuestPose(Pose2d newRobotPose) {
@@ -80,10 +96,17 @@ public class QuestNavSubsystem extends SubsystemBase {
                 Pose3d newRobotPose3d = new Pose3d(newRobotPose.getX(), newRobotPose.getY(), 0,
                         new Rotation3d(newRobotPose.getRotation().getDegrees(), 0, 0));
                 Pose3d questPose = newRobotPose3d.transformBy(Constants.Quest.RobotToQuest);
+
                 quest.setPose(questPose);
             });
         }
-        
-    }   
-}
 
+        public Command updateNT() {
+            return new RunCommand(() -> {
+                networkTables.quest.updateQuestPose(questPose3d);
+                networkTables.quest.updateRobotPose(robotPose3d);
+            });
+        }
+
+    }
+}

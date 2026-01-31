@@ -3,11 +3,22 @@ package frc.robot.Subsystems.auto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class AutoDirector {
     // This is the chooser that will be displayed on the dashboard to select the
@@ -15,7 +26,7 @@ public class AutoDirector {
     public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
     public final List<Auto> Autos = new ArrayList<>();
     private final AutoSubsystems autoSubsystems;
-
+    private final PathConstraints constraints = Constants.Auto.pathConstraints;
     public AutoDirector(AutoSubsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
         addAutos();
@@ -62,11 +73,20 @@ public class AutoDirector {
 
         return new Auto("TestShooting", tracker, new Pose2d());
     }
+
     public Auto TestAuto() {
+        Pose2d startPose = new Pose2d();
+        
         List<Command> list = new ArrayList<>();
         list.add(Commands.print("Testing Auto"));
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
+        // list.add(AutoBuilder.pathfindToPose(new Pose2d(1.0, 1.0, new Rotation2d(Math.PI/2)), constraints));
+        try {
+        list.add(AutoBuilder.followPath(PathPlannerPath.fromPathFile("Straight")));
+        } catch (Exception e) {
+            list.add(Commands.print("Robot is big sad :("));
+        }
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> startPose);
 
-        return new Auto("TestAuto", tracker, new Pose2d());
+        return new Auto("TestAuto", tracker, startPose);
     }
 }

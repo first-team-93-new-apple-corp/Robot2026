@@ -14,8 +14,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.Swerve;
 import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.auto.*;
 import frc.robot.controls.*;
@@ -36,7 +36,7 @@ public class RobotContainer {
   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
   // Quest
-  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d());
+  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d(), networkTables);
 
   //Shooter
   private ShooterMath shooterMath = new ShooterMath();
@@ -50,21 +50,18 @@ public class RobotContainer {
   }
 
   private void updateControlScheme(String selected) {
-    switch (selected) {
-    case "TwoStickDrive":
+    if (selected.equals("TwoStickDrive")) {
       selectedControls = new TwoStickDrive(0, 1);
-      break;
-    case "TwoStickDriveXboxOp":
+    } else if (selected.equals("TwoStickDriveXboxOp")) {
       selectedControls = new TwoStickDriveXboxOp(0, 1, 2);
-      break;
-    case "XboxDrive":
-    default:
+    } else {
       selectedControls = new XboxDrive(0);
-      break;
     }
+    refreshBindings();
   }
 
   private void configureBindings() {
+    
     // Controls
     controlSchemeChooser.addOption("Xbox Drive", "XboxDrive");
     controlSchemeChooser.setDefaultOption("Two Stick Drive", "TwoStickDrive");
@@ -75,17 +72,24 @@ public class RobotContainer {
     selectedControls = new TwoStickDrive(0, 1);
     selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(questNav.commands.resetQuestPose(new Pose2d())));
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
-    drivetrain.setDefaultCommand(drivetrain.commands.applyRequest(() -> drive
-        .withVelocityX(selectedControls.DriveLeft() * Swerve.MaxSpeed).withVelocityY(selectedControls.DriveUp() * Swerve.MaxSpeed)
-        .withRotationalRate(selectedControls.DriveTheta() * Swerve.MaxAngularRate)));
-    
+
+    drivetrain
+        .setDefaultCommand(drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft() * Constants.Swerve.MaxSpeed)
+            .withVelocityY(selectedControls.DriveUp() * Constants.Swerve.MaxSpeed).withRotationalRate(selectedControls.DriveTheta() * Constants.Swerve.MaxSpeed)));
+
+    refreshBindings();
+
+
+    CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
+  }
+
+  public void refreshBindings() {
+    selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
+    selectedControls.Seed().onTrue(questNav.commands.resetQuestPose(new Pose3d()).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
   }
 
   public Command getAutonomousCommand() {
     return Commands.defer(() -> auto.selection().command(), Set.of(drivetrain, questNav));
   }
-  public void periodic() {
-    networkTables.updateRobotPose(drivetrain.getState().Pose);
-    networkTables.updateQuestPose(new Pose3d(drivetrain.getState().Pose).transformBy(Constants.Quest.RobotToQuest));
-  }
+
 }
