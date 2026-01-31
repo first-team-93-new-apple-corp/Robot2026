@@ -46,11 +46,19 @@ public class AutoDirector {
     }
 
     public Auto TestShooting() {
-        ArrayList<Command> list = new ArrayList<>();
-        list.add(new Commands.print("hello"));
+        List<Command> list = new ArrayList<>();
+        list.add(Commands.print("Testing Shooting Math"));
+        Pose2d currentPose = autoSubsystems.drivetrain().getState().Pose;
+        double hubX = (Math
+                .sqrt(Math.pow(4.625594 - currentPose.getX(), 2) + Math.pow(4.034536 - currentPose.getY(), 2)));
+        double hubY = 1.82;
+        double angle = autoSubsystems.shooterMath().calculateAngle(0.0, 0.0, hubX - 0.5, hubY + 0.5, hubX, hubY);
 
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, new Pose2d());
+        list.add(Commands.print("Shoot at angle " + angle + "Shoot at velocity "
+                + autoSubsystems.shooterMath().calculateV(angle, hubX, hubY, -9.8)));
 
-        return new Auto("hello", tracker, new Pose2d());
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
+
+        return new Auto("TestShooting", tracker, new Pose2d());
     }
 }

@@ -2,7 +2,7 @@ package frc.robot;
 
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
-    public static double calculateAngle(double xinit, double xfinal, double xmid, double yinit, double yfinal, double ymid) {
+    public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
         double[] point1 = { xinit, yinit };
         double[] point2 = { xmid, ymid };
         double[] point3 = { xfinal, yfinal };
@@ -25,10 +25,8 @@ public class ShooterMath {
         if (y1 > hubY) {
             return Math.PI+Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
         }
-        if (y1 < hubY) {
-            return Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
-        }
-        return null;
+ 
+        return Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
     }
 
     public static double calculateDeterminantValue(double[][] matrix) {

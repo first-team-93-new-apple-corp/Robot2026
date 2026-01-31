@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Set;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -14,11 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Swerve;
-import frc.robot.Subsystems.CommandSwerveDrivetrain;
-import frc.robot.Subsystems.NTSubsystem;
-import frc.robot.Subsystems.QuestNavSubsystem;
+import frc.robot.Subsystems.*;
+import frc.robot.Subsystems.auto.*;
 import frc.robot.controls.*;
-
 
 public class RobotContainer {
   // Drive
@@ -38,9 +38,13 @@ public class RobotContainer {
   // Quest
   private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d());
 
+  //Shooter
+  private ShooterMath shooterMath = new ShooterMath();
+
   // Auto Stuff
-  private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav);
+  private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav, shooterMath);
   private AutoDirector auto = new AutoDirector(autoSubsystems);
+
   public RobotContainer() {
     configureBindings();
   }
@@ -71,12 +75,12 @@ public class RobotContainer {
     selectedControls = new XboxDrive(0);
     selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
-    drivetrain
-        .setDefaultCommand(drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft()*Swerve.MaxSpeed)
-            .withVelocityY(selectedControls.DriveUp()).withRotationalRate(selectedControls.DriveTheta()*Swerve.MaxAngularRate)));
+    drivetrain.setDefaultCommand(drivetrain.commands.applyRequest(() -> drive
+        .withVelocityX(selectedControls.DriveLeft() * Swerve.MaxSpeed).withVelocityY(selectedControls.DriveUp())
+        .withRotationalRate(selectedControls.DriveTheta() * Swerve.MaxAngularRate)));
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return Commands.defer(() -> auto.selection().command(), Set.of(drivetrain, questNav));
   }
 }
