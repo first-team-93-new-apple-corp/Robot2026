@@ -14,8 +14,10 @@ public class AutoDirector {
     // auto.
     public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
     public final List<Auto> Autos = new ArrayList<>();
+    private final AutoSubsystems autoSubsystems;
 
-    public AutoDirector() {
+    public AutoDirector(AutoSubsystems autoSubsystems) {
+        this.autoSubsystems = autoSubsystems;
         addAutos();
     }
 
@@ -36,9 +38,19 @@ public class AutoDirector {
     public void addAutos() {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
         // Autos.add([Auto]);
+        Autos.add(TestShooting());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
         }
         SmartDashboard.putData("AutoChooser", autoChooser);
+    }
+
+    public Auto TestShooting() {
+        ArrayList<Command> list = new ArrayList<>();
+        list.add(new Commands.print("hello"));
+
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list, new Pose2d());
+
+        return new Auto("hello", tracker, new Pose2d());
     }
 }

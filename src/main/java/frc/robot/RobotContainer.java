@@ -38,6 +38,9 @@ public class RobotContainer {
   // Quest
   private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d());
 
+  // Auto Stuff
+  private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav);
+  private AutoDirector auto = new AutoDirector(autoSubsystems);
   public RobotContainer() {
     configureBindings();
   }
