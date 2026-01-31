@@ -172,6 +172,7 @@ public class Constants {
 
     public class ClimberConstants {
         public static final double climberSpeed = .5;
-
+        public static final int barHeight = 30;
+        
     }
 }

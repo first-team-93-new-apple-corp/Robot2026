@@ -37,7 +37,7 @@ public class ClimberSubsystem extends SubsystemBase {
         public Command Extend(){
             return run(()-> setPosition(-Constants.ClimberConstants.barHeight));
         }
-
+        
         public Command Stop() {
             return runOnce(() -> setSpeed(0));
         }
@@ -48,6 +48,25 @@ public class ClimberSubsystem extends SubsystemBase {
 
         public Command manualExtend() {
             return runOnce(() -> setSpeed(-Constants.ClimberConstants.climberSpeed));
+        }
+
+        //Version 2 - Logan & Andrew
+        
+        public Command autoExtendRetract() {
+        // robot init, set slot 0 gains
+        m_motor.config_kF(0, 0.05, 50);
+        m_motor.config_kP(0, 0.046, 50);
+        m_motor.config_kI(0, 0.0002, 50);
+        m_motor.config_kD(0, 4.2, 50);
+
+        // enable voltage compensation
+        m_motor.configVoltageComSaturation(12);
+        m_motor.enableVoltageCompensation(true);
+
+        // periodic, run velocity control with slot 0 configs,
+        // target velocity of 50 rps (10240 ticks/100ms)
+        m_motor.selectProfileSlot(0, 0);
+        m_motor.setControl(m_motmag.withPosition(200));
         }
     }
 
