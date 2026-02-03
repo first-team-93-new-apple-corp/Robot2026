@@ -33,7 +33,7 @@ public class QuestNavSubsystem extends SubsystemBase {
 
         // Assume this is the requested reset pose
         robotPose3d = startingPose;
-
+        
         // Transform by the offset to get the Quest pose
         questPose3d = robotPose3d.transformBy(Constants.Quest.RobotToQuest);
 
