@@ -177,5 +177,8 @@ public class NTSubsystem {
 				// System.out.println("Reset Robot NT Pose");
 			// });
 		}
+		public void updatePiPose(Pose3d pose) {
+			m_field.getObject("PI").setPose(pose.toPose2d());
+		}
 	}
 }

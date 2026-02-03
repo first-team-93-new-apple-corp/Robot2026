@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -84,8 +85,8 @@ public class RobotContainer {
   }
 
   public void refreshBindings() {
-    selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
-    selectedControls.Seed().onTrue(questNav.commands.resetQuestPose(new Pose3d()).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
+    // selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
+    selectedControls.Seed().onTrue(questNav.commands.resetQuestPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
   }
 
   public Command getAutonomousCommand() {
