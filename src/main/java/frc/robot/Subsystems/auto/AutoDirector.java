@@ -91,7 +91,8 @@ public class AutoDirector {
         list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
 
         list.add(AutoBuilder.followPath(testPath));
-        list.add(AutoBuilder.pathfindToPose(startPose, constraints));
+        Command cmd = AutoBuilder.pathfindToPose(correctedStartPose, constraints).andThen(Commands.print("Pathfound back to start: "+ correctedStartPose.toString()));
+        list.add(cmd);
 
         AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> correctedStartPose);
 

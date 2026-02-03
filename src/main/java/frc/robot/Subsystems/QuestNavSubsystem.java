@@ -42,7 +42,7 @@ public class QuestNavSubsystem extends SubsystemBase {
     private Pose2d robotPose2d;
     private Pose3d robotPose3d;
 
-    private Pose3d piPose3d;
+    private Pose3d piPose3d = new Pose3d();
 
     private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
