@@ -30,11 +30,11 @@ public class Constants {
     }
 
     public class Quest {
-        public static final Distance QuestX = Inches.of(14.5);
+        public static final Distance QuestX = Inches.of(15.5);
         public static final Distance QuestY = Inches.of(-1.75);
         public static final Distance QuestZ = Inches.of(20.5);
 
-        public static final Angle QuestYawOffset = Degrees.of(12.0);
+        public static final Angle QuestYawOffset = Degrees.of(2.0);
         public static final Angle QuestPitchOffset = Degrees.of(-1.5);
         public static final Angle QuestRollOffset = Degrees.of(3.0);
 

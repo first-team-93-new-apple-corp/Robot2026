@@ -105,9 +105,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
                 (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)),
 
-                new PPHolonomicDriveController(new PIDConstants(8, 0.0, 0.01), new PIDConstants(5, 0.0, 0.0)), config, // The
-                                                                                                                       // robot
-                                                                                                                       // configuration
+                new PPHolonomicDriveController(new PIDConstants(0.75, 0.0, 0), new PIDConstants(0.5, 0.0, 0.0)), 
+                config,
                 () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red
                     // alliance
@@ -122,7 +121,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }, this // Reference to this subsystem to set requirements
         );
     }
-
+    // @Override 
+    // public void ppResetPose(Pose2d pose) {
+    //     this.resetPose(pose);
+        
+    // }
     public class SysID implements Subsystem {
         private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(new SysIdRoutine.Config(null, // Use
                                                                                                               // default

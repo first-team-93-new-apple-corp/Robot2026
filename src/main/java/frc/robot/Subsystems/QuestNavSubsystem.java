@@ -94,7 +94,7 @@ public class QuestNavSubsystem extends SubsystemBase {
         public Command resetQuestPose(Pose2d newRobotPose) {
             return Commands.runOnce(() -> {
                 Pose3d newRobotPose3d = new Pose3d(newRobotPose.getX(), newRobotPose.getY(), 0,
-                        new Rotation3d(newRobotPose.getRotation().getDegrees(), 0, 0));
+                        new Rotation3d(0, 0, newRobotPose.getRotation().getDegrees()));
                 Pose3d questPose = newRobotPose3d.transformBy(Constants.Quest.RobotToQuest);
 
                 quest.setPose(questPose);

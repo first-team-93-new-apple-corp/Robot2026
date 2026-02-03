@@ -27,6 +27,7 @@ public class AutoDirector {
     public final List<Auto> Autos = new ArrayList<>();
     private final AutoSubsystems autoSubsystems;
     private final PathConstraints constraints = Constants.Auto.pathConstraints;
+
     public AutoDirector(AutoSubsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
         addAutos();
@@ -75,18 +76,24 @@ public class AutoDirector {
     }
 
     public Auto TestAuto() {
-        Pose2d startPose = new Pose2d();
-        
+        PathPlannerPath testPath = null;
         List<Command> list = new ArrayList<>();
-        list.add(Commands.print("Testing Auto"));
-        // list.add(AutoBuilder.pathfindToPose(new Pose2d(1.0, 1.0, new Rotation2d(Math.PI/2)), constraints));
-        try {
-        list.add(AutoBuilder.followPath(PathPlannerPath.fromPathFile("Straight")));
-        } catch (Exception e) {
-            list.add(Commands.print("Robot is big sad :("));
-        }
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> startPose);
 
-        return new Auto("TestAuto", tracker, startPose);
+        try {
+            testPath = PathPlannerPath.fromPathFile("Over Bump");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Pose2d startPose = testPath.getStartingDifferentialPose();
+        Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
+        list.add(Commands.print("Testing Auto"));
+        list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
+        list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
+
+        list.add(AutoBuilder.followPath(testPath));
+
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> correctedStartPose);
+
+        return new Auto("TestAuto", tracker, correctedStartPose);
     }
 }
