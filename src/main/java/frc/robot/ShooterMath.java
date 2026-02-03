@@ -2,7 +2,7 @@ package frc.robot;
 
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
-    public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
+    public double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
         double[] point1 = { xinit, yinit };
         double[] point2 = { xmid, ymid };
         double[] point3 = { xfinal, yfinal };
@@ -11,13 +11,14 @@ public class ShooterMath {
                 generateTotalDeterminant(point1, point2, point3));
         double b = calculateCoefficent(generatePartialDeterminant("b", point1, point2, point3),
                 generateTotalDeterminant(point1, point2, point3));
+        @SuppressWarnings("unused")
         double c = calculateCoefficent(generatePartialDeterminant("c", point1, point2, point3),
                 generateTotalDeterminant(point1, point2, point3));
 
         return Math.atan(2 * a * xinit + b);
     }
 
-    public static double calculateV(double theta, double xfinal, double yfinal, double gravity) {
+    public double calculateV(double theta, double xfinal, double yfinal, double gravity) {
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
 
