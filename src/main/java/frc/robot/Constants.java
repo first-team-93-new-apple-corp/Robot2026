@@ -175,4 +175,11 @@ public class Constants {
         public static final int barHeight = 30;
         
     }
+
+    public class IntakeConstants {
+        public static final double intakeSpeed = 1.0;
+        public static final double outtakeSpeed = -1.0;
+    } 
+
 }
+
