@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class IntakeSubsytem extends SubsystemBase {
     
@@ -21,10 +22,20 @@ public class IntakeSubsytem extends SubsystemBase {
         topIntakeMotor.set(Speed);
         bottomIntakeMotor.set(Speed);
     }
-
-    public class IntakeCommands() {
+    
+    public class IntakeCommands {
         public Command stop() {
             return runOnce(() -> setSpeed(0));
         }
+
+        public Command intake() {
+            return runOnce(() -> setSpeed(intakeSpeed));
+        }
+
+        public Command outtake() {
+            return runOnce(() -> setSpeed(outtakeSpeed));
+        }
+        
     }
+    
 }
