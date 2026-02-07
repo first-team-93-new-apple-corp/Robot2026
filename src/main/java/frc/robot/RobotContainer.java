@@ -16,11 +16,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.Subsystems.ClimberSubsystem;
+import frc.robot.Subsystems.CommandSwerveDrivetrain;
+import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 
 public class RobotContainer {
@@ -45,9 +44,9 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+    // public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
-    public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+    // public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
     public RobotContainer() {
 
@@ -94,17 +93,17 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
-        joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
+        // joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
+        // joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
-        joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
+        // joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+        // joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
+        // joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        // joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
 
-        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
+        // joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        // joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
     }
 
     public Command getAutonomousCommand() {
