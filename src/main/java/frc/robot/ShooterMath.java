@@ -1,4 +1,3 @@
-package frc.robot;
 
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
@@ -16,18 +15,49 @@ public class ShooterMath {
 
         return Math.atan(2 * a * xinit + b);
     }
-
+    
     public static double calculateV(double theta, double xfinal, double yfinal, double gravity) {
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
-
-    public double angleToAlign(double x1, double hubX, double y1, double hubY, double currAngle) {
-        if (y1 > hubY) {
-            return Math.PI+Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
+    public static double calculateV(double theta, double xfinal, double yfinal, double gravity,double robotX, double robotZ, double angleToHub) {
+        double totalShootingVelocity = calculateV(theta,xfinal,yfinal,gravity);
+        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ);
+        return totalShootingVelocity - robotRelX;
+    }
+    public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub) {
+        double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
+        double adjustment = Math.PI/2 - Math.atan(shooterVelocity/robotRelZ);
+        return adjustment;
+    }
+    public static double calculateRobotRelX(double angleToHub,double robotX,double robotZ) {
+        return robotX*Math.cos(angleToHub)+robotZ*Math.sin(angleToHub);
+    }
+    public static double calculateRobotRelZ(double angleToHub,double robotX,double robotZ) {
+        return -robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
+    }
+    public static double angleToAlign(double robotX, double hubX, double robotY, double hubY, double currAngle) {
+        double angleToHub = 0;
+        if (robotX > hubX) {
+            angleToHub = Math.PI+Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX));
         }
  
-        return Math.atan(Math.abs(hubY - y1) / Math.abs(hubX - x1));
+        angleToHub =  Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX)); // Angle our robot needs to face to be algined with the hub
+        // angle our robot needs to change to have its velocity z in line with the plane to the hub
+        if (robotX>hubX && robotY>hubY) {
+            return angleToHub - (Math.PI/2);
+        }
+        if (robotX<hubX && robotY>hubY) {
+            return angleToHub-(Math.PI/2);
+        }
+        if (robotX>hubX && robotY<hubY) {
+            return angleToHub - (Math.PI/2);
+        }
+        if (robotX<hubX && robotY<hubY) {
+            return (Math.PI/2) - angleToHub;
+        }
+        return 1;
     }
+    
 
     public static double calculateDeterminantValue(double[][] matrix) {
         double a = matrix[0][0];
@@ -76,6 +106,7 @@ public class ShooterMath {
         }
         return matrix;
     }
+    
 
     
 }
