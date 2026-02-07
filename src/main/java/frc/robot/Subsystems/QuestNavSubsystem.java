@@ -44,7 +44,7 @@ public class QuestNavSubsystem extends SubsystemBase {
 
     private Pose3d piPose3d = new Pose3d();
 
-    private PhotonCamera camera = new PhotonCamera("MainCam");
+    // private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
@@ -79,19 +79,19 @@ public class QuestNavSubsystem extends SubsystemBase {
         quest.commandPeriodic();
 
         // if (!hasPoseInit) {
-                Optional<EstimatedRobotPose> visionEst = Optional.empty();
-                for (var result : camera.getAllUnreadResults()) {
-                    visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-                    if (visionEst.isEmpty()) {
-                        visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
-                    }
-                    visionEst.ifPresent(est -> {
-                        piPose3d = est.estimatedPose;
-                        // .transformBy(kRobotToCam.inverse());
+                // Optional<EstimatedRobotPose> visionEst = Optional.empty();
+                // for (var result : camera.getAllUnreadResults()) {
+                //     visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+                //     if (visionEst.isEmpty()) {
+                //         visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                //     }
+                //     visionEst.ifPresent(est -> {
+                //         piPose3d = est.estimatedPose;
+                //         // .transformBy(kRobotToCam.inverse());
                         
-                        hasPoseInit = true;
-                    });
-                }
+                //         hasPoseInit = true;
+                //     });
+                // }
         // }
 
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
@@ -122,7 +122,9 @@ public class QuestNavSubsystem extends SubsystemBase {
         }
 
     }
-
+    public Pose2d getQuestRobotPose(){
+        return robotPose2d;
+    }
     public class QuestCommands {
         public Command resetQuestPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {

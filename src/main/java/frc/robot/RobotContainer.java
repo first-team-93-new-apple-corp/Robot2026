@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Set;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -45,8 +48,13 @@ public class RobotContainer {
   // Auto Stuff
   private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav, shooterMath);
   private AutoDirector auto = new AutoDirector(autoSubsystems);
-
+  private FileWriter writer = null;
   public RobotContainer() {
+    try {
+      writer =  new FileWriter(new File("/U/testlog.csv"));
+    } catch (Exception e) {
+     System.out.println("Failed to create to log");
+    }
     configureBindings();
   }
 
@@ -91,6 +99,16 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return Commands.defer(() -> auto.selection().command(), Set.of(drivetrain, questNav));
+  }
+  public Command printPoseInfo(){
+    return Commands.runOnce(()->{
+      try {
+        writer.write(""+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"," + autoSubsystems.questNav().getQuestRobotPose().getX()+","+autoSubsystems.questNav().getQuestRobotPose().getY()+"\n");
+      } catch (IOException e) {
+        System.out.println("Failed to write to log: "+ e);
+      }
+    });
+  //   return ("["+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"],[" + autoSubsystems.questNav().getQuestRobotPose().getX()+autoSubsystems.questNav().getQuestRobotPose().getY()+"]");
   }
 
 }

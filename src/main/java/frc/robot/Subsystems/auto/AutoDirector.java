@@ -86,13 +86,22 @@ public class AutoDirector {
         }
         Pose2d startPose = testPath.getStartingDifferentialPose();
         Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
+        // Shhh definintly not doing this vvv
+        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
+        // Shhh definintly not doing this ^^^^
         list.add(Commands.print("Testing Auto"));
-        list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
-        list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
-
+        
+        list.add(Commands.print("***************************** Starting Info **************************\n"));
+        list.add(Commands.print("PathPlanner:\n\tSTART POSE: " + startPose.toString() + "\n\tBetter POSE: " + correctedStartPose.toString() + "\nTelematry:\n\tRobotPose: "+autoSubsystems.drivetrain().getState().Pose.toString()+"\n\tQuestPose:....."));
+        list.add(Commands.print("***************************** End of Starting Info **************************\n"));
         list.add(AutoBuilder.followPath(testPath));
+
         Command cmd = AutoBuilder.pathfindToPose(correctedStartPose, constraints).andThen(Commands.print("Pathfound back to start: "+ correctedStartPose.toString()));
         list.add(cmd);
+        list.add(Commands.print("***************************** Ending Info **************************\n"));
+        list.add(Commands.print("PathPlanner:\n\tSTART POSE: " + startPose.toString() + "\n\tBetter POSE: " + correctedStartPose.toString() + "\nTelematry:\n\tRobotPose: "+autoSubsystems.drivetrain().getState().Pose.toString()+"\n\tQuestPose:....."));
+        list.add(Commands.print("***************************** End of Ending Info **************************\n"));
+        list.add(Commands.print("***********************Deefinintly done"));
 
         AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> correctedStartPose);
 
