@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -19,9 +18,10 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
@@ -38,10 +38,10 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
+    private final CommandXboxController joystick = new CommandXboxController(2);
+
     private final CommandJoystick leftJoystick = new CommandJoystick(0);
     private final CommandJoystick rightJoystick = new CommandJoystick(1);
-
-    private final CommandXboxController xBoxController = new CommandXboxController(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -50,31 +50,24 @@ public class RobotContainer {
     public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
     public RobotContainer() {
+
         configureBindings();
     }
 
     private void configureBindings() {
+
+        
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        // drivetrain.setDefaultCommand( // For Xbox Controller
-        // Drivetrain will execute this command periodically
-        // drivetrain.applyRequest(() ->
-        // drive.withVelocityX(-xBoxController.getLeftY() * MaxSpeed) // Drive forward
-        // with negative Y (forward)
-        // .withVelocityY(-xBoxController.getLeftX() * MaxSpeed) // Drive left with
-        // negative X (left)
-        // .withRotationalRate(-xBoxController.getRightX() * MaxAngularRate) // Drive
-        // counterclockwise with negative X (left)
-        // )
-        // );
-        drivetrain.setDefaultCommand( // For Joysticks
-                drivetrain.applyRequest(() -> drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with
-                                                                                                   // negative
-                                                                                                   // Y(forward)
-                        .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                    // negative X (left)
-                ));
+        drivetrain.setDefaultCommand(
+            // Drivetrain will execute this command periodically
+            drivetrain.applyRequest(() ->
+                drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
+
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -82,33 +75,36 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        xBoxController.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        xBoxController.leftBumper().whileTrue(drivetrain.applyRequest(() -> point
-                .withModuleDirection(new Rotation2d(-xBoxController.getLeftY(), -xBoxController.getLeftX()))));
+        rightJoystick.button(1).whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        xBoxController.back().and(xBoxController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        xBoxController.back().and(xBoxController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        xBoxController.start().and(xBoxController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        xBoxController.start().and(xBoxController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
+        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
         leftJoystick.button(12).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        xBoxController.b().onTrue(m_IntakeSubsystem.Commands.intake());
-        xBoxController.b().onFalse(m_IntakeSubsystem.Commands.stop());
+        joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
+        joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        xBoxController.x().onTrue(m_IntakeSubsystem.Commands.outtake());
-        xBoxController.x().onFalse(m_IntakeSubsystem.Commands.stop());
+        joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+        joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        xBoxController.povUp().onTrue(m_ClimberSubsystem.Commands.manualRetract());
-        xBoxController.povUp().onFalse(m_ClimberSubsystem.Commands.Stop());
+        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
 
-        xBoxController.povDown().onTrue(m_ClimberSubsystem.Commands.manualExtend());
-        xBoxController.povDown().onFalse(m_ClimberSubsystem.Commands.Stop());
+        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
     }
 
     public Command getAutonomousCommand() {
