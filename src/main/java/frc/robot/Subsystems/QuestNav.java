@@ -3,6 +3,7 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -44,16 +45,22 @@ public class QuestNav {
       nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
 
   // Pose of the Quest when the pose was reset
-  private Pose2d resetPoseQuest = new Pose2d();
+  private Pose2d resetPoseQuest2D = new Pose2d();
+  private Pose3d resetPoseQuest3D = new Pose3d();
+
 
   // Pose of the robot when the pose was reset
-  private Pose2d resetPoseRobot = new Pose2d();
+  private Pose2d resetPoseRobot2D = new Pose2d();
+  private Pose3d resetPoseRobot3D = new Pose3d();
+
 
   private final Transform2d robotToQuest2D = Constants.Quest.RobotToQuest2D;
   private final Transform3d robotToQuest3D = Constants.Quest.RobotToQuest3D;
   
 
-  private final RollingAveragePose2d rollingAvg;
+  private final RollingAveragePose2d rollingAvg2d;
+  private final RollingAveragePose3d rollingAvg3d;
+
 
   /* Constructor */
   public QuestNav(int windowSize) {
@@ -61,7 +68,8 @@ public class QuestNav {
     if (questMiso.get() != 99) {
       questMosi.set(1);
     }
-    rollingAvg = new RollingAveragePose2d(windowSize);
+    rollingAvg2d = new RollingAveragePose2d(windowSize);
+    rollingAvg3d = new RollingAveragePose3d(windowSize);
   }
 
   public QuestNav() {
@@ -69,11 +77,11 @@ public class QuestNav {
   }
 
   public void updateAverageRobotPose() {
-    rollingAvg.addPose(getRobotPose());
+    rollingAvg2d.addPose(getRobotPose());
   }
 
   public Pose2d getAverageRobotPose() {
-    return rollingAvg.getAveragePose();
+    return rollingAvg2d.getAveragePose();
   }
 
   /**
@@ -92,11 +100,11 @@ public class QuestNav {
    * @return pose of the Quest
    */
   public Pose2d getQuestPose() {
-    var rawPose = getQuestPOse();
-    var poseRelativeToReset = rawPose.minus(resetPoseQuest);
+    var rawPose = getUnfilteredQuestPose();
+    var poseRelativeToReset = rawPose.minus(resetPoseQuest2D);
     // Transform from "reset quest pose" to "current quest pose"
 
-    return resetPoseRobot // the robot's field pose at reset
+    return resetPoseRobot2D // the robot's field pose at reset
         .transformBy(robotToQuest2D) // offset to get the Quest's field pose at reset
         .transformBy(poseRelativeToReset);
   }
@@ -150,9 +158,9 @@ public class QuestNav {
    * @param newPose new robot pose
    */
   public void resetPose(Pose2d newPose) {
-    // rollingAvg.reset();
-    resetPoseQuest = getQuestPose();
-    resetPoseRobot = newPose;
+    // rollingAvg2d.reset();
+    resetPoseQuest2D = getQuestPose();
+    resetPoseRobot2D = newPose;
   }
 
   /**
@@ -170,7 +178,7 @@ public class QuestNav {
    *
    * @return pose of the oculus
    */
-  private Pose2d getUnfliteredQuestPose() {
+  private Pose2d getUnfilteredQuestPose() {
     var eulerAngles = questEulerAngles.get();
     var rotation = Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360d));
 
