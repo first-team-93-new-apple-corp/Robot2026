@@ -10,6 +10,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.FloatArraySubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -27,6 +31,7 @@ public class NTSubsystem {
 
 	// Our NT
 	private NetworkTableInstance ntInst = NetworkTableInstance.getDefault();
+	private NetworkTable questInst = ntInst.getTable("questnav");
 
 	// Classes
 	public ntSwerve swerve = new ntSwerve();
@@ -151,32 +156,34 @@ public class NTSubsystem {
 	}
 
 	public class ntQuest {
+
 		public void updateQuestPose(Pose2d pose) {
 			// return Commands.runOnce(() -> {
-				m_field.getObject("Quest").setPose(pose);
-				// System.out.println("Reset Robot NT Pose");
+			m_field.getObject("Quest").setPose(pose);
+			// System.out.println("Reset Robot NT Pose");
 			// });
 		}
 
 		public void updateQuestPose(Pose3d pose) {
-				m_field.getObject("Quest").setPose(pose.toPose2d());
-				// System.out.println("Reset Robot NT Pose");
+			m_field.getObject("Quest").setPose(pose.toPose2d());
+			// System.out.println("Reset Robot NT Pose");
 		}
 
 		public void updateRobotPose(Pose2d pose) {
 			// return new InstantCommand(() -> {
-				m_field.setRobotPose(pose);
-				// System.out.println("Reset Robot NT Pose");
+			m_field.setRobotPose(pose);
+			// System.out.println("Reset Robot NT Pose");
 			// });
 
 		}
 
 		public void updateRobotPose(Pose3d pose) {
 			// return new InstantCommand(() -> {
-				m_field.setRobotPose(pose.toPose2d());
-				// System.out.println("Reset Robot NT Pose");
+			m_field.setRobotPose(pose.toPose2d());
+			// System.out.println("Reset Robot NT Pose");
 			// });
 		}
+
 		public void updatePiPose(Pose3d pose) {
 			m_field.getObject("PI").setPose(pose.toPose2d());
 		}

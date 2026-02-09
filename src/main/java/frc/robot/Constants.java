@@ -7,7 +7,9 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -38,8 +40,9 @@ public class Constants {
         public static final Angle QuestPitchOffset = Degrees.of(-1.5);
         public static final Angle QuestRollOffset = Degrees.of(3.0);
 
-        public static Transform3d RobotToQuest = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
+        public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
                 QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
+        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters), new Rotation2d(QuestYawOffset.in(Degrees)));
 
         // public static final Matrix<N3, N1> QUESTNAV_STD_D  EVS = VecBuilder.fill(0.01, 0.01, 0.035);
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);

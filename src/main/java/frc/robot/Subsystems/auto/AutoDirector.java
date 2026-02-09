@@ -87,7 +87,7 @@ public class AutoDirector {
         Pose2d startPose = testPath.getStartingDifferentialPose();
         Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
         // Shhh definintly not doing this vvv
-        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
+        // list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
         // Shhh definintly not doing this ^^^^
         list.add(Commands.print("Testing Auto"));
         

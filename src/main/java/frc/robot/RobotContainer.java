@@ -40,8 +40,8 @@ public class RobotContainer {
   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
   // Quest
-  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d(), networkTables);
-
+  private QuestNav questNav = new QuestNav();
+  
   //Shooter
   private ShooterMath shooterMath = new ShooterMath();
 
@@ -79,7 +79,8 @@ public class RobotContainer {
     SmartDashboard.putData("Control Scheme", controlSchemeChooser);
 
     selectedControls = new TwoStickDrive(0, 1);
-    selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(questNav.commands.resetQuestPose(new Pose2d())));
+    // TODO: CHANGE ME
+    // selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(Commands.runOnce(questNav.resetPose(drivetrain.getState().Pose)));
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
 
     drivetrain
@@ -89,21 +90,22 @@ public class RobotContainer {
     refreshBindings();
 
 
-    CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
+    // CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
   }
 
   public void refreshBindings() {
     // selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
-    selectedControls.Seed().onTrue(questNav.commands.resetQuestPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
+    selectedControls.Seed().onTrue(Commands.runOnce(()->questNav.resetPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0)))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
   }
 
   public Command getAutonomousCommand() {
-    return Commands.defer(() -> auto.selection().command(), Set.of(drivetrain, questNav));
+    return auto.selection().command();
   }
+  
   public Command printPoseInfo(){
     return Commands.runOnce(()->{
       try {
-        writer.write(""+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"," + autoSubsystems.questNav().getQuestRobotPose().getX()+","+autoSubsystems.questNav().getQuestRobotPose().getY()+"\n");
+        writer.write(""+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"," + autoSubsystems.questNav().getRobotPose().getX()+","+autoSubsystems.questNav().getRobotPose().getY()+"\n");
       } catch (IOException e) {
         System.out.println("Failed to write to log: "+ e);
       }

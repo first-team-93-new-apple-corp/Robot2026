@@ -12,7 +12,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public AutoTracker(AutoSubsystems subsystems, List<Command> commandList, Supplier<Pose2d> initialPose) {
         this.subsystems = subsystems;
-        addCommands(subsystems.questNav().commands.resetQuestPose(initialPose.get()));
+        // addCommands(subsystems.questNav().commands.resetQuestPose(initialPose.get()));
         for (Command command : commandList) {
             addCommands(command);
         }
