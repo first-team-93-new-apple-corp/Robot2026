@@ -18,7 +18,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
-import frc.robot.Subsystems.RollingAveragePose2d;
+import frc.robot.util.RollingAveragePose2d;
+import frc.robot.util.RollingAveragePose3d;
 
 /**
  * Interface with the QuestNav on VR headset for pose estimation. See
