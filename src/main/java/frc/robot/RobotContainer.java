@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.auto.*;
 import frc.robot.controls.*;
+import frc.robot.util.NTSubsystem;
 
 public class RobotContainer {
   // Drive
