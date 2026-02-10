@@ -60,7 +60,7 @@ public class QuestNav {
   private final RollingAveragePose2d rollingAvg2d;
   private final RollingAveragePose3d rollingAvg3d;
 
-  /* Constructor */
+  /*** Constructor */
   public QuestNav(int windowSize) {
     // Zero the absolute 3D position of the robot (similar to long-pressing the
     // quest logo)
@@ -225,7 +225,16 @@ public class QuestNav {
    *
    * @return pose of the Quest
    */
-  // private Pose3d getUnfilteredQuestPose3D() {
+  private Pose3d getUnfilteredQuestPose3D() {
+    // Use the raw quaternion for full 3D orientation
+    var quaternion = getQuaternion();
+
+    var questnavPosition = questPosition.get();
+    var translation = new Translation3d(questnavPosition[2], -questnavPosition[0], questnavPosition[1]);
+
+    return new Pose3d(translation, quaternion);
+  }
+    // private Pose3d getUnfilteredQuestPose3D() {
   //   // var eulerAngles = questEulerAngles.get();
   //   var quaternion = questQuaternion.get();
 
@@ -235,14 +244,4 @@ public class QuestNav {
   //   var translation = new Translation3d(questnavPosition[2], -questnavPosition[0], questnavPosition[1]);
   //   return new Pose3d(translation, rotation);
   // }
-
-  private Pose3d getUnfilteredQuestPose3D() {
-    // Use the raw quaternion for full 3D orientation
-    var rotation = getQuaternion();
-
-    var questnavPosition = questPosition.get();
-    var translation = new Translation3d(questnavPosition[2], -questnavPosition[0], questnavPosition[1]);
-
-    return new Pose3d(translation, rotation);
-  }
 }

@@ -82,6 +82,9 @@ public class RobotContainer {
     selectedControls = new TwoStickDrive(0, 1);
     // TODO: CHANGE ME
     // selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(Commands.runOnce(questNav.resetPose(drivetrain.getState().Pose)));
+    
+    
+    
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
 
     drivetrain
@@ -96,18 +99,30 @@ public class RobotContainer {
 
   public void refreshBindings() {
     // selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
-    selectedControls.Seed().onTrue(Commands.runOnce(()->questNav.resetPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0)))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
+    // selectedControls.Seed().onTrue(Commands.runOnce(()->questNav.resetPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0)))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
   }
 
   public Command getAutonomousCommand() {
     return auto.selection().command();
   }
-  
+
+  /***
+   * Seeds the drivetrain and questnav.
+   * @return a command that seeds the drivetrain and questnav
+   */
+  public Command seed() {
+    return Commands.runOnce(() -> {
+      drivetrain.seedFieldCentric();
+      // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
+    });
+  }
+
   public Command printPoseInfo(){
     return Commands.runOnce(()->{
       try {
-        writer.write(""+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"," + autoSubsystems.questNav().getRobotPose().getX()+","+autoSubsystems.questNav().getRobotPose().getY()+"\n");
-      } catch (IOException e) {
+        double[] pose = new double[4];
+        String logEntry = String.format("%f,%f,%f,%f\n", autoSubsystems.drivetrain().getState().Pose.getX(), autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.questNav().getQuestRobotPose().getX(), autoSubsystems.questNav().getQuestRobotPose().getY());
+      }catch(Exception e){
         System.out.println("Failed to write to log: "+ e);
       }
     });
