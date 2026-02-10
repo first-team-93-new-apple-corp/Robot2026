@@ -6,19 +6,14 @@ package frc.robot;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Set;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.auto.*;
@@ -42,19 +37,20 @@ public class RobotContainer {
 
   // Quest
   private QuestNav questNav = new QuestNav();
-  
-  //Shooter
+
+  // Shooter
   private ShooterMath shooterMath = new ShooterMath();
 
   // Auto Stuff
   private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav, shooterMath);
   private AutoDirector auto = new AutoDirector(autoSubsystems);
   private FileWriter writer = null;
+
   public RobotContainer() {
     try {
-      writer =  new FileWriter(new File("/U/testlog.csv"));
+      writer = new FileWriter(new File("/U/testlog.csv"));
     } catch (Exception e) {
-     System.out.println("Failed to create to log");
+      System.out.println("Failed to create to log");
     }
     configureBindings();
   }
@@ -71,7 +67,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    
+
     // Controls
     controlSchemeChooser.addOption("Xbox Drive", "XboxDrive");
     controlSchemeChooser.setDefaultOption("Two Stick Drive", "TwoStickDrive");
@@ -80,34 +76,39 @@ public class RobotContainer {
     SmartDashboard.putData("Control Scheme", controlSchemeChooser);
 
     selectedControls = new TwoStickDrive(0, 1);
-    // TODO: CHANGE ME
-    // selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(Commands.runOnce(questNav.resetPose(drivetrain.getState().Pose)));
-    
-    
-    
+
+    selectedControls.Seed().onTrue(seed());
+
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
 
     drivetrain
-        .setDefaultCommand(drivetrain.commands.applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft() * Constants.Swerve.MaxSpeed)
-            .withVelocityY(selectedControls.DriveUp() * Constants.Swerve.MaxSpeed).withRotationalRate(selectedControls.DriveTheta() * Constants.Swerve.MaxSpeed)));
+        .setDefaultCommand(drivetrain.commands
+            .applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft() * Constants.Swerve.MaxSpeed)
+                .withVelocityY(selectedControls.DriveUp() * Constants.Swerve.MaxSpeed)
+                .withRotationalRate(selectedControls.DriveTheta() * Constants.Swerve.MaxSpeed)));
 
     refreshBindings();
-
-
-    // CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
   }
 
   public void refreshBindings() {
-    // selectedControls.Brake().onTrue(questNav.commands.resetQuestPose(new Pose3d()).ignoringDisable(true));
-    // selectedControls.Seed().onTrue(Commands.runOnce(()->questNav.resetPose(new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), new Rotation2d(0)))).andThen(drivetrain.runOnce(drivetrain::seedFieldCentric)));
+    selectedControls.Seed().onTrue(seed());
   }
 
   public Command getAutonomousCommand() {
     return auto.selection().command();
   }
+  
 
+  /** 
+   * Periodic method to run things that need periodic. Set to 20ms with a 5ms offset
+   */
+  public void visionPeriodic() {
+    questNav.updateVisionMeasurement(drivetrain);
+  }
+  
   /***
    * Seeds the drivetrain and questnav.
+   * 
    * @return a command that seeds the drivetrain and questnav
    */
   public Command seed() {
@@ -116,17 +117,41 @@ public class RobotContainer {
       // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
     });
   }
-
-  public Command printPoseInfo(){
-    return Commands.runOnce(()->{
+/**
+ * Prints the drivetrain and questnav pose to a log file. This is used for offline analysis of the pose estimation performance.
+ * The log file will have the following format:
+ * timestamp, drivetrainX, drivetrainY, questnav2DX, questnav2DY, questnav3DX, questnav3DY, questnav3DZ
+ * @return Command to run the logging action
+ */
+  public Command printPoseInfo() {
+    return Commands.runOnce(() -> {
       try {
-        double[] pose = new double[4];
-        String logEntry = String.format("%f,%f,%f,%f\n", autoSubsystems.drivetrain().getState().Pose.getX(), autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.questNav().getQuestRobotPose().getX(), autoSubsystems.questNav().getQuestRobotPose().getY());
-      }catch(Exception e){
-        System.out.println("Failed to write to log: "+ e);
+        double[] drivetrainPose = {
+            autoSubsystems.drivetrain().getState().Pose.getX(),
+            autoSubsystems.drivetrain().getState().Pose.getY() };
+        double[] questPose2D = {
+            autoSubsystems.questNav().getAverageRobotPose2D().getX(),
+            autoSubsystems.questNav().getAverageRobotPose2D().getY() };
+        double[] questPose3D = {
+            autoSubsystems.questNav().getAverageRobotPose3D().getX(),
+            autoSubsystems.questNav().getAverageRobotPose3D().getY(),
+            autoSubsystems.questNav().getAverageRobotPose3D().getZ() };
+        double timestamp = autoSubsystems.questNav().getTimestamp();
+        String logEntry = String.format(
+            "%f,%f,%f,%f,%f,%f,%f\n",
+            timestamp,
+            drivetrainPose[0],
+            drivetrainPose[1],
+            questPose2D[0],
+            questPose2D[1],
+            questPose3D[0],
+            questPose3D[1],
+            questPose3D[2]);
+        writer.write(logEntry);
+      } catch (Exception e) {
+        System.out.println("Failed to write to log: " + e);
       }
     });
-  //   return ("["+ autoSubsystems.drivetrain().getState().Pose.getX() +","+autoSubsystems.drivetrain().getState().Pose.getY()+"],[" + autoSubsystems.questNav().getQuestRobotPose().getX()+autoSubsystems.questNav().getQuestRobotPose().getY()+"]");
   }
 
 }
