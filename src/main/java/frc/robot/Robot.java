@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private Command printCmd;
+
   private final RobotContainer m_robotContainer;
 
   public Robot() {
@@ -45,10 +45,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {
-     printCmd = m_robotContainer.printPoseInfo();
-    CommandScheduler.getInstance().schedule(printCmd);
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void autonomousExit() {}

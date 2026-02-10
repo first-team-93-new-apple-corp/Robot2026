@@ -44,7 +44,7 @@ public class Constants {
                 QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
         public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters), new Rotation2d(QuestYawOffset.in(Degrees)));
 
-        // public static final Matrix<N3, N1> QUESTNAV_STD_D  EVS = VecBuilder.fill(0.01, 0.01, 0.035);
+        // public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.01, 0.01, 0.035);
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
     }
 
