@@ -1,7 +1,9 @@
+import java.security.AlgorithmConstraints;
 
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
     public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
+
         double[] point1 = { xinit, yinit };
         double[] point2 = { xmid, ymid };
         double[] point3 = { xfinal, yfinal };
@@ -16,46 +18,53 @@ public class ShooterMath {
         return Math.atan(2 * a * xinit + b);
     }
     
-    public static double calculateV(double theta, double xfinal, double yfinal, double gravity) {
+    public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY,double hubHeight, double gravity) {
+        double distance = Math.sqrt(hubX*hubX-poseX*poseX+hubY*hubY-poseY*poseY);
+        double xfinal = Math.abs(distance);
+        double yfinal = Math.abs(hubHeight);
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
-    public static double calculateV(double theta, double xfinal, double yfinal, double gravity,double robotX, double robotZ, double angleToHub) {
-        double totalShootingVelocity = calculateV(theta,xfinal,yfinal,gravity);
-        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ);
+    public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY, double hubHeight, double gravity,double robotX, double robotZ, double angleToHub) {
+        double totalShootingVelocity = calculateV(theta,poseX, poseY, hubX,hubY,hubHeight,gravity);
+        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
         return totalShootingVelocity - robotRelX;
     }
     public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub) {
         double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
         double adjustment = Math.PI/2 - Math.atan(shooterVelocity/robotRelZ);
-        return adjustment;
+        return angleToHub-adjustment;
     }
-    public static double calculateRobotRelX(double angleToHub,double robotX,double robotZ) {
-        return robotX*Math.cos(angleToHub)+robotZ*Math.sin(angleToHub);
+    public static double calculateRobotRelX(double angleToHub,double robotX,double robotZ,double poseX, double poseY, double hubX, double hubY) {
+        if (poseX>hubX && poseY>hubY) {
+            robotX = -robotX;
+            robotZ = -robotZ;
+        }
+        if (poseX<hubX && poseY>hubY) {
+            robotX = -robotX;
+            robotZ = robotZ;
+        }
+        if (poseX>hubX && poseY<hubY) {
+            robotX = robotX;
+            robotZ = -robotZ;
+        }
+        if (poseX<hubX && poseY<hubY) {
+            robotX = robotX;
+            robotZ = robotZ;
+        }
+        return robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
     }
     public static double calculateRobotRelZ(double angleToHub,double robotX,double robotZ) {
-        return -robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
+        // return -robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
+        return Math.cos(angleToHub) * robotX + Math.sin(angleToHub) * robotZ;
     }
-    public static double angleToAlign(double robotX, double hubX, double robotY, double hubY, double currAngle) {
+    public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
         double angleToHub = 0;
         if (robotX > hubX) {
             angleToHub = Math.PI+Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX));
         }
  
         angleToHub =  Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX)); // Angle our robot needs to face to be algined with the hub
-        // angle our robot needs to change to have its velocity z in line with the plane to the hub
-        if (robotX>hubX && robotY>hubY) {
-            return angleToHub - (Math.PI/2);
-        }
-        if (robotX<hubX && robotY>hubY) {
-            return angleToHub-(Math.PI/2);
-        }
-        if (robotX>hubX && robotY<hubY) {
-            return angleToHub - (Math.PI/2);
-        }
-        if (robotX<hubX && robotY<hubY) {
-            return (Math.PI/2) - angleToHub;
-        }
-        return 1;
+        return angleToHub;
     }
     
 
@@ -106,7 +115,7 @@ public class ShooterMath {
         }
         return matrix;
     }
-    
+   
 
     
 }
