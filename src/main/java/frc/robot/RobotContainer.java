@@ -6,10 +6,13 @@ package frc.robot;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +39,7 @@ public class RobotContainer {
   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
   // Quest
-  private QuestNav questNav = new QuestNav();
+  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d(), networkTables);
 
   // Shooter
   private ShooterMath shooterMath = new ShooterMath();
@@ -103,7 +106,7 @@ public class RobotContainer {
    * Periodic method to run things that need periodic. Set to 20ms with a 5ms offset
    */
   public void visionPeriodic() {
-    questNav.updateVisionMeasurement(drivetrain);
+    questNav.visionPeriodic();
   }
   
   /***
@@ -124,34 +127,13 @@ public class RobotContainer {
  * @return Command to run the logging action
  */
   public Command printPoseInfo() {
-    return Commands.runOnce(() -> {
-      try {
-        double[] drivetrainPose = {
-            autoSubsystems.drivetrain().getState().Pose.getX(),
-            autoSubsystems.drivetrain().getState().Pose.getY() };
-        double[] questPose2D = {
-            autoSubsystems.questNav().getAverageRobotPose2D().getX(),
-            autoSubsystems.questNav().getAverageRobotPose2D().getY() };
-        double[] questPose3D = {
-            autoSubsystems.questNav().getAverageRobotPose3D().getX(),
-            autoSubsystems.questNav().getAverageRobotPose3D().getY(),
-            autoSubsystems.questNav().getAverageRobotPose3D().getZ() };
-        double timestamp = autoSubsystems.questNav().getTimestamp();
-        String logEntry = String.format(
-            "%f,%f,%f,%f,%f,%f,%f\n",
-            timestamp,
-            drivetrainPose[0],
-            drivetrainPose[1],
-            questPose2D[0],
-            questPose2D[1],
-            questPose3D[0],
-            questPose3D[1],
-            questPose3D[2]);
-        writer.write(logEntry);
-      } catch (Exception e) {
-        System.out.println("Failed to write to log: " + e);
-      }
-    });
+    return Commands.runOnce(()-> {
+		try {
+			writer.write(autoSubsystems.questNav().questPoseInfo()+"\n");
+		} catch (IOException e) {
+			System.out.println("Failed to write to log: "+e.getMessage());
+		}
+	});
   }
 
 }

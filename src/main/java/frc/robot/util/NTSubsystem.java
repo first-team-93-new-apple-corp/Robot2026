@@ -169,6 +169,30 @@ public class NTSubsystem {
 			// System.out.println("Reset Robot NT Pose");
 		}
 
+		public void updateAvgQuestPose(Pose2d pose) {
+			// return Commands.runOnce(() -> {
+			m_field.getObject("QuestAvg").setPose(pose);
+			// System.out.println("Reset Robot NT Pose");
+			// });
+		}
+
+		public void updateAvgQuestPose(Pose3d pose) {
+			m_field.getObject("QuestAvg").setPose(pose.toPose2d());
+			// System.out.println("Reset Robot NT Pose");
+		}
+
+		public void updateAvgRobotPose(Pose2d pose) {
+			// return Commands.runOnce(() -> {
+			m_field.getObject("RobotAvg").setPose(pose);
+			// System.out.println("Reset Robot NT Pose");
+			// });
+		}
+
+		public void updateAvgRobotPose(Pose3d pose) {
+			m_field.getObject("RobotAvg").setPose(pose.toPose2d());
+			// System.out.println("Reset Robot NT Pose");
+		}
+
 		public void updateRobotPose(Pose2d pose) {
 			// return new InstantCommand(() -> {
 			m_field.setRobotPose(pose);
