@@ -58,12 +58,9 @@ public class QuestNavSubsystem {
             new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, kRobotToCam);
 
-    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, Pose3d startingPose, NTSubsystem networkTables) {
-        this.drivetrain = drivetrain;
-        quest = new QuestNav();
+    public QuestNavSubsystem() {
 
-        // Assume this is the requested reset pose
-        robotPose3d = startingPose;
+        quest = new QuestNav();
 
         // Transform by the offset to get the Quest pose
         questPose3d = robotPose3d.transformBy(Constants.Quest.RobotToQuest3D);

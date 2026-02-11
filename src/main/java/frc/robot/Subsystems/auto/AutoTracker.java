@@ -12,9 +12,8 @@ import java.util.List;
 public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
 
-    public AutoTracker(subsystems subsystems, List<Command> commandList, Supplier<Pose2d> initialPose) {
+    public AutoTracker(subsystems subsystems, List<Command> commandList) {
         this.subsystems = subsystems;
-        // addCommands(subsystems.questNav().commands.resetQuestPose(initialPose.get()));
         for (Command command : commandList) {
             addCommands(command);
         }

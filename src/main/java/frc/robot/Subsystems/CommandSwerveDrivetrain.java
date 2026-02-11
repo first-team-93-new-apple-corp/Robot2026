@@ -3,6 +3,7 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -57,9 +58,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    // Auto
-    private SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
+   
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -67,7 +66,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configureAuto();
     }
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
@@ -76,7 +74,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configureAuto();
 
     }
 
@@ -88,44 +85,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        configureAuto();
     }
 
-    public void configureAuto() {
-        RobotConfig config = null;
-        try {
-            config = RobotConfig.fromGUISettings();
-
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
-        }
-
-        // Configure AutoBuilder last
-        AutoBuilder.configure(() -> getState().Pose, this::resetPose, () -> getState().Speeds,
-                (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)),
-
-                new PPHolonomicDriveController(new PIDConstants(0.75, 0.0, 0), new PIDConstants(0.5, 0.0, 0.0)), 
-                config,
-                () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red
-                    // alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                }, this // Reference to this subsystem to set requirements
-        );
-    }
-    // @Override 
-    // public void ppResetPose(Pose2d pose) {
-    //     this.resetPose(pose);
-        
-    // }
     public class SysID implements Subsystem {
         private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(new SysIdRoutine.Config(null, // Use
                                                                                                               // default
@@ -167,16 +128,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         public void setSysIdRoutine(String routine) {
             switch (routine) {
-            default:
-            case "m_sysIdRoutineTranslation":
-                m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
-                break;
-            case "m_sysIdRoutineRotation":
-                m_sysIdRoutineToApply = m_sysIdRoutineRotation;
-                break;
-            case "m_sysIdRoutineSteer":
-                m_sysIdRoutineToApply = m_sysIdRoutineSteer;
-                break;
+                default:
+                case "m_sysIdRoutineTranslation":
+                    m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+                    break;
+                case "m_sysIdRoutineRotation":
+                    m_sysIdRoutineToApply = m_sysIdRoutineRotation;
+                    break;
+                case "m_sysIdRoutineSteer":
+                    m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+                    break;
             }
         }
     }

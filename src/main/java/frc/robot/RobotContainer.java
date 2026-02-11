@@ -9,10 +9,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,12 +41,14 @@ public class RobotContainer {
   // Controls
   private final SendableChooser<String> controlSchemeChooser = new SendableChooser<>();
   private ControllerSchemeIO selectedControls;
+
   // Network Tables
   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
-  // Vision 
+  // Vision
   // * Quest
-  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d(), networkTables);
+  private QuestNavSubsystem questNav = new QuestNavSubsystem();
+
   // Subsystems
   // * Shooter
   private ShooterMath shooterMath = new ShooterMath();
@@ -50,7 +58,7 @@ public class RobotContainer {
   private FileWriter writer = null;
 
   public RobotContainer() {
-    // 
+    //
     try {
       writer = new FileWriter(new File("/U/testlog.csv"));
     } catch (Exception e) {
@@ -101,15 +109,15 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return auto.selection().command();
   }
-  
 
-  /** 
-   * Periodic method to run things that need periodic. Set to 20ms with a 5ms offset
+  /**
+   * Periodic method to run things that need periodic. Set to 20ms with a 5ms
+   * offset
    */
   public void visionPeriodic() {
     questNav.visionPeriodic();
   }
-  
+
   /***
    * Seeds the drivetrain and questnav.
    * 
@@ -121,20 +129,24 @@ public class RobotContainer {
       // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
     });
   }
-/**
- * Prints the drivetrain and questnav pose to a log file. This is used for offline analysis of the pose estimation performance.
- * The log file will have the following format:
- * timestamp, drivetrainX, drivetrainY, questnav2DX, questnav2DY, questnav3DX, questnav3DY, questnav3DZ
- * @return Command to run the logging action
- */
+
+  /**
+   * Prints the drivetrain and questnav pose to a log file. This is used for
+   * offline analysis of the pose estimation performance.
+   * The log file will have the following format:
+   * timestamp, drivetrainX, drivetrainY, questnav2DX, questnav2DY, questnav3DX,
+   * questnav3DY, questnav3DZ
+   * 
+   * @return Command to run the logging action
+   */
   public Command printPoseInfo() {
-    return Commands.runOnce(()-> {
-		try {
-			writer.write(subsystems.questNav().questPoseInfo()+"\n");
-		} catch (IOException e) {
-			System.out.println("Failed to write to log: "+e.getMessage());
-		}
-	});
+    return Commands.runOnce(() -> {
+      try {
+        writer.write(subsystems.questNav().questPoseInfo() + "\n");
+      } catch (IOException e) {
+        System.out.println("Failed to write to log: " + e.getMessage());
+      }
+    });
   }
 
 }

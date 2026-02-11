@@ -2,14 +2,24 @@ package frc.robot.Subsystems.auto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
@@ -29,9 +39,59 @@ public class AutoDirector {
     private final subsystems autoSubsystems;
     private final PathConstraints constraints = Constants.Auto.pathConstraints;
 
+    // Auto
+    private ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
+            .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
     public AutoDirector(subsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
+        RobotConfig config = null;
+        try {
+            config = RobotConfig.fromGUISettings();
+
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+        }
+
+        // Configure AutoBuilder last
+        AutoBuilder.configure(
+                this::getPose,
+                this::resetAutoPose,
+                this::getSpeeds,
+                (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
+                new PPHolonomicDriveController(
+                        new PIDConstants(0.75, 0.0, 0),
+                        new PIDConstants(0.5, 0.0, 0.0)),
+                config,
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                autoSubsystems.drivetrain() // Reference to this subsystem to set requirements
+        );
         addAutos();
+    }
+
+    private Pose2d getPose() {
+        return autoSubsystems.drivetrain().getState().Pose;
+    }
+
+    private ChassisSpeeds getSpeeds() {
+        return autoSubsystems.drivetrain().getState().Speeds;
+    }
+
+    public void resetAutoPose(Pose2d pose) {
+        autoSubsystems.drivetrain().resetPose(pose);
+        autoSubsystems.questNav().commands.resetQuestPose(pose);
     }
 
     // This is the basis of the Auto. It contains the name of the auto, the command
@@ -59,6 +119,16 @@ public class AutoDirector {
         SmartDashboard.putData("AutoChooser", autoChooser);
     }
 
+    public Auto combineAutos(Auto... autos) {
+        List<Command> list = new ArrayList<>();
+        for (Auto auto : autos) {
+            list.add(Commands.print("Starting Auto: " + auto.name));
+            list.add(auto.command);
+        }
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
+        return new Auto("Combined Auto", tracker, new Pose2d());
+    }
+
     public Auto TestShooting() {
         List<Command> list = new ArrayList<>();
         list.add(Commands.print("Testing Shooting Math"));
@@ -71,7 +141,7 @@ public class AutoDirector {
         list.add(Commands.print("Shoot at angle " + angle + "Shoot at velocity "
                 + autoSubsystems.shooterMath().calculateV(angle, hubX, hubY, -9.8)));
 
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
 
         return new Auto("TestShooting", tracker, new Pose2d());
     }
@@ -88,17 +158,23 @@ public class AutoDirector {
         Pose2d startPose = testPath.getStartingDifferentialPose();
         Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
         // Shhh definintly not doing this vvv
-        // list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
-        // Shhh definintly not doing this ^^^^
+        // Assuming the position of the robot is correct, we tell the robot that it is
+        // at the starting pose of the path
+        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
+        // Shhh definintly not doing this ^^^
         list.add(Commands.print("Testing Auto"));
         list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
-        list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
+        list.add(Commands
+                .print("****************************************** Better POSE: " + correctedStartPose.toString()));
 
         list.add(AutoBuilder.followPath(testPath));
-        Command cmd = AutoBuilder.pathfindToPose(correctedStartPose, constraints).andThen(Commands.print("Pathfound back to start: "+ correctedStartPose.toString()));
+        // After following the path, we tell the robot to pathfind back to the starting
+        // pose, which should be the same as the corrected start pose
+        Command cmd = AutoBuilder.pathfindToPose(correctedStartPose, constraints)
+                .andThen(Commands.print("Pathfound back to start: " + correctedStartPose.toString()));
         list.add(cmd);
 
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> correctedStartPose);
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
 
         return new Auto("TestAuto", tracker, correctedStartPose);
     }
