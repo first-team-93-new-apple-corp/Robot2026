@@ -1,15 +1,20 @@
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimberConstants;
+import frc.robot.subsystems.ClimberSubsystem.ClimberCommands;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -24,16 +29,12 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public ClimberSubsystem() {
         climberMotor = new TalonFX(10);
-        
-        // robot init, set slot 0 gains
-        climberMotorConfig.Slot0.kP = 1.0;
-        climberMotorConfig.Slot0.kI = 1.0;
-        climberMotorConfig.Slot0.kD = 1.0;
-
-        climberMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        climberMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-        climberMotor.getConfigurator().apply(climberMotorConfig);
+        // m_Encoder = new DutyCycleEncoder(10);
+        var slot0Configs = new Slot0Configs();
+        slot0Configs.kP = ClimberConstants.kP; // An error of 1 rotation results in 2.4 V output
+        slot0Configs.kI = ClimberConstants.kI; // no output for integrated error
+        slot0Configs.kD = ClimberConstants.kD; // A velocity of 1 rps results in 0.1 V output
+        climberMotor.getConfigurator().apply(slot0Configs);
     }
 
     public ClimberCommands commands = new ClimberCommands();
@@ -43,7 +44,8 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void runDistance(double distance) {
-        climberMotor.setPosition(distance);
+        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        climberMotor.setControl(m_request.withPosition(distance));
     }
     public void stop() {
         climberMotor.setControl(neutral);
@@ -63,10 +65,8 @@ public class ClimberSubsystem extends SubsystemBase {
             return runOnce(() -> setSpeed(-Constants.ClimberConstants.climberSpeed));
         }
 
-        //Version 2 - Logan & Andrew
-        
-        public Command autoExtendRetract() {
-            return Commands.runOnce(() -> climberMotor.setControl(m_motmag.withPosition(Rotations.of(20))));
+        public Command autoExtend() {
+            return runOnce(() -> runDistance(Constants.ClimberConstants.barHeight));
         }
     }
 
