@@ -1,10 +1,10 @@
-package frc.robot.Subsystems.auto;
+package frc.robot.util;
 
 import frc.robot.ShooterMath;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.QuestNavSubsystem;
 
-public record AutoSubsystems(
+public record subsystems(
     CommandSwerveDrivetrain drivetrain, 
     QuestNavSubsystem questNav,
     ShooterMath shooterMath

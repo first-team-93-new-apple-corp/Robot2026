@@ -19,16 +19,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.util.subsystems;
 
 public class AutoDirector {
     // This is the chooser that will be displayed on the dashboard to select the
     // auto.
     public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
     public final List<Auto> Autos = new ArrayList<>();
-    private final AutoSubsystems autoSubsystems;
+    private final subsystems autoSubsystems;
     private final PathConstraints constraints = Constants.Auto.pathConstraints;
 
-    public AutoDirector(AutoSubsystems autoSubsystems) {
+    public AutoDirector(subsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
         addAutos();
     }

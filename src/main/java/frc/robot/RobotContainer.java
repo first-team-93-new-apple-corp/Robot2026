@@ -22,6 +22,7 @@ import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.auto.*;
 import frc.robot.controls.*;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.subsystems;
 
 public class RobotContainer {
   // Drive
@@ -34,22 +35,22 @@ public class RobotContainer {
   // Controls
   private final SendableChooser<String> controlSchemeChooser = new SendableChooser<>();
   private ControllerSchemeIO selectedControls;
-
   // Network Tables
   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
-  // Quest
+  // Vision 
+  // * Quest
   private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, new Pose3d(), networkTables);
-
-  // Shooter
+  // Subsystems
+  // * Shooter
   private ShooterMath shooterMath = new ShooterMath();
-
-  // Auto Stuff
-  private AutoSubsystems autoSubsystems = new AutoSubsystems(drivetrain, questNav, shooterMath);
-  private AutoDirector auto = new AutoDirector(autoSubsystems);
+  // subsytems var, contains all subsytems, less to implemnt into classes
+  private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath);
+  private AutoDirector auto = new AutoDirector(subsystems);
   private FileWriter writer = null;
 
   public RobotContainer() {
+    // 
     try {
       writer = new FileWriter(new File("/U/testlog.csv"));
     } catch (Exception e) {
@@ -129,7 +130,7 @@ public class RobotContainer {
   public Command printPoseInfo() {
     return Commands.runOnce(()-> {
 		try {
-			writer.write(autoSubsystems.questNav().questPoseInfo()+"\n");
+			writer.write(subsystems.questNav().questPoseInfo()+"\n");
 		} catch (IOException e) {
 			System.out.println("Failed to write to log: "+e.getMessage());
 		}
