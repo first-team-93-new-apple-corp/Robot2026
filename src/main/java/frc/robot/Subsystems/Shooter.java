@@ -1,8 +1,13 @@
 package frc.robot.Subsystems;
 
-public class Shooter {
-    
-    public Shooter(){
-        
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Shooter extends SubsystemBase{
+    ShooterCommands commands = new ShooterCommands();
+    public Shooter() {
+
+    }
+    public class ShooterCommands {
+
     }
 }

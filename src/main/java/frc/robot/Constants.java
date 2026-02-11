@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
@@ -24,7 +25,11 @@ public class Constants {
         public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
     }
-
+    public class Field {
+        public static final double hubX = 4;
+        public static final double hubY = 4;
+        public static final double hubHeight = 4;
+    }
     public class Controls {
         public static final double Deadzone = 0.04;
     }
@@ -49,5 +54,6 @@ public class Constants {
         }
 
         public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0), MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI), RadiansPerSecondPerSecond.of(Math.PI/2));
+        public static RobotConfig robotConfig = null;
     }
 }

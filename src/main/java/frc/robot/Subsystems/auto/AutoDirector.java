@@ -30,7 +30,7 @@ public class AutoDirector {
 
     public AutoDirector(AutoSubsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
-        addAutos();
+        // addAutos();  
     }
 
     // This is the basis of the Auto. It contains the name of the auto, the command
@@ -47,33 +47,33 @@ public class AutoDirector {
         return autoChooser.getSelected();
     }
 
-    public void addAutos() {
-        autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
-        // Autos.add([Auto]);
-        Autos.add(TestShooting());
-        Autos.add(TestAuto());
-        for (Auto auto : Autos) {
-            autoChooser.addOption(auto.name, auto);
-        }
-        SmartDashboard.putData("AutoChooser", autoChooser);
-    }
+    // public void addAutos() {
+    //     autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
+    //     // Autos.add([Auto]);
+    //     Autos.add(TestShooting());
+    //     Autos.add(TestAuto());
+    //     for (Auto auto : Autos) {
+    //         autoChooser.addOption(auto.name, auto);
+    //     }
+    //     SmartDashboard.putData("AutoChooser", autoChooser);
+    // }
 
-    public Auto TestShooting() {
-        List<Command> list = new ArrayList<>();
-        list.add(Commands.print("Testing Shooting Math"));
-        Pose2d currentPose = autoSubsystems.drivetrain().getState().Pose;
-        double hubX = (Math
-                .sqrt(Math.pow(4.625594 - currentPose.getX(), 2) + Math.pow(4.034536 - currentPose.getY(), 2)));
-        double hubY = 1.82;
-        double angle = autoSubsystems.shooterMath().calculateAngle(0.0, 0.0, hubX - 0.5, hubY + 0.5, hubX, hubY);
+    // public Auto TestShooting() {
+    //     List<Command> list = new ArrayList<>();
+    //     list.add(Commands.print("Testing Shooting Math"));
+    //     Pose2d currentPose = autoSubsystems.drivetrain().getState().Pose;
+    //     double hubX = (Math
+    //             .sqrt(Math.pow(4.625594 - currentPose.getX(), 2) + Math.pow(4.034536 - currentPose.getY(), 2)));
+    //     double hubY = 1.82;
+    //     double angle = autoSubsystems.shooterMath().calculateAngle(0.0, 0.0, hubX - 0.5, hubY + 0.5, hubX, hubY);
 
-        list.add(Commands.print("Shoot at angle " + angle + "Shoot at velocity "
-                + autoSubsystems.shooterMath().calculateV(angle, hubX, hubY, -9.8)));
+    //     list.add(Commands.print("Shoot at angle " + angle + "Shoot at velocity "
+    //             + autoSubsystems.shooterMath().calculateV(angle, hubX, hubY, -9.8)));
 
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
+    //     AutoTracker tracker = new AutoTracker(autoSubsystems, list, () -> new Pose2d());
 
-        return new Auto("TestShooting", tracker, new Pose2d());
-    }
+    //     return new Auto("TestShooting", tracker, new Pose2d());
+    // }
 
     public Auto TestAuto() {
         PathPlannerPath testPath = null;

@@ -1,7 +1,8 @@
-import java.security.AlgorithmConstraints;
+package frc.robot;
 
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
+    // Static hood angle
     public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
 
         double[] point1 = { xinit, yinit };
@@ -17,23 +18,40 @@ public class ShooterMath {
 
         return Math.atan(2 * a * xinit + b);
     }
+    // Calculating hood angle with movement
+    public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal,double robotX,double robotZ,double poseX, double poseY, double hubX, double hubY, double hubHeight, double gravity, double angleToHub) {
+        double originalTheta = calculateAngle(xinit, yinit, xmid, ymid, xfinal, yfinal);
+        double totalShootingVelocity = calculateV(originalTheta,poseX, poseY, hubX,hubY,hubHeight,gravity);
+        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
+
+        return Math.atan((totalShootingVelocity*Math.sin(originalTheta)/(totalShootingVelocity*Math.cos(originalTheta)-robotRelX)));
+    }
     
+    // Static shooting velocity calculation
     public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY,double hubHeight, double gravity) {
-        double distance = Math.sqrt(hubX*hubX-poseX*poseX+hubY*hubY-poseY*poseY);
+        double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+
         double xfinal = Math.abs(distance);
         double yfinal = Math.abs(hubHeight);
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
+    // Shooting velocity calculation while moving
     public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY, double hubHeight, double gravity,double robotX, double robotZ, double angleToHub) {
         double totalShootingVelocity = calculateV(theta,poseX, poseY, hubX,hubY,hubHeight,gravity);
         double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
-        return totalShootingVelocity - robotRelX;
+        return Math.sqrt(Math.pow(totalShootingVelocity*Math.cos(theta)-robotRelX,2)+Math.pow(totalShootingVelocity*Math.sin(theta), 2));
     }
+    // Calculates angle to align to the hub (static and while moving)
     public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub) {
         double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
-        double adjustment = Math.PI/2 - Math.atan(shooterVelocity/robotRelZ);
-        return angleToHub-adjustment;
+        if (robotRelZ != 0) {
+            double adjustment = Math.PI/2 - Math.atan(shooterVelocity/robotRelZ);
+            return angleToHub-adjustment;
+        }
+        return angleToHub;
+        
     }
+    // Calculates robot's velocity in the x direction (towards the hub)
     public static double calculateRobotRelX(double angleToHub,double robotX,double robotZ,double poseX, double poseY, double hubX, double hubY) {
         if (poseX>hubX && poseY>hubY) {
             robotX = -robotX;
@@ -53,10 +71,12 @@ public class ShooterMath {
         }
         return robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
     }
+    // Calculates robots velocity in the z direction (Orthogonal to direction towards hub)
     public static double calculateRobotRelZ(double angleToHub,double robotX,double robotZ) {
         // return -robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
         return Math.cos(angleToHub) * robotX + Math.sin(angleToHub) * robotZ;
     }
+
     public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
         double angleToHub = 0;
         if (robotX > hubX) {
@@ -115,7 +135,28 @@ public class ShooterMath {
         }
         return matrix;
     }
-   
+    // public static void main(String[] args) throws Exception {
+    //   double hubX = 4;
+    //   double hubY = 4;
+    //   double robotX = 1;
+    //   double robotZ = 2;
+    //   double poseX = 0;
+    //   double poseY = 0;
+      
+    //   double hubHeight = 4;
+    //   double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+    //   double alignAngle = angleToAlign(poseX, hubX, poseY, hubY);
+    //   double shooter_angle = calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
+    //   System.out.println("Static angle of shooter" + shooter_angle);
+    //   double shooter_velocity = calculateV(shooter_angle,poseX, poseY,hubX,hubY,hubHeight, -9.8);
+    //   System.out.println("Static velocity " + shooter_velocity);
+    //   double nshooter_velocity = calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);
+    //   System.out.println("Theoretical velocity while moving" + nshooter_velocity);
+    //   double adjustment = calculateAdjustment(robotX,robotZ,nshooter_velocity,angleToAlign(poseX, hubX, poseY, hubY));
+    //   System.out.println("Theoretical adjustment angle to shoot while moving " + adjustment + " Normal angle " + alignAngle) ;
+    //   double nshooter_angle = calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
+    //   System.out.println("Theoretical hood angle to shoot from while moving " + nshooter_angle);
+    // }
 
     
 }
