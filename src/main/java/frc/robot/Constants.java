@@ -172,10 +172,11 @@ public class Constants {
 
     public class ClimberConstants {
         public static final double climberSpeed = .5;
-        public static final int barHeight = 30;
-        public static final double kP = 5;
-        public static final double kI = 2.5;
-        public static final double kD = 0.001;
+        public static final double barHeight = -40;
+        public static final double baseHeight = 0;
+        public static final double kP = 0.84;
+        public static final double kI = 0.15;
+        public static final double kD = 0.4;
     }
 
     public class IntakeConstants {
