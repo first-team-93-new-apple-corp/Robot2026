@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.Thrustmaster;
 
 public class TwoStickDriveXboxOp implements ControllerSchemeIO {
 
@@ -19,7 +19,7 @@ public class TwoStickDriveXboxOp implements ControllerSchemeIO {
     }
 
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Controls.Deadzone) {
+        if (Math.abs(value) < Thrustmaster.Controls.Deadzone) {
             return 0.0;
         }
         return value;

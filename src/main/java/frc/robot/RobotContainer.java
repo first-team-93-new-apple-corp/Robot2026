@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.signals.Led1OffColorValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -20,50 +21,55 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.*;
-import frc.robot.Subsystems.auto.*;
+//import frc.robot.Subsystems.auto.*;
+import frc.robot.Subsystems.LEDSubsystem; 
 import frc.robot.controls.*;
 import frc.robot.util.NTSubsystem;
-import frc.robot.util.subsystems;
+// import frc.robot.util.subsystems;
 
 public class RobotContainer {
   // Drive
   private CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-      .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
+      .withDeadband(Thrustmaster.Swerve.MaxSpeed * Thrustmaster.Controls.Deadzone)
+      .withRotationalDeadband(Thrustmaster.Swerve.MaxAngularRate * Thrustmaster.Controls.Deadzone)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
+  CommandXboxController op = new CommandXboxController(0);
   // Controls
   private final SendableChooser<String> controlSchemeChooser = new SendableChooser<>();
   private ControllerSchemeIO selectedControls;
-
+  private LEDSubsystem led;
   // Network Tables
-  private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+//   private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
   // Vision
   // * Quest
-  private QuestNavSubsystem questNav = new QuestNavSubsystem();
+//   private QuestNavSubsystem questNav = new QuestNavSubsystem();
 
   // Subsystems
   // * Shooter
-  private ShooterMath shooterMath = new ShooterMath();
+//   private ShooterMath shooterMath = new ShooterMath();
   // subsytems var, contains all subsytems, less to implemnt into classes
-  private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath);
+//   private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath);
   //private AutoDirector auto = new AutoDirector(subsystems);
-  private FileWriter writer = null;
+//   private FileWriter writer = null;
 
-  public RobotContainer() {
+  public RobotContainer(LEDSubsystem led) {
+    this.led = led;
     //
-    try {
-      writer = new FileWriter(new File("/U/testlog.csv"));
-    } catch (Exception e) {
-      System.out.println("Failed to create to log");
-    }
+    // try {
+    //   writer = new FileWriter(new File("/U/testlog.csv"));
+    // } catch (Exception e) {
+    //   System.out.println("Failed to create to log");
+    // }
     configureBindings();
   }
 
@@ -87,18 +93,21 @@ public class RobotContainer {
 
     SmartDashboard.putData("Control Scheme", controlSchemeChooser);
 
-    selectedControls = new TwoStickDrive(0, 1);
-
+    // selectedControls = new TwoStickDrive(0, 1);
+    selectedControls = new XboxDrive(0);
     selectedControls.Seed().onTrue(seed());
 
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
+    selectedControls.A().onTrue(led.TestGreen());
+    selectedControls.B().onTrue(led.TestRed());
+    selectedControls.X().onTrue(led.TestBlue());
+    selectedControls.Y().onTrue(led.LEDOn(Color.kBlack));
 
     drivetrain
         .setDefaultCommand(drivetrain.commands
-            .applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft() * Constants.Swerve.MaxSpeed)
-                .withVelocityY(selectedControls.DriveUp() * Constants.Swerve.MaxSpeed)
-                .withRotationalRate(selectedControls.DriveTheta() * Constants.Swerve.MaxSpeed)));
-
+            .applyRequest(() -> drive.withVelocityX(selectedControls.DriveLeft() * Thrustmaster.Swerve.MaxSpeed)
+                .withVelocityY(selectedControls.DriveUp() * Thrustmaster.Swerve.MaxSpeed)
+                .withRotationalRate(selectedControls.DriveTheta() * Thrustmaster.Swerve.MaxSpeed)));
     refreshBindings();
   }
 
@@ -116,7 +125,7 @@ public class RobotContainer {
    * offset
    */
   public void visionPeriodic() {
-    questNav.visionPeriodic();
+    // questNav.visionPeriodic();
   }
 
   /***
@@ -140,14 +149,14 @@ public class RobotContainer {
    * 
    * @return Command to run the logging action
    */
-  public Command printPoseInfo() {
-    return Commands.runOnce(() -> {
-      try {
-        writer.write(subsystems.questNav().questPoseInfo() + "\n");
-      } catch (IOException e) {
-        System.out.println("Failed to write to log: " + e.getMessage());
-      }
-    });
-  }
+//   public Command printPoseInfo() {
+//     return Commands.runOnce(() -> {
+//       try {
+//         writer.write(subsystems.questNav().questPoseInfo() + "\n");
+//       } catch (IOException e) {
+//         System.out.println("Failed to write to log: " + e.getMessage());
+//       }
+//     });
+//   }
 
 }

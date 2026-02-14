@@ -3,7 +3,7 @@ package frc.robot.controls;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.Thrustmaster;
 
 public class XboxDrive implements ControllerSchemeIO {
 
@@ -14,7 +14,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Controls.Deadzone) {
+        if (Math.abs(value) < Thrustmaster.Controls.Deadzone) {
             return 0.0;
         }
         return value;
@@ -22,17 +22,17 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public double InputLeft() {
-        return deadzone(-Xbox.getLeftY()) * Constants.Swerve.MaxSpeed;
+        return deadzone(-Xbox.getLeftY()) * Thrustmaster.Swerve.MaxSpeed;
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-Xbox.getLeftX()) * Constants.Swerve.MaxSpeed;
+        return deadzone(-Xbox.getLeftX()) * Thrustmaster.Swerve.MaxSpeed;
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-Xbox.getRightX()) * Constants.Swerve.MaxAngularRate;
+        return deadzone(-Xbox.getRightX()) * Thrustmaster.Swerve.MaxAngularRate;
     }
 
 
