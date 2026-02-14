@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.ClimberSubsystem;
+import frc.robot.Subsystems.CommandSwerveDrivetrain;
+import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.generated.TunerConstants;
 
 
