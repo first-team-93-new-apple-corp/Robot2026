@@ -4,6 +4,7 @@ import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -47,7 +48,6 @@ public class Constants {
     // }
     //
     // }
-
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
@@ -65,6 +65,12 @@ public class Constants {
         public static final int BL_Cancoder = 23;
         public static final int BR_Cancoder = 24;
 
+    }
+    public class CAN {
+        public static final int climber = 30;
+        public static final int intakeRoller = 9;
+        public static final int intakePivot = 10;
+        public static final int intakePivotEncoder = 11;
     }
 
     public class Thrustmaster {
@@ -180,8 +186,25 @@ public class Constants {
     }
 
     public class IntakeConstants {
+        // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
+        // Pivot
+        public static final double pivotkP = 0.1;
+        public static final double pivotkI = 0.0;
+        public static final double pivotkD = 0.0;
+        public static final double pivotkV = 0.0;
+        public static final double pivotkA = 0.0;
+        public static final double pivotkG = 0.02;
+        public static final double pivotkS = 0.0;
+        public static final double pivotUpSpeed = 0.2;
+        public static final double pivotDownSpeed = -0.2;
+        public static final Angle pivotUpPosition = Degrees.of(0);
+        public static final Angle pivotDownPosition = Degrees.of(135);
+        public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
+        public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
+        public static final double gearBoxRatio = 9; // 9:1 for torque
+        public static final double chainRatio = 1; // 1:1
     } 
 
 }

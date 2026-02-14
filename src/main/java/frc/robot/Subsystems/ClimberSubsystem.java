@@ -10,14 +10,12 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class ClimberSubsystem extends SubsystemBase {
     
     private TalonFX climberMotor;
     private TalonFXConfiguration climberMotorConfig;
-    private MotionMagicVoltage m_motmag = new MotionMagicVoltage(Rotations.of(0));
     private NeutralOut neutral = new NeutralOut();
     final MotionMagicVoltage m_request;
 
