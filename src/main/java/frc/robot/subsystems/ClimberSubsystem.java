@@ -20,7 +20,8 @@ public class ClimberSubsystem extends SubsystemBase {
     private TalonFXConfiguration climberMotorConfig;
     private MotionMagicVoltage m_motmag = new MotionMagicVoltage(Rotations.of(0));
     private NeutralOut neutral = new NeutralOut();
-    private DigitalInput climberLimitSwitch = new DigitalInput(0);
+    private DigitalInput climberLimitSwitch = new DigitalInput(9);
+    private boolean HasReset = false;
     final MotionMagicVoltage m_request;
 
     public ClimberSubsystem() {
@@ -80,8 +81,9 @@ public class ClimberSubsystem extends SubsystemBase {
         climberMotor.setControl(neutral);
     }
     public void resetEncoderIfAtBottom(){
-        if (climberLimitSwitch.get ()){
+        if (!climberLimitSwitch.get() && !HasReset){
             climberMotor.setPosition(0);
+            HasReset = true;
         }
     }
     public class ClimberCommands {
@@ -106,8 +108,8 @@ public class ClimberSubsystem extends SubsystemBase {
         public Command autoRetract() {
             return runOnce(() -> runDistance(Constants.ClimberConstants.baseHeight));
         }
-        public Command ResetCoderWhenRetracted() {
-            return run(() -> resetEncoderIfAtBottom());
+        public Command resetEncoder() {
+            return run(() -> climberMotor.setPosition(0));
          }
         }
 }

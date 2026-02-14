@@ -110,6 +110,7 @@ public class RobotContainer {
         joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
         joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
         joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.povRight().onTrue(m_ClimberSubsystem.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {
