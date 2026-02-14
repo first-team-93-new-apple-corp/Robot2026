@@ -1,5 +1,6 @@
 package frc.robot.Subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,6 +20,7 @@ public class ClimberSubsystem extends SubsystemBase {
     private TalonFXConfiguration climberMotorConfig;
     private MotionMagicVoltage m_motmag = new MotionMagicVoltage(Rotations.of(0));
     private NeutralOut neutral = new NeutralOut();
+    private DigitalInput climberLimitSwitch = new DigitalInput(0);
     final MotionMagicVoltage m_request;
 
     public ClimberSubsystem() {
@@ -55,6 +57,14 @@ public class ClimberSubsystem extends SubsystemBase {
         climberMotor.getConfigurator().apply(climberMotorConfig);
         m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
+
+
+        
+    }
+
+    @Override
+    public void periodic(){
+        resetEncoderIfAtBottom();
     }
 
     public ClimberCommands commands = new ClimberCommands();
@@ -69,7 +79,11 @@ public class ClimberSubsystem extends SubsystemBase {
     public void stop() {
         climberMotor.setControl(neutral);
     }
-
+    public void resetEncoderIfAtBottom(){
+        if (climberLimitSwitch.get ()){
+            climberMotor.setPosition(0);
+        }
+    }
     public class ClimberCommands {
         
         public Command Stop() {
@@ -92,6 +106,8 @@ public class ClimberSubsystem extends SubsystemBase {
         public Command autoRetract() {
             return runOnce(() -> runDistance(Constants.ClimberConstants.baseHeight));
         }
-    }
-
+        public Command ResetCoderWhenRetracted() {
+            return run(() -> resetEncoderIfAtBottom());
+         }
+        }
 }

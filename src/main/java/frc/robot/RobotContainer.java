@@ -49,7 +49,7 @@ public class RobotContainer {
     public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
     public RobotContainer() {
-
+        
         configureBindings();
     }
 
