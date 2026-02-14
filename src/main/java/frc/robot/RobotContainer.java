@@ -20,6 +20,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.generated.TunerConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class RobotContainer {
@@ -105,6 +106,10 @@ public class RobotContainer {
         joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
         // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
         joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
+
+        SmartDashboard.getNumber("LED Red", 0);
+        SmartDashboard.getNumber("LED Green", 0);
+        SmartDashboard.getNumber("LED Blue", 0);
     }
 
     public Command getAutonomousCommand() {
