@@ -37,10 +37,10 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(2);
+    private final CommandXboxController joystick = new CommandXboxController(0);
 
-    private final CommandJoystick leftJoystick = new CommandJoystick(0);
-    private final CommandJoystick rightJoystick = new CommandJoystick(1);
+    private final CommandJoystick leftJoystick = new CommandJoystick(1);
+    private final CommandJoystick rightJoystick = new CommandJoystick(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -99,11 +99,12 @@ public class RobotContainer {
         // joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
         // joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        joystick.povUp().onTrue(m_ClimberSubsystem.commands.autoRetract());
-        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.y().onTrue(m_ClimberSubsystem.commands.autoRetract());
+        // joystick.y().onFalse(m_ClimberSubsystem.commands.Stop());
 
-        joystick.povDown().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
+        // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
     }
 
     public Command getAutonomousCommand() {

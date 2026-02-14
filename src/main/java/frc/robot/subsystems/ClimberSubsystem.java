@@ -14,12 +14,12 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class ClimberSubsystem extends SubsystemBase {
-
+    
     private TalonFX climberMotor;
     private TalonFXConfiguration climberMotorConfig;
     private MotionMagicVoltage m_motmag = new MotionMagicVoltage(Rotations.of(0));
     private NeutralOut neutral = new NeutralOut();
-
+    final MotionMagicVoltage m_request;
 
     public ClimberSubsystem() {
         climberMotor = new TalonFX(30);
@@ -30,6 +30,8 @@ public class ClimberSubsystem extends SubsystemBase {
         slot0Configs.kP = ClimberConstants.kP; 
         slot0Configs.kI = ClimberConstants.kI;
         slot0Configs.kD = ClimberConstants.kD;
+
+        climberMotorConfig = new TalonFXConfiguration();
 
         climberMotorConfig.withSlot0(slot0Configs);
 
@@ -42,15 +44,17 @@ public class ClimberSubsystem extends SubsystemBase {
         climberMotorConfig.CurrentLimits.SupplyCurrentLowerTime = 1;
 
         // Motion Magic Configs
-        climberMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
-        climberMotorConfig.MotionMagic.MotionMagicAcceleration = 40;
-        climberMotorConfig.MotionMagic.MotionMagicJerk = 40;
+        climberMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 80;
+        climberMotorConfig.MotionMagic.MotionMagicAcceleration = 160;
+        climberMotorConfig.MotionMagic.MotionMagicJerk = 160;
         // climberMotorConfig.MotionMagic.MotionMagicExpo_kA = 0;
         // climberMotorConfig.MotionMagic.MotionMagicExpo_kV = 0;
 
 
         // Applies the config
         climberMotor.getConfigurator().apply(climberMotorConfig);
+        m_request = new MotionMagicVoltage(0.0).withSlot(0);
+
     }
 
     public ClimberCommands commands = new ClimberCommands();
@@ -60,7 +64,6 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void runDistance(double distance) {
-        final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
         climberMotor.setControl(m_request.withPosition(distance));
     }
     public void stop() {
@@ -82,7 +85,8 @@ public class ClimberSubsystem extends SubsystemBase {
         }
 
         public Command autoExtend() {
-            return runOnce(() -> runDistance(Constants.ClimberConstants.barHeight));
+           return runOnce(() -> runDistance(Constants.ClimberConstants.barHeight));
+        // return runOnce(() -> System.out.println("Testing 1"));
         }
         
         public Command autoRetract() {
