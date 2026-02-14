@@ -98,10 +98,10 @@ public class RobotContainer {
     selectedControls.Seed().onTrue(seed());
 
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
-    selectedControls.A().onTrue(led.TestGreen());
-    selectedControls.B().onTrue(led.TestRed());
-    selectedControls.X().onTrue(led.TestBlue());
-    selectedControls.Y().onTrue(led.LEDOn(Color.kBlack));
+    // selectedControls.A().onTrue(led.TestGreen());
+    // selectedControls.B().onTrue(led.TestRed());
+    // selectedControls.X().onTrue(led.TestBlue());
+    // selectedControls.Y().onTrue(led.LEDOn(Color.kBlack));
 
     drivetrain
         .setDefaultCommand(drivetrain.commands

@@ -15,18 +15,18 @@ import frc.robot.Subsystems.LEDSubsystem;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private LEDSubsystem muy_leds;
+  private LEDSubsystem LED;
   private final RobotContainer m_robotContainer;
 
   public Robot() {
-    muy_leds = new LEDSubsystem();
-    m_robotContainer = new RobotContainer(muy_leds);
+    LED = new LEDSubsystem();
+    m_robotContainer = new RobotContainer(LED);
     
   }
 
   @Override
   public void robotInit(){
-    muy_leds.startup();
+    LED.startup();
   }
 
   @Override
