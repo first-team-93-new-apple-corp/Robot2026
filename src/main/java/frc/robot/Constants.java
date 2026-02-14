@@ -182,7 +182,30 @@ public class Constants {
     public class IntakeConstants {
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-    } 
+    }
+
+    public static class ManipulationConstants {
+        public static final int bottomRollerMotorID = 41; // Bottom Rollers
+        public static final int sideRollerMotorID = 42; // Side Rollers
+        public static final int kickerMotorID = 43; // Top Rollers
+
+        public static class intake {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+
+        public static class outtake {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+
+        public static class idle {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+    }
 
 }
-

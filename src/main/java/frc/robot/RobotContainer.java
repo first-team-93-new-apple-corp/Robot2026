@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.generated.TunerConstants;
 
 
@@ -47,6 +48,8 @@ public class RobotContainer {
     // public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
     public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+
+    public final ManipulationSubsystem m_ManipulationSubsystem = new ManipulationSubsystem();
 
     public RobotContainer() {
 
@@ -85,6 +88,11 @@ public class RobotContainer {
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+        joystick.x().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+        joystick.b().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+        joystick.x().and(joystick.b()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
