@@ -113,6 +113,7 @@ public class AutoDirector {
         // Autos.add([Auto]);
         Autos.add(TestShooting());
         Autos.add(TestAuto());
+        Autos.add(Demo());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
         }
@@ -177,5 +178,31 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems, list);
 
         return new Auto("TestAuto", tracker, correctedStartPose);
+    }
+
+    public Auto Demo() {
+        PathPlannerPath testPath = null;
+        List<Command> list = new ArrayList<>();
+
+        try {
+            testPath = PathPlannerPath.fromPathFile("Demo Path");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Pose2d startPose = testPath.getStartingDifferentialPose();
+        Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
+        // Shhh definintly not doing this vvv
+        // Assuming the position of the robot is correct, we tell the robot that it is
+        // at the starting pose of the path
+        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
+        // Shhh definintly not doing this ^^^
+        list.add(Commands.print("Running Demo Auto"));
+        list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
+        list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
+
+        list.add(AutoBuilder.followPath(testPath));
+        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
+
+        return new Auto("Demo", tracker, correctedStartPose);
     }
 }

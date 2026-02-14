@@ -47,7 +47,7 @@ public class RobotContainer {
 
   // Vision
   // * Quest
-  private QuestNavSubsystem questNav = new QuestNavSubsystem();
+  private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
 
   // Subsystems
   // * Shooter

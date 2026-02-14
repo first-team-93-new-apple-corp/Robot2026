@@ -39,11 +39,11 @@ public class QuestNavSubsystem {
     public QuestCommands commands = new QuestCommands();
     private NTSubsystem networkTables;
 
-    private Pose2d questPose2d;
-    private Pose3d questPose3d;
+    private Pose2d questPose2d = new Pose2d();
+    private Pose3d questPose3d = new Pose3d();
 
-    private Pose2d robotPose2d;
-    private Pose3d robotPose3d;
+    private Pose2d robotPose2d = new Pose2d();
+    private Pose3d robotPose3d = new Pose3d();
 
     private RollingAveragePose3d robotPoseAverager = new RollingAveragePose3d(10);
     private RollingAveragePose3d questPoseAverager = new RollingAveragePose3d(10);
@@ -58,8 +58,9 @@ public class QuestNavSubsystem {
             new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, kRobotToCam);
 
-    public QuestNavSubsystem() {
-
+    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
+        this.drivetrain = drivetrain;
+        this.networkTables = nt;
         quest = new QuestNav();
 
         // Transform by the offset to get the Quest pose
