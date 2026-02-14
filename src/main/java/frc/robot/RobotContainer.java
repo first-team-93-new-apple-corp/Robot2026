@@ -54,7 +54,7 @@ public class RobotContainer {
   private ShooterMath shooterMath = new ShooterMath();
   // subsytems var, contains all subsytems, less to implemnt into classes
   private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath);
-  private AutoDirector auto = new AutoDirector(subsystems);
+  //private AutoDirector auto = new AutoDirector(subsystems);
   private FileWriter writer = null;
 
   public RobotContainer() {
@@ -107,7 +107,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return auto.selection().command();
+    //return auto.selection().command();
+    return Commands.none();
   }
 
   /**
