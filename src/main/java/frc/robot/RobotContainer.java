@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.ClimberSubsystem.ClimberCommands;
 import frc.robot.generated.TunerConstants;
 
 
@@ -105,6 +106,10 @@ public class RobotContainer {
         joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
         // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
         joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
+        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
     }
 
     public Command getAutonomousCommand() {
