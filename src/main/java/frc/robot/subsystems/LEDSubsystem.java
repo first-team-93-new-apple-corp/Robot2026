@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDSubsystem extends SubsystemBase {
     DigitalOutput red;
@@ -50,5 +52,18 @@ public class LEDSubsystem extends SubsystemBase {
 
     public void turnLEDSOff() {
         setColor(Color.kBlack);
+    }
+    @Override
+    public void periodic() {
+
+        double red;
+        double green;
+        double blue;
+
+        SmartDashboard.getNumber("LED Red", red);
+        SmartDashboard.getNumber("LED Green", green);
+        SmartDashboard.getNumber("LED Blue", blue);
+
+        setColor(new Color(red,green,blue));
     }
 }
