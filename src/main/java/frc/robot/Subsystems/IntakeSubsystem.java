@@ -4,6 +4,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -81,8 +83,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         intakeRollerMotor.getConfigurator().apply(intakeRollerConfig);
 
-        SmartDashboard.putData("Brake IntakePivot", commands.brakeMotor(true));
-        SmartDashboard.putData("Coast IntakePivot", commands.brakeMotor(false));
+        SmartDashboard.putData("Brake IntakePivot", commands.brakePivotMotor(true));
+        SmartDashboard.putData("Coast IntakePivot", commands.brakePivotMotor(false));
     }
 
     public void setRollerSpeed(double speed) {
@@ -93,6 +95,17 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotMotor.set(speed);
     }
 
+    public boolean atSetpoint() {
+        return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
+    }
+
+    public Angle getPivotPoseRaw() {
+        return Rotations.of(pivotEncoder.get()).minus(IntakeConstants.encoderOffset);
+    }
+
+    public Angle getPivotPose() {
+        return getPivotPoseRaw().div(IntakeConstants.gearBoxRatio);
+    }
     public void setPivotPosition(Angle position) {
         if (position.lt(IntakeConstants.pivotDownPosition)) {
             position = IntakeConstants.pivotDownPosition;
@@ -139,7 +152,26 @@ public class IntakeSubsystem extends SubsystemBase {
             return runOnce(() -> setPivotSpeed(0));
         }
 
-        public Command brakeMotor(boolean brake) {
+        public Command autoPivotUp() {
+            return runOnce(() -> setPivotPosition(IntakeConstants.pivotUpPosition));
+        }
+
+        public Command autoPivotDown() {
+            return runOnce(() -> setPivotPosition(IntakeConstants.pivotDownPosition));
+        }
+
+        public Command wigglePivot() {
+            double delay = 0.5; // seconds
+            Command moveToMiddle = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotMiddlePosition));
+            Command moveToDown = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotDownPosition));
+            Command moveToUp = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotUpPosition));
+            Command wait = Commands.waitSeconds(delay);
+            Command sequence = Commands.sequence(moveToMiddle, wait, moveToDown, wait, moveToUp);
+            Command parallel = Commands.parallel(sequence, intake());
+            return parallel;
+        }
+
+        public Command brakePivotMotor(boolean brake) {
             return runOnce(() -> {
                 if (brake) {
                     intakePivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
