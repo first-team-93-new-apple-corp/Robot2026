@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.ManipulationSubsystem;
+import frc.robot.Subsystems.ClimberSubsystem.ClimberCommands;
 import frc.robot.generated.TunerConstants;
 
 
@@ -48,8 +50,10 @@ public class RobotContainer {
 
     public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
-    public RobotContainer() {
+    public final ManipulationSubsystem m_ManipulationSubsystem = new ManipulationSubsystem();
 
+    public RobotContainer() {
+        
         configureBindings();
     }
 
@@ -86,6 +90,11 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+        joystick.x().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+        joystick.b().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+        joystick.x().and(joystick.b()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+
+
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
@@ -105,6 +114,11 @@ public class RobotContainer {
         joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
         // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
         joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
+        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
+        joystick.povRight().onTrue(m_ClimberSubsystem.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {

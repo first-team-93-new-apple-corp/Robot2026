@@ -177,7 +177,7 @@ public class Constants {
     }
 
     public class ClimberConstants {
-        public static final double climberSpeed = .5;
+        public static final double climberSpeed = .3;
         public static final double barHeight = -40;
         public static final double baseHeight = 0;
         public static final double kP = 0.84;
@@ -207,5 +207,28 @@ public class Constants {
         public static final double chainRatio = 1; // 1:1
     } 
 
-}
+    public static class ManipulationConstants {
+        public static final int bottomRollerMotorID = 41; // Bottom Rollers
+        public static final int sideRollerMotorID = 42; // Side Rollers
+        public static final int kickerMotorID = 43; // Top Rollers
 
+        public static class intake {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+
+        public static class outtake {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+
+        public static class idle {
+            public static final double bottomRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = 1.0;
+            public static final double kickerSpeed = 1.0;
+        }
+    }
+
+}
