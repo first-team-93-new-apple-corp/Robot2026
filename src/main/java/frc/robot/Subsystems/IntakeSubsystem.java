@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -28,7 +29,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private TalonFX intakeRollerMotor;
     private TalonFX intakePivotMotor;
 
-    private DutyCycleEncoder pivotEncoder;
+    private CANcoder pivotEncoder;
 
     private TalonFXConfiguration intakePivotConfig;
     private TalonFXConfiguration intakeRollerConfig;
@@ -49,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeRollerMotor = new TalonFX(CAN.intakeRoller);
         intakePivotMotor = new TalonFX(CAN.intakePivot);
 
-        pivotEncoder = new DutyCycleEncoder(CAN.intakePivotEncoder);
+        pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
@@ -69,9 +70,12 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 45;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 75;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 75;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 30;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 30;
+
+        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);
         m_request = new MotionMagicVoltage(0.0).withSlot(0);
@@ -100,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Angle getPivotPoseRaw() {
-        return Rotations.of(pivotEncoder.get()).minus(IntakeConstants.encoderOffset);
+        return pivotEncoder.getAbsolutePosition().getValue().minus(IntakeConstants.encoderOffset);
     }
 
     public Angle getPivotPose() {
