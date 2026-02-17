@@ -10,10 +10,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
-import edu.wpi.first.networktables.FloatArraySubscriber;
-import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -31,7 +27,7 @@ public class NTSubsystem {
 
 	// Our NT
 	private NetworkTableInstance ntInst = NetworkTableInstance.getDefault();
-	private NetworkTable questInst = ntInst.getTable("questnav");
+	// private NetworkTable questInst = ntInst.getTable("questnav");
 
 	// Classes
 	public ntSwerve swerve = new ntSwerve();

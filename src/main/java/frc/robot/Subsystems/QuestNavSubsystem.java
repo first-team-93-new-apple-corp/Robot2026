@@ -3,11 +3,7 @@ package frc.robot.Subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
+// import org.photonvision.PhotonPoseEstimator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -20,13 +16,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.util.NTSubsystem;
 import frc.robot.util.RollingAveragePose3d;
-import frc.robot.util.NTSubsystem.*;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
@@ -39,7 +31,7 @@ public class QuestNavSubsystem {
     public QuestCommands commands = new QuestCommands();
     private NTSubsystem networkTables;
 
-    private Pose2d questPose2d = new Pose2d();
+    // private Pose2d questPose2d = new Pose2d();
     private Pose3d questPose3d = new Pose3d();
 
     private Pose2d robotPose2d = new Pose2d();
@@ -56,7 +48,7 @@ public class QuestNavSubsystem {
     public static final Transform3d kRobotToCam = new Transform3d(
             new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
             new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
-    private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, kRobotToCam);
+    // private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, kRobotToCam);
 
     public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
         this.drivetrain = drivetrain;
@@ -69,7 +61,7 @@ public class QuestNavSubsystem {
         // Send the reset operation
         quest.setPose(questPose3d);
 
-        this.networkTables = networkTables;
+        // this.networkTables = networkTables;
 
         quest.setVersionCheckEnabled(false);
 

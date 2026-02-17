@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Controls.ControllerSchemeIO;
 
 public class TwoStickDrive implements ControllerSchemeIO {
 
