@@ -71,6 +71,7 @@ public class RobotContainer {
 
     selectedControls = new TwoStickDrive(0, 1);
     selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(questNav.commands.resetQuestPose(new Pose2d())));
+    selectedControls.Align().onTrue(drivetrain.alignToHub());
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
 
     drivetrain
@@ -79,7 +80,7 @@ public class RobotContainer {
 
     refreshBindings();
 
-    selectedControls.Align().onTrue(drivetrain.alignToHub());
+    
     CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
   }
 

@@ -101,7 +101,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     
     public Command alignToHub() {
+        
+
         try{
+            
             RobotConfig robotConfig = null;
             try {
                 robotConfig = RobotConfig.fromGUISettings();
@@ -113,8 +116,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
             double poseX = getState().Pose.getX();
             double poseY = getState().Pose.getY();
+            double rotation = getState().Pose.getRotation().getRadians();
+            System.out.println("**************************************** " + rotation);
+
+            List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                new Pose2d(poseX,poseY,getState().Pose.getRotation()),
+                new Pose2d(poseX,poseY,getState().Pose.getRotation()),
+                new Pose2d(poseX,poseY,getState().Pose.getRotation())
+            );
+            System.out.println("****************************************"+Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).toString());
             PathPlannerPath path = new PathPlannerPath(
-                    null,
+                    waypoints,
                     Constants.Auto.pathConstraints,
                     null, 
                     new GoalEndState(0.0, Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)))
@@ -132,9 +144,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             double nshooter_velocity = ShooterMath.calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
             double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
 
-            Commands.print("Angle of drivetrain " + Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).getDegrees());
-            Commands.print("Speed to shoot at " + nshooter_velocity);
-            Commands.print("Angle to shoot at " + nshooter_angle);
+            System.out.println("Angle of drivetrain " + Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).getDegrees());
+            System.out.println("Speed to shoot at " + nshooter_velocity);
+            System.out.println("Angle to shoot at " + nshooter_angle);
 
 
             return new FollowPathCommand(

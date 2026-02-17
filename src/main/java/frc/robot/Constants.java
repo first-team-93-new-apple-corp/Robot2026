@@ -26,9 +26,9 @@ public class Constants {
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
     }
     public class Field {
-        public static final double hubX = 4;
-        public static final double hubY = 4;
-        public static final double hubHeight = 4;
+        public static final double hubX = 4.625;
+        public static final double hubY = 4.040;
+        public static final double hubHeight = 3;
     }
     public class Controls {
         public static final double Deadzone = 0.04;
