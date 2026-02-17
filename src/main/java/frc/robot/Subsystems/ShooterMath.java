@@ -1,6 +1,8 @@
-package frc.robot;
+package frc.robot.Subsystems;
 
-public class ShooterMath {
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class ShooterMath extends SubsystemBase {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
     public double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal) {
         double[] point1 = { xinit, yinit };

@@ -43,10 +43,16 @@ public class RobotContainer {
   // Subsystems
   // * Shooter
   private ShooterMath shooterMath = new ShooterMath();
+  private ClimberSubsystem climber = new ClimberSubsystem();
+  private IntakeSubsystem intake = new IntakeSubsystem();
+  private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+
   // subsytems var, contains all subsytems, less to implemnt into classes
-  private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath);
+  // private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath, climber, intake, manipulation);
+    private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath, climber, intake, manipulation);
   private AutoDirector auto = new AutoDirector(subsystems);
   private FileWriter writer = null;
+  
 
   public RobotContainer() {
     //

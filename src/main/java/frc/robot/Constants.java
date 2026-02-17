@@ -159,6 +159,7 @@ import edu.wpi.first.math.numbers.N3;
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 0.1;
         public static final double pivotkI = 0.0;

@@ -5,13 +5,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Swerve;
+import frc.robot.util.subsystems;
 
 public class TestSubsystem extends SubsystemBase{
     private CommandSwerveDrivetrain drivetrain;
     public TestCommands commands = new TestCommands();
 
-    public TestSubsystem(CommandSwerveDrivetrain drivetrain) {
-        this.drivetrain = drivetrain;
+    public TestSubsystem(subsystems subsystems) {
+        this.drivetrain = subsystems.drivetrain();
     }
 
     private void checkSwerveModules() {
