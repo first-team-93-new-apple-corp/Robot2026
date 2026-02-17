@@ -88,4 +88,10 @@ public class TwoStickDrive implements ControllerSchemeIO {
         throw new UnsupportedOperationException("Not available on this control scheme!");
     }
 
+    @Override
+    public Trigger Align() {
+        // TODO Auto-generated method stub
+        return LeftStick.button(1);
+    }
+
 }

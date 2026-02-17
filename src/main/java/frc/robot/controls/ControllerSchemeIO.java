@@ -54,7 +54,7 @@ public interface ControllerSchemeIO {
 
     public Trigger Y();
 
-
+    public Trigger Align();
     public default double DriveLeft() {
         return InputLeft();
     }
@@ -66,6 +66,7 @@ public interface ControllerSchemeIO {
     public default double DriveTheta() {
         return InputTheta();
     }
+
 
     public default ChassisSpeeds Speeds() {
         return new ChassisSpeeds(DriveLeft(), DriveUp(), DriveTheta());

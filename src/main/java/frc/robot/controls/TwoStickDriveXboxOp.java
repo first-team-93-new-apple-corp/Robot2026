@@ -88,4 +88,10 @@ public class TwoStickDriveXboxOp implements ControllerSchemeIO {
         return operatorController.y();
     }
 
+    @Override
+    public Trigger Align() {
+        // TODO Auto-generated method stub
+        return LeftStick.button(1);
+    }
+
 }

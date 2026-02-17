@@ -79,7 +79,7 @@ public class RobotContainer {
 
     refreshBindings();
 
-
+    selectedControls.Align().onTrue(drivetrain.alignToHub());
     CommandScheduler.getInstance().schedule(questNav.commands.updateNT().ignoringDisable(true));
   }
 

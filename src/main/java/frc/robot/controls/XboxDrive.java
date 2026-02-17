@@ -95,5 +95,11 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.b();
     }
 
+    @Override
+    public Trigger Align() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'Align'");
+    }
+
    
 }
