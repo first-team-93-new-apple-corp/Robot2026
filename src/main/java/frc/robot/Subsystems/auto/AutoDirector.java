@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.util.subsystems;
@@ -110,8 +111,6 @@ public class AutoDirector {
 
     public void addAutos() {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
-        // Autos.add([Auto]);
-        Autos.add(TestShooting());
         Autos.add(TestAuto());
         Autos.add(Demo());
         for (Auto auto : Autos) {
@@ -126,25 +125,11 @@ public class AutoDirector {
             list.add(Commands.print("Starting Auto: " + auto.name));
             list.add(auto.command);
         }
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
-        return new Auto("Combined Auto", tracker, new Pose2d());
-    }
-
-    public Auto TestShooting() {
-        List<Command> list = new ArrayList<>();
-        list.add(Commands.print("Testing Shooting Math"));
-        Pose2d currentPose = autoSubsystems.drivetrain().getState().Pose;
-        double hubX = (Math
-                .sqrt(Math.pow(4.625594 - currentPose.getX(), 2) + Math.pow(4.034536 - currentPose.getY(), 2)));
-        double hubY = 1.82;
-        double angle = autoSubsystems.shooterMath().calculateAngle(0.0, 0.0, hubX - 0.5, hubY + 0.5, hubX, hubY);
-
-        list.add(Commands.print("Shoot at angle " + angle + "Shoot at velocity "
-                + autoSubsystems.shooterMath().calculateV(angle, hubX, hubY, -9.8)));
-
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
-
-        return new Auto("TestShooting", tracker, new Pose2d());
+        SequentialCommandGroup cmds = new SequentialCommandGroup();
+        for (Command command : list) {
+            cmds.addCommands(command);
+        }
+        return new Auto("Combined Auto", cmds, new Pose2d());
     }
 
     public Auto TestAuto() {
@@ -175,9 +160,12 @@ public class AutoDirector {
                 .andThen(Commands.print("Pathfound back to start: " + correctedStartPose.toString()));
         list.add(cmd);
 
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
+        SequentialCommandGroup cmds = new SequentialCommandGroup();
+        for (Command command : list) {
+            cmds.addCommands(command);
+        }
 
-        return new Auto("TestAuto", tracker, correctedStartPose);
+        return new Auto("TestAuto", cmds, correctedStartPose);
     }
 
     public Auto Demo() {
@@ -201,8 +189,18 @@ public class AutoDirector {
         list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
 
         list.add(AutoBuilder.followPath(testPath));
-        AutoTracker tracker = new AutoTracker(autoSubsystems, list);
+        SequentialCommandGroup cmds = new SequentialCommandGroup();
+        for (Command command : list) {
+            cmds.addCommands(command);
+        }
 
-        return new Auto("Demo", tracker, correctedStartPose);
+        return new Auto("Demo", cmds, correctedStartPose);
+    }
+
+    public Auto testing(){
+        Pose2d startPose = new Pose2d();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+
+        return new Auto("Testing", tracker, startPose);
     }
 }

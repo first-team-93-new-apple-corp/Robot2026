@@ -1,0 +1,13 @@
+Control Scheme 
+
+Xbox:
+b-intake 
+x-outtake
+y-retracts arm (pullup)
+a-extends arm (reach for bar)
+right bumper-brake
+
+Stick: 
+left stick-drive
+right stick-turn
+button 12 left stick-field relative
