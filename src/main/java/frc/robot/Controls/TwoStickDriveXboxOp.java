@@ -1,4 +1,4 @@
-package frc.robot.generated;
+package frc.robot.Controls;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -6,15 +6,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
-public class TwoStickDrive implements ControllerSchemeIO {
+public class TwoStickDriveXboxOp implements ControllerSchemeIO {
 
     public CommandJoystick LeftStick;
     public CommandJoystick RightStick;
     public CommandXboxController operatorController;
 
-    public TwoStickDrive(int LeftPort, int RightPort) {
+    public TwoStickDriveXboxOp(int LeftPort, int RightPort, int opPort) {
         LeftStick = new CommandJoystick(LeftPort);
         RightStick = new CommandJoystick(RightPort);
+        operatorController = new CommandXboxController(opPort);
     }
 
     public double deadzone(double value) {
@@ -48,44 +49,43 @@ public class TwoStickDrive implements ControllerSchemeIO {
     public Trigger Seed() {
         return LeftStick.button(12);
     }
-   
+
     @Override
-    public Trigger Brake()  {
+    public Trigger Brake() {
         return RightStick.trigger();
     }
-    
+
     @Override
     public Trigger Menu() {
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.start();
     }
 
     @Override
     public Trigger Back() {
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.back();
+
     }
 
     @Override
     public Trigger A() {
-        
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.a();
     }
 
     @Override
     public Trigger B() {
-        
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.b();
+
     }
 
     @Override
     public Trigger X() {
-        
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.x();
+
     }
 
     @Override
     public Trigger Y() {
-        
-        throw new UnsupportedOperationException("Not available on this control scheme!");
+        return operatorController.y();
     }
 
 }
