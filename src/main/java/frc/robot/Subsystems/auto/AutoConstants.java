@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.auto;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.PathPoint;
 import com.pathplanner.lib.util.FlippingUtil;
@@ -9,7 +10,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 
-public class PositionConstants {
+public class AutoConstants {
     public static Rotation2d awayFromAlliance = Rotation2d.kZero;
     public static Rotation2d towardAlliance = Rotation2d.k180deg;
 
@@ -39,4 +40,6 @@ public class PositionConstants {
         public static final Pose2d rightRed = FlippingUtil.flipFieldPose(rightBlue);
         public static final Pose2d Center = new Pose2d(7.2, 4, towardAlliance);
     }
+
+    public static final PathConstraints constraints = new PathConstraints(3, 4, Math.PI*8, Math.PI*10);
 }

@@ -31,6 +31,7 @@ public class AutoDirector {
     public final List<Auto> Autos = new ArrayList<>();
     private final subsystems autoSubsystems;
     private final PathConstraints constraints = Constants.Auto.pathConstraints;
+    private static RobotConfig config = null;
 
     // Auto
     private ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
@@ -38,7 +39,6 @@ public class AutoDirector {
 
     public AutoDirector(subsystems autoSubsystems) {
         this.autoSubsystems = autoSubsystems;
-        RobotConfig config = null;
         try {
             config = RobotConfig.fromGUISettings();
 
@@ -72,6 +72,10 @@ public class AutoDirector {
                 autoSubsystems.drivetrain() // Reference to this subsystem to set requirements
         );
         addAutos();
+    }
+
+    public static RobotConfig getRobotConfig() {
+        return config;
     }
 
     private Pose2d getPose() {
@@ -178,7 +182,8 @@ public class AutoDirector {
         // Shhh definintly not doing this ^^^
         list.add(Commands.print("Running Demo Auto"));
         list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
-        list.add(Commands.print("****************************************** Better POSE: " + correctedStartPose.toString()));
+        list.add(Commands
+                .print("****************************************** Better POSE: " + correctedStartPose.toString()));
 
         list.add(AutoBuilder.followPath(testPath));
         SequentialCommandGroup cmds = new SequentialCommandGroup();
@@ -189,7 +194,7 @@ public class AutoDirector {
         return new Auto("Demo", cmds, correctedStartPose);
     }
 
-    public Auto testing(){
+    public Auto testing() {
         Pose2d startPose = new Pose2d();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
 
