@@ -1,5 +1,11 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
+
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
     // Static hood angle
@@ -80,10 +86,12 @@ public class ShooterMath {
     public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
         double angleToHub = 0;
         if (robotX > hubX) {
-            angleToHub = Math.PI+Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX));
+            angleToHub = Math.PI+Math.atan((hubY - robotY) / (hubX - robotX));
+        } else {
+            angleToHub =  Math.atan((hubY - robotY) / (hubX - robotX)); // Angle our robot needs to face to be algined with the hub
+
         }
  
-        angleToHub =  Math.atan(Math.abs(hubY - robotY) / Math.abs(hubX - robotX)); // Angle our robot needs to face to be algined with the hub
         return angleToHub;
     }
     
@@ -134,6 +142,27 @@ public class ShooterMath {
             matrix[2][2] = point1[1];
         }
         return matrix;
+    }
+    public static Rotation2d generateRotation2d(double poseX, double poseY, double robotX, double robotZ) {
+        double hubX = Constants.Field.hub.getX();
+        double hubY = Constants.Field.hub.getY();
+        
+        double hubHeight = 4;
+        double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+        double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
+        // double alignAngleMoving = ShooterMath.calculateAdjustment(robotX, robotZ, alignAngle, hubY);
+        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
+        
+        double nshooter_velocity = ShooterMath.calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
+        double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
+        Angle driveTrainAngle = Radians.of(alignAngle);
+        System.out.println("Angle of drivetrain " + driveTrainAngle.in(Degrees));
+        System.out.println("Speed to shoot at " + nshooter_velocity);
+        System.out.println("Angle to shoot at " + nshooter_angle);
+        System.out.println("Pose of robot " + poseX + " " + poseY);
+        System.out.println("Pose of hub " + hubX + " " + hubY);
+
+        return new Rotation2d(alignAngle);
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

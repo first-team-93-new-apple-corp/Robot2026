@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -26,8 +27,10 @@ public class Constants {
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
     }
     public class Field {
-        public static final double hubX = 4.625;
-        public static final double hubY = 4.040;
+        // x 4.04
+        // y = 0.4.625
+        public static final Pose2d hub = new Pose2d(4.625,4.04,new Rotation2d());
+
         public static final double hubHeight = 3;
     }
     public class Controls {

@@ -100,84 +100,84 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         configureAuto();
     }
     
-    public Command alignToHub() {
+    // public Command alignToHub() {
         
 
-        try{
+        // try{
             
-            RobotConfig robotConfig = null;
-            try {
-                robotConfig = RobotConfig.fromGUISettings();
+        //     RobotConfig robotConfig = null;
+        //     try {
+        //         robotConfig = RobotConfig.fromGUISettings();
                 
-            } catch (Exception e) {
-                // Handle exception as needed
-                e.printStackTrace();
-            }
-            PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
-            double poseX = getState().Pose.getX();
-            double poseY = getState().Pose.getY();
-            double rotation = getState().Pose.getRotation().getRadians();
-            System.out.println("**************************************** " + rotation);
+        //     } catch (Exception e) {
+        //         // Handle exception as needed
+        //         e.printStackTrace();
+        //     }
+        //     PathConstraints constraints = new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI);
+        //     double poseX = getState().Pose.getX();
+        //     double poseY = getState().Pose.getY();
+        //     double rotation = getState().Pose.getRotation().getRadians();
+        //     System.out.println("**************************************** " + rotation);
 
-            List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                new Pose2d(poseX,poseY,getState().Pose.getRotation()),
-                new Pose2d(poseX,poseY,getState().Pose.getRotation()),
-                new Pose2d(poseX,poseY,getState().Pose.getRotation())
-            );
-            System.out.println("****************************************"+Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).toString());
-            PathPlannerPath path = new PathPlannerPath(
-                    waypoints,
-                    Constants.Auto.pathConstraints,
-                    null, 
-                    new GoalEndState(0.0, Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)))
-            );
-            double hubX = Constants.Field.hubX;
-            double hubY = Constants.Field.hubY;
-            double robotX = getState().Speeds.vxMetersPerSecond;
-            double robotZ = getState().Speeds.vyMetersPerSecond; 
+        //     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        //         new Pose2d(poseX,poseY,getState().Pose.getRotation()),
+        //         new Pose2d(poseX,poseY,getState().Pose.getRotation()),
+        //         new Pose2d(poseX,poseY,getState().Pose.getRotation())
+        //     );
+        //     System.out.println("****************************************"+Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).toString());
+        //     PathPlannerPath path = new PathPlannerPath(
+        //             waypoints,
+        //             Constants.Auto.pathConstraints,
+        //             null, 
+        //             new GoalEndState(0.0, Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)))
+        //     );
+        //     double hubX = Constants.Field.hubX;
+        //     double hubY = Constants.Field.hubY;
+        //     double robotX = getState().Speeds.vxMetersPerSecond;
+        //     double robotZ = getState().Speeds.vyMetersPerSecond; 
            
-            double hubHeight = 4;
-            double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
-            double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
-            double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
+        //     double hubHeight = 4;
+        //     double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+        //     double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
+        //     double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
             
-            double nshooter_velocity = ShooterMath.calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
-            double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
+        //     double nshooter_velocity = ShooterMath.calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
+        //     double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
 
-            System.out.println("Angle of drivetrain " + Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).getDegrees());
-            System.out.println("Speed to shoot at " + nshooter_velocity);
-            System.out.println("Angle to shoot at " + nshooter_angle);
+        //     System.out.println("Angle of drivetrain " + Rotation2d.fromRadians(ShooterMath.angleToAlign(poseX, Constants.Field.hubX, poseY, Constants.Field.hubY)).getDegrees());
+        //     System.out.println("Speed to shoot at " + nshooter_velocity);
+        //     System.out.println("Angle to shoot at " + nshooter_angle);
 
 
-            return new FollowPathCommand(
-                    path,
+        //     return new FollowPathCommand(
+        //             path,
                     
-                    ()->getState().Pose, // Robot pose supplier
-                    ()->getState().Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> {}, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                            new PIDConstants(3.0, 0.0, 0.0), // Translation PID constants
-                            new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
-                    ),
-                    robotConfig, // The robot configuration
-                    () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        //             ()->getState().Pose, // Robot pose supplier
+        //             ()->getState().Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        //             (speeds, feedforwards) -> {}, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds, AND feedforwards
+        //             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+        //                     new PIDConstants(3.0, 0.0, 0.0), // Translation PID constants
+        //                     new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
+        //             ),
+        //             robotConfig, // The robot configuration
+        //             () -> {
+        //             // Boolean supplier that controls when the path will be mirrored for the red alliance
+        //             // This will flip the path being followed to the red side of the field.
+        //             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                    },
-                    this // Reference to this subsystem to set requirements
-            );
-        } catch (Exception e) {
-            DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
-            return Commands.none();
-        }
-    }
+        //             var alliance = DriverStation.getAlliance();
+        //             if (alliance.isPresent()) {
+        //                 return alliance.get() == DriverStation.Alliance.Red;
+        //             }
+        //             return false;
+        //             },
+        //             this // Reference to this subsystem to set requirements
+        //     );
+        // } catch (Exception e) {
+        //     DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+        //     return Commands.none();
+        // }
+    // }
     
     public void configureAuto() {
         RobotConfig config = null;
