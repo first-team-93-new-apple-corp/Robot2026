@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDSubsystem extends SubsystemBase {
     DigitalOutput red;
@@ -21,6 +20,10 @@ public class LEDSubsystem extends SubsystemBase {
         green = new DigitalOutput(4);
         blue = new DigitalOutput(2);
         setColor(Color.kWhite);
+
+        SmartDashboard.putNumber("LED Red", 0);
+        SmartDashboard.putNumber("LED Green", 0);
+        SmartDashboard.putNumber("LED Blue", 0);
     }
 
     public void setColor(Color m_color) {
