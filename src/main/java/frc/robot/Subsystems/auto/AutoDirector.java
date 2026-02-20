@@ -197,7 +197,25 @@ public class AutoDirector {
     public Auto testing() {
         Pose2d startPose = new Pose2d();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addIntakingPath("intakeLeft");
 
         return new Auto("Testing", tracker, startPose);
     }
+    /* TODO 
+     *  Score preload before intake?
+     * Intake then score intake and preload?
+     * What to do before climb
+     * shooting positions? / path to shoot on.
+     *   farther away to get out of the way of other robots
+     *     Follow up question: timing to score
+     *        figure out how to implement custom delays in paths to avoid robots
+     *  
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * */ 
+    
 }

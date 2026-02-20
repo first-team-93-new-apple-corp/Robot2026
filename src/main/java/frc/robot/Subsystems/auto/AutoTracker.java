@@ -33,43 +33,43 @@ public class AutoTracker extends SequentialCommandGroup {
         this.subsystems = subsystems;
     }
 
-    public Command Intake() {
+    private Command Intake() {
         return(subsystems.intake().commands.intake());
     }
 
-    public Command Outtake() {
+    private Command Outtake() {
         return(subsystems.intake().commands.outtake());
     }
 
-    public Command Idle() {
+    private Command Idle() {
         return(subsystems.intake().commands.idle());
     }
 
-    public Command wigglePivot() {
+    private Command wigglePivot() {
         return(subsystems.intake().commands.wigglePivot());
     }
 
-    public Command pivotUp() {
+    private Command pivotUp() {
         return(subsystems.intake().commands.autoPivotUp());
     }
 
-    public Command pivotDown() {
+    private Command pivotDown() {
         return(subsystems.intake().commands.autoPivotDown());
     }
 
-    public Command pivotMiddle() {
+    private Command pivotMiddle() {
         return(subsystems.intake().commands.autoPivotUp());
     }
 
-    public Command manipIdle() {
+    private Command manipIdle() {
         return subsystems.manipulation().commands.idleCommand();
     }
 
-    public Command manipIntake() {
+    private Command manipIntake() {
         return(subsystems.manipulation().commands.intakeCommand());
     }
 
-    public Command manipOuttake() {
+    private Command manipOuttake() {
         return(subsystems.manipulation().commands.outtakeCommand());
     }
 
