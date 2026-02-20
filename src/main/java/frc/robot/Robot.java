@@ -15,9 +15,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
-    private final RobotContainer m_robotContainer;
+    // private final RobotContainer m_robotContainer;
 
     /* log and replay timestamp and joystick data */
+    private RobotContainer m_robotContainer;
     private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
             .withTimestampReplay()
             .withJoystickReplay();
