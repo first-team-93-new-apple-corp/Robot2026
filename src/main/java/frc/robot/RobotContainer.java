@@ -10,6 +10,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -44,96 +49,137 @@ public class RobotContainer {
     private final CommandJoystick leftJoystick = new CommandJoystick(1);
     private final CommandJoystick rightJoystick = new CommandJoystick(2);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
-    public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+    // public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
-    public final ManipulationSubsystem m_ManipulationSubsystem = new ManipulationSubsystem();
+    // public final ManipulationSubsystem m_ManipulationSubsystem = new ManipulationSubsystem();
+    private IntegerPublisher  controlData;
+    private boolean controlDataZero = false;
 
     public RobotContainer() {
+        var table = NetworkTableInstance.getDefault().getTable("FMSInfo");
+        var data = table.getIntegerTopic("FMSControlData");
+        controlData = data.publish(PubSubOption.disableRemote(false));
+        // controlData.set(0);
+        // SmartDashboard.putData("setShenanganFalse", setControlDataZeroFalse());
+        SmartDashboard.putData("setControlToggle", setControlToggle());
+        SmartDashboard.putData("setControl0", setControlDataCMD(0));
+        SmartDashboard.putData("setControl32", setControlDataCMD(32));
+        // configureBindings();
+    }
+
+    public Command setControlToggle(){
+        return Commands.runOnce(()->toggleBrake());
+    }
+    public void toggleBrake(){
+        controlDataZero = !controlDataZero;
+    }
+
+    public boolean getToggle(){
+        return controlDataZero;
+    }
+
+    public Command setToggle(boolean bool){
+        var cmd = Commands.runOnce(()->controlDataZero = bool);
+        return cmd.ignoringDisable(true);
+    }
+    // public Command setControlDataZeroFalse(){
+    //     return Commands.runOnce(()->{
+    //         controlDataZero = false;
+    //         controlData.set(32);
+    //     });
+    // }
+
+    public Command setControlDataCMD(int i){
+        return Commands.runOnce(()-> setControlData(i));
+    }
+
+    public void setControlData(int i){
+        if (controlDataZero){
+            controlData.set(i);
+        }
+    }
+
+    // private void configureBindings() {
+
         
-        configureBindings();
-    }
-
-    private void configureBindings() {
-
-        
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+    //     // Note that X is defined as forward according to WPILib convention,
+    //     // and Y is defined as to the left according to WPILib convention.
+    //     drivetrain.setDefaultCommand(
+    //         // Drivetrain will execute this command periodically
+    //         drivetrain.applyRequest(() ->
+    //             drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y (forward)
+    //                 .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
+    //                 .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //         )
+    //     );
 
 
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+    //     // Idle while the robot is disabled. This ensures the configured
+    //     // neutral mode is applied to the drive motors while disabled.
+    //     final var idle = new SwerveRequest.Idle();
+    //     RobotModeTriggers.disabled().whileTrue(
+    //             drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        rightJoystick.button(1).whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+    //     rightJoystick.button(1).whileTrue(drivetrain.applyRequest(() -> brake));
+    //     joystick.b().whileTrue(drivetrain.applyRequest(() ->
+    //         point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+    //     ));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    //     // Run SysId routines when holding back/start and X/Y.
+    //     // Note that each routine should be run exactly once in a single log.
+    //     joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    //     joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    //     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    //     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.x().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
-        joystick.b().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
-        joystick.x().and(joystick.b()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+    //     joystick.x().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+    //     joystick.b().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+    //     joystick.x().and(joystick.b()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
 
 
-        // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    //     // Reset the field-centric heading on left bumper press.
+    //     joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        leftJoystick.button(12).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    //     leftJoystick.button(12).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+    //     drivetrain.registerTelemetry(logger::telemeterize);
 
-        // joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
-        // joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
+    //     // joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
+    //     // joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        // joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
-        // joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
+    //     // joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+    //     // joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        joystick.y().onTrue(m_ClimberSubsystem.commands.autoRetract());
-        // joystick.y().onFalse(m_ClimberSubsystem.commands.Stop());
+    //     joystick.y().onTrue(m_ClimberSubsystem.commands.autoRetract());
+    //     // joystick.y().onFalse(m_ClimberSubsystem.commands.Stop());
 
-        joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
-        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.povRight().onTrue(m_ClimberSubsystem.commands.resetEncoder());
-    }
+    //     joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
+    //     // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
+    //     joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
+    //     joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualExtend());
+    //     joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
+    //     joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
+    //     joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
+    //     joystick.povRight().onTrue(m_ClimberSubsystem.commands.resetEncoder());
+    // }
 
-    public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                        .withVelocityY(0)
-                        .withRotationalRate(0))
-                        .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
-    }
+    // public Command getAutonomousCommand() {
+    //     // Simple drive forward auton
+    //     final var idle = new SwerveRequest.Idle();
+    //     return Commands.sequence(
+    //             // Reset our field centric heading to match the robot
+    //             // facing away from our alliance station wall (0 deg).
+    //             drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+    //             // Then slowly drive forward (away from us) for 5 seconds.
+    //             drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+    //                     .withVelocityY(0)
+    //                     .withRotationalRate(0))
+    //                     .withTimeout(5.0),
+    //             // Finally idle for the rest of auton
+    //             drivetrain.applyRequest(() -> idle));
+    // }
 }

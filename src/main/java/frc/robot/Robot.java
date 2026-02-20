@@ -7,8 +7,10 @@ package frc.robot;
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -22,11 +24,24 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+        SmartDashboard.putData("setFalse", m_robotContainer.setToggle(false).alongWith(Commands.runOnce(()->m_robotContainer.setControlData(32))).ignoringDisable(true));
+        SmartDashboard.putData("setTrue", m_robotContainer.setToggle(true).ignoringDisable(true));
+        
+    }   
+
+    @Override
+    public void robotInit(){
+        // addPeriodic(()->m_robotContainer.setControlData(0), 20.0, 10.0);
+        
     }
 
     @Override
     public void robotPeriodic() {
-        m_timeAndJoystickReplay.update();
+        SmartDashboard.putBoolean("ControlZeroRunning?", m_robotContainer.getToggle());
+        if (m_robotContainer.getToggle()){
+            m_robotContainer.setControlData(0);
+        }
+        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
     }
 
@@ -44,11 +59,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().schedule(m_autonomousCommand);
-        }
+        // if (m_autonomousCommand != null) {
+        //     CommandScheduler.getInstance().schedule(m_autonomousCommand);
+        // }
     }
 
     @Override
@@ -61,9 +76,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
-        }
+        // if (m_autonomousCommand != null) {
+        //     CommandScheduler.getInstance().cancel(m_autonomousCommand);
+        // }
     }
 
     @Override
@@ -76,7 +91,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        CommandScheduler.getInstance().cancelAll();
+        // CommandScheduler.getInstance().cancelAll();
     }
 
     @Override
