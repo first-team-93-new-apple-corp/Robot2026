@@ -29,7 +29,7 @@ public class Constants {
     public class Field {
         // x 4.04
         // y = 0.4.625
-        public static final Pose2d hub = new Pose2d(4.625,4.04,new Rotation2d());
+        public static final Pose2d hub = new Pose2d(4.23,-0.77,new Rotation2d());
 
         public static final double hubHeight = 3;
     }

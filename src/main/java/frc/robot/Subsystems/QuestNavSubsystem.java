@@ -57,7 +57,8 @@ public class QuestNavSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
-
+        SmartDashboard.putNumber("PoseX", drivetrain.getState().Pose.getX());
+        SmartDashboard.putNumber("PoseY", drivetrain.getState().Pose.getY());
         if (quest.isTracking()) {
             // Get the latest pose data frames from the Quest
             PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();

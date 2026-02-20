@@ -85,7 +85,6 @@ public class RobotContainer {
       () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), drivetrain.getState().Speeds.vxMetersPerSecond,drivetrain.getState().Speeds.vyMetersPerSecond))
       .withVelocityX(selectedControls.DriveLeft() * Constants.Swerve.MaxSpeed)
       .withVelocityY(selectedControls.DriveUp() * Constants.Swerve.MaxSpeed)));
-    
 
     controlSchemeChooser.onChange(selected -> updateControlScheme(selected));
 

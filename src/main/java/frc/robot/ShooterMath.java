@@ -48,12 +48,14 @@ public class ShooterMath {
         return Math.sqrt(Math.pow(totalShootingVelocity*Math.cos(theta)-robotRelX,2)+Math.pow(totalShootingVelocity*Math.sin(theta), 2));
     }
     // Calculates angle to align to the hub (static and while moving)
-    public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub) {
+    public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub, double shooterPitch) {
         double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
-        if (robotRelZ != 0) {
-            double adjustment = Math.PI/2 - Math.atan(shooterVelocity/robotRelZ);
-            return angleToHub-adjustment;
-        }
+        
+        // if (robotRelZ != 0) {
+        //     double adjustment = Math.PI/2 - Math.atan2(shooterVelocity*Math.cos(shooterPitch), robotRelZ);
+        //     System.out.println("Adjustment " + adjustment);
+        //     return angleToHub-adjustment;
+        // }
         return angleToHub;
         
     }
@@ -85,12 +87,13 @@ public class ShooterMath {
 
     public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
         double angleToHub = 0;
-        if (robotX > hubX) {
-            angleToHub = Math.PI+Math.atan((hubY - robotY) / (hubX - robotX));
-        } else {
-            angleToHub =  Math.atan((hubY - robotY) / (hubX - robotX)); // Angle our robot needs to face to be algined with the hub
+        angleToHub = Math.atan2((hubY - robotY) , (hubX - robotX));
+        // if (robotX > hubX) {
+        //     angleToHub = Math.PI+Math.atan((hubY - robotY) / (hubX - robotX));
+        // } else {
+        //     angleToHub =  Math.atan((hubY - robotY) / (hubX - robotX)); // Angle our robot needs to face to be algined with the hub
 
-        }
+        // }
  
         return angleToHub;
     }
@@ -146,21 +149,27 @@ public class ShooterMath {
     public static Rotation2d generateRotation2d(double poseX, double poseY, double robotX, double robotZ) {
         double hubX = Constants.Field.hub.getX();
         double hubY = Constants.Field.hub.getY();
-        
-        double hubHeight = 4;
-        double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
-        // double alignAngleMoving = ShooterMath.calculateAdjustment(robotX, robotZ, alignAngle, hubY);
-        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
         
-        double nshooter_velocity = ShooterMath.calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
+        double hubHeight = 2;
+        double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+        
         double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
+        double shooter_velocity = ShooterMath.calculateV(nshooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);
+        // double nshooter_velocity = ShooterMath.calculateV(nshooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
+
+        double alignAngleMoving = ShooterMath.calculateAdjustment(robotX, robotZ, shooter_velocity, alignAngle,nshooter_angle);
+        // double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
+        double robotRelZ = calculateRobotRelZ(alignAngle, robotX, robotZ);
+        
         Angle driveTrainAngle = Radians.of(alignAngle);
+        Angle driveTrainAngleWhileMoving = Radians.of(alignAngleMoving);
         System.out.println("Angle of drivetrain " + driveTrainAngle.in(Degrees));
-        System.out.println("Speed to shoot at " + nshooter_velocity);
+        System.out.println("Speed to shoot at " + shooter_velocity);
         System.out.println("Angle to shoot at " + nshooter_angle);
         System.out.println("Pose of robot " + poseX + " " + poseY);
         System.out.println("Pose of hub " + hubX + " " + hubY);
+        System.out.println("Robot rel z: " + robotRelZ);
 
         return new Rotation2d(alignAngle);
     }
