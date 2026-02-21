@@ -23,15 +23,15 @@ public class Constants {
         public static final int[] driveMotors = { 5, 6, 7, 8 };
         public static final int[] canCoders = { 10, 11, 12, 13 };
 
-        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+        public static final double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     }
     public class Field {
         // x 4.04
         // y = 0.4.625
         public static final Pose2d hub = new Pose2d(4.23,-0.77,new Rotation2d());
 
-        public static final double hubHeight = 3;
+        public static final double hubHeight = 1.83;
     }
     public class Controls {
         public static final double Deadzone = 0.04;
@@ -49,7 +49,7 @@ public class Constants {
         public static Transform3d RobotToQuest = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
                 QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
 
-        public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.01, 0.01, 0.035);
+        public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.005, 0.005, 0.017);
     }
 
     public class Auto {

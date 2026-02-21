@@ -170,6 +170,8 @@ public class ShooterMath {
         System.out.println("Pose of robot " + poseX + " " + poseY);
         System.out.println("Pose of hub " + hubX + " " + hubY);
         System.out.println("Robot rel z: " + robotRelZ);
+        System.out.println("Field rel x: " + robotX);
+        System.out.println("Field rel y: " + robotZ);
 
         return new Rotation2d(alignAngle);
     }

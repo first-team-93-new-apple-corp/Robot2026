@@ -79,7 +79,7 @@ public class RobotContainer {
     selectedControls = new TwoStickDrive(0, 1);
     selectedControls.Seed().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()).alongWith(questNav.commands.resetQuestPose(new Pose2d())));
     // selectedControls.Align().onTrue(drivetrain.alignToHub());
-    driveFacingAngle.HeadingController.setPID(15, 0, 0);
+    driveFacingAngle.HeadingController.setPID(15, 0, 0.1);
     
     selectedControls.Align().whileTrue(drivetrain.commands.applyRequest(
       () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), drivetrain.getState().Speeds.vxMetersPerSecond,drivetrain.getState().Speeds.vyMetersPerSecond))
