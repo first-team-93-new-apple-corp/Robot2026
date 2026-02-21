@@ -31,6 +31,11 @@ public class AutoConstants {
         return new Pose2d(point.position, point.rotationTarget.rotation());
     }
 
+    public static Pose2d getFirstPoseInPath(PathPlannerPath path){
+        PathPoint point = path.getAllPathPoints().get(0);
+        return new Pose2d(point.position, point.rotationTarget.rotation());
+    }
+
     public class startingPoses {
 
         private static final double startingLineBlue = 7.2;

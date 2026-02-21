@@ -107,7 +107,6 @@ public class AutoDirector {
 
     public void addAutos() {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
-        Autos.add(TestAuto());
         Autos.add(Demo());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
@@ -126,42 +125,6 @@ public class AutoDirector {
             cmds.addCommands(command);
         }
         return new Auto("Combined Auto", cmds, new Pose2d());
-    }
-
-    public Auto TestAuto() {
-        PathPlannerPath testPath = null;
-        List<Command> list = new ArrayList<>();
-
-        try {
-            testPath = PathPlannerPath.fromPathFile("Many Over Bump");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Pose2d startPose = testPath.getStartingDifferentialPose();
-        Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
-        // Shhh definintly not doing this vvv
-        // Assuming the position of the robot is correct, we tell the robot that it is
-        // at the starting pose of the path
-        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
-        // Shhh definintly not doing this ^^^
-        list.add(Commands.print("Testing Auto"));
-        list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
-        list.add(Commands
-                .print("****************************************** Better POSE: " + correctedStartPose.toString()));
-
-        list.add(AutoBuilder.followPath(testPath));
-        // After following the path, we tell the robot to pathfind back to the starting
-        // pose, which should be the same as the corrected start pose
-        Command cmd = AutoBuilder.pathfindToPose(correctedStartPose, constraints)
-                .andThen(Commands.print("Pathfound back to start: " + correctedStartPose.toString()));
-        list.add(cmd);
-
-        SequentialCommandGroup cmds = new SequentialCommandGroup();
-        for (Command command : list) {
-            cmds.addCommands(command);
-        }
-
-        return new Auto("TestAuto", cmds, correctedStartPose);
     }
 
     public Auto Demo() {
@@ -194,12 +157,55 @@ public class AutoDirector {
         return new Auto("Demo", cmds, correctedStartPose);
     }
 
-    public Auto testing() {
-        Pose2d startPose = new Pose2d();
+    public Auto Preload() {
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakingPath("intakeLeft");
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
 
-        return new Auto("Testing", tracker, startPose);
+    public Auto PreloadClimb(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
+
+    public Auto PreloadDepot(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
+
+    public Auto PreloadOutPost(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
+
+    public Auto PreloadDepotClimb(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
+
+    public Auto PreloadOutpostCLimb(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        return null;
+    }
+
+
+    public Auto doNothing(){
+        return null;
+    }
+
+    public Auto moveForward(){
+        return null;
     }
     /* TODO 
      *  Score preload before intake?

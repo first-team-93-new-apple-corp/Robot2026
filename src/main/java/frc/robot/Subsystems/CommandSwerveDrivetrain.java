@@ -186,6 +186,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);
     }
+    //TODO implement pose get with photon camera
+    public Pose2d getStartingPose(){
+        return new Pose2d();
+    }
 
     @Override
     public Optional<Pose2d> samplePoseAt(double timestampSeconds) {
