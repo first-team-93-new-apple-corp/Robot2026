@@ -24,7 +24,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     public void startup() {
         red = new DigitalOutput(0);
-        green = new DigitalOutput(4);
+        green = new DigitalOutput(6);
         blue = new DigitalOutput(2);
         setColor(Color.kWhite);
 
