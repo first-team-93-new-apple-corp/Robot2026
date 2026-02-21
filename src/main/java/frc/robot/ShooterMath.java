@@ -28,8 +28,12 @@ public class ShooterMath {
     public static double calculateAngle(double xinit, double yinit , double xmid, double ymid, double xfinal, double yfinal,double robotX,double robotZ,double poseX, double poseY, double hubX, double hubY, double hubHeight, double gravity, double angleToHub) {
         double originalTheta = calculateAngle(xinit, yinit, xmid, ymid, xfinal, yfinal);
         double totalShootingVelocity = calculateV(originalTheta,poseX, poseY, hubX,hubY,hubHeight,gravity);
-        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
+        // double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
+        double robotRelX = robotX;
 
+        // System.out.println("Original theta " + originalTheta);
+        // System.out.println("Total shooting Velocity " + totalShootingVelocity);
+        // System.out.println("robotRelX");
         return Math.atan((totalShootingVelocity*Math.sin(originalTheta)/(totalShootingVelocity*Math.cos(originalTheta)-robotRelX)));
     }
     
@@ -44,18 +48,25 @@ public class ShooterMath {
     // Shooting velocity calculation while moving
     public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY, double hubHeight, double gravity,double robotX, double robotZ, double angleToHub) {
         double totalShootingVelocity = calculateV(theta,poseX, poseY, hubX,hubY,hubHeight,gravity);
-        double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
+        // double robotRelX = calculateRobotRelX(angleToHub, robotX, robotZ,poseX,poseY,hubX,hubY);
+        double robotRelX = robotX;
         return Math.sqrt(Math.pow(totalShootingVelocity*Math.cos(theta)-robotRelX,2)+Math.pow(totalShootingVelocity*Math.sin(theta), 2));
     }
     // Calculates angle to align to the hub (static and while moving)
     public static double calculateAdjustment(double robotX, double robotZ, double shooterVelocity, double angleToHub, double shooterPitch) {
-        double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
+        // double robotRelZ = calculateRobotRelZ(angleToHub, robotX, robotZ);
+        double robotRelZ = robotZ;
         
-        // if (robotRelZ != 0) {
-        //     double adjustment = Math.PI/2 - Math.atan2(shooterVelocity*Math.cos(shooterPitch), robotRelZ);
-        //     System.out.println("Adjustment " + adjustment);
-        //     return angleToHub-adjustment;
-        // }
+        if (robotRelZ != 0) {
+            double adjustment = Math.PI/2 - Math.atan2(shooterVelocity*Math.cos(shooterPitch), robotRelZ);
+            System.out.println("Adjustment " + Radians.of(adjustment).in(Degrees));
+            System.out.println("Shooter velocity " + shooterVelocity);
+            System.out.println("Shooter pitch " + Radians.of(shooterPitch).in(Degrees));
+            System.out.println("Robot rel z " + robotRelZ);
+            System.out.println("Field X " + robotX);
+            System.out.println("Field Z " + robotZ);
+            return angleToHub-adjustment;
+        }
         return angleToHub;
         
     }
@@ -81,8 +92,9 @@ public class ShooterMath {
     }
     // Calculates robots velocity in the z direction (Orthogonal to direction towards hub)
     public static double calculateRobotRelZ(double angleToHub,double robotX,double robotZ) {
+        return robotX * Math.sin(Math.PI/2-angleToHub) + robotZ * Math.cos(Math.PI/2-angleToHub);
         // return -robotX*Math.sin(angleToHub)+robotZ*Math.cos(angleToHub);
-        return Math.cos(angleToHub) * robotX + Math.sin(angleToHub) * robotZ;
+        // return Math.cos(angleToHub) * robotX + Math.sin(angleToHub) * robotZ;
     }
 
     public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
@@ -153,27 +165,30 @@ public class ShooterMath {
         
         double hubHeight = 2;
         double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
         
-        double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
-        double shooter_velocity = ShooterMath.calculateV(nshooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);
+        double shooter_velocity = ShooterMath.calculateV(shooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);
+        // double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
         // double nshooter_velocity = ShooterMath.calculateV(nshooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
 
-        double alignAngleMoving = ShooterMath.calculateAdjustment(robotX, robotZ, shooter_velocity, alignAngle,nshooter_angle);
-        // double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
-        double robotRelZ = calculateRobotRelZ(alignAngle, robotX, robotZ);
+        double alignAngleMoving = ShooterMath.calculateAdjustment(robotX, robotZ, shooter_velocity, alignAngle,shooter_angle);
         
         Angle driveTrainAngle = Radians.of(alignAngle);
         Angle driveTrainAngleWhileMoving = Radians.of(alignAngleMoving);
-        System.out.println("Angle of drivetrain " + driveTrainAngle.in(Degrees));
-        System.out.println("Speed to shoot at " + shooter_velocity);
-        System.out.println("Angle to shoot at " + nshooter_angle);
-        System.out.println("Pose of robot " + poseX + " " + poseY);
-        System.out.println("Pose of hub " + hubX + " " + hubY);
-        System.out.println("Robot rel z: " + robotRelZ);
-        System.out.println("Field rel x: " + robotX);
-        System.out.println("Field rel y: " + robotZ);
+        // if (Math.abs(robotRelZ)>0.5) {
+        //     System.out.println("Angle of drivetrain " + driveTrainAngle.in(Degrees));
+        //     // System.out.println("Speed to shoot at " + shooter_velocity);
+        //     System.out.println("Angle to shoot at " + shooter_angle);
+        //     // System.out.println("Pose of robot " + poseX + " " + poseY);
+        //     // System.out.println("Pose of hub " + hubX + " " + hubY);
 
-        return new Rotation2d(alignAngle);
+        //     System.out.println("Robot rel z: " + robotRelZ);
+        //     System.out.println("Field rel x: " + robotX);
+        //     System.out.println("Field rel y: " + robotZ);
+        // }
+        
+
+        return new Rotation2d(alignAngleMoving);
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
