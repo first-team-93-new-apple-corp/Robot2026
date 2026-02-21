@@ -15,6 +15,13 @@ public class LEDSubsystem extends SubsystemBase {
     double g;
     double b;
 
+    int loopsCounter;
+    int loopsBetweenVibing = 1;
+    int vibingCounter;
+    int vibeSpeed;
+    int shotCounter;
+    boolean vibe = true;
+
     public void startup() {
         red = new DigitalOutput(0);
         green = new DigitalOutput(4);
@@ -64,5 +71,24 @@ public class LEDSubsystem extends SubsystemBase {
     }
     public Command TestBlue() {
         return runOnce(() -> setColor(Color.kBlue));
+    }
+    public void vibing() {
+        if (vibe) {
+            if (loopsCounter >= loopsBetweenVibing) {
+                loopsCounter = 0;
+                vibingCounter += vibeSpeed;
+            } else {
+                loopsCounter += vibeSpeed;
+            }
+
+            if (vibingCounter > 255) {
+                vibingCounter = 0;
+
+            }
+
+            setColor(Color.fromHSV(vibingCounter, 255, 255));
+        } else {
+            return;
+        }
     }
 }
