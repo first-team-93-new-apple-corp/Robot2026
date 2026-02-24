@@ -1,30 +1,13 @@
 package frc.robot.Subsystems.auto;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-
-import org.json.simple.parser.ParseException;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.controllers.PathFollowingController;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
-import com.pathplanner.lib.util.FileVersionException;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.Auto;
-import frc.robot.Constants.Drivetrain;
-import frc.robot.Constants.ManipulationConstants.intake;
 import frc.robot.util.subsystems;
 
 public class AutoTracker extends SequentialCommandGroup {
@@ -32,6 +15,10 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
+    }
+
+    public AutoTracker(subsystems subsystems){
+        this(subsystems, new Pose2d());
     }
 
     private Command Intake() {
@@ -74,6 +61,19 @@ public class AutoTracker extends SequentialCommandGroup {
         return (subsystems.manipulation().commands.outtakeCommand());
     }
 
+    private double getDrivePoseX(){
+        return subsystems.drivetrain().getState().Pose.getX();
+    }
+    private double getDrivePoseY(){
+        return subsystems.drivetrain().getState().Pose.getY();
+    }
+    private double getDriveSpeedX(){
+        return subsystems.drivetrain().getState().Speeds.vxMetersPerSecond;
+    }
+    private double getDriveSpeedY(){
+        return subsystems.drivetrain().getState().Speeds.vyMetersPerSecond;
+    }
+
     public void addGroundIntakePath(String pathName) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
@@ -109,6 +109,7 @@ public class AutoTracker extends SequentialCommandGroup {
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
     }
 
+    @Deprecated
     public void shootWhilstGoingTo(Pose2d pose) {
         Command revShooter = Commands.none(); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(1));
@@ -117,5 +118,20 @@ public class AutoTracker extends SequentialCommandGroup {
         ParallelCommandGroup followShootingPathThingy = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints)
                 .alongWith(alignFunction);
         addCommands(followShootingPathThingy);
+    }
+
+    public void shootWhilstFollowing(PathPlannerPath path) {
+        Command alignCommand = subsystems.drivetrain().commands.applyRequest(
+                () -> AutoConstants.driveFacingAngle.withTargetDirection(subsystems.shooter().getAlignedShooterR2D(
+                        getDrivePoseX(), 
+                        getDrivePoseY(),
+                        getDriveSpeedX(),
+                        getDriveSpeedY())));
+        Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+        Command hoodAlign = Commands.none(); // TODO implement
+        Command rpmSet = Commands.none(); // TODO implement
+        Command masterShoot = alignCommand.alongWith(rpmSet).alongWith(hoodAlign); 
+        ParallelRaceGroup race = pathFollowCmd.raceWith(masterShoot.repeatedly());
+        addCommands(race);
     }
 }

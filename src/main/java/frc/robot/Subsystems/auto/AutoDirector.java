@@ -168,6 +168,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.shootWhilstGoingTo(new Pose2d());
         return null;
     }
 
@@ -215,12 +216,6 @@ public class AutoDirector {
      *   farther away to get out of the way of other robots
      *     Follow up question: timing to score
      *        figure out how to implement custom delays in paths to avoid robots
-     *  
-     * 
-     * 
-     * 
-     * 
-     * 
      * 
      * */ 
     

@@ -19,6 +19,7 @@ import frc.robot.Subsystems.*;
 import frc.robot.Subsystems.auto.*;
 import frc.robot.Controls.*;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShooterMath;
 import frc.robot.util.subsystems;
 
 public class RobotContainer {
@@ -46,11 +47,12 @@ public class RobotContainer {
     private ClimberSubsystem climber = new ClimberSubsystem();
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
     // private subsystems subsystems = new subsystems(drivetrain, questNav,
     // shooterMath, climber, intake, manipulation);
-    private subsystems subsystems = new subsystems(drivetrain, questNav, shooterMath, climber, intake, manipulation);
+    private subsystems subsystems = new subsystems(drivetrain, questNav, shooter, climber, intake, manipulation);
     private AutoDirector auto = new AutoDirector(subsystems);
     private FileWriter writer = null;
 
