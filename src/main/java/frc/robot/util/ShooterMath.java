@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.google.flatbuffers.Constants;
 
@@ -161,7 +162,7 @@ public class ShooterMath {
         }
         return matrix;
     }
-    public static Rotation2d generateRotation2d(double poseX, double poseY, double velX, double velY) {
+    public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
         double hubX = AutoConstants.Hub.Blue.getX();
         double hubY = AutoConstants.Hub.Blue.getY();
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
@@ -191,7 +192,7 @@ public class ShooterMath {
         // }
         
 
-        return new Rotation2d(alignAngleMoving);
+        return new ShootingData(new Rotation2d(alignAngleMoving), Radians.of(shooter_angle), RotationsPerSecond.of(shooter_velocity));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

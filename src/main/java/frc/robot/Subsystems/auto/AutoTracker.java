@@ -122,11 +122,11 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void shootWhilstFollowing(PathPlannerPath path) {
         Command alignCommand = subsystems.drivetrain().commands.applyRequest(
-                () -> AutoConstants.driveFacingAngle.withTargetDirection(subsystems.shooter().getAlignedShooterR2D(
+                () -> AutoConstants.driveFacingAngle.withTargetDirection(subsystems.shooter().getShootingData(
                         getDrivePoseX(), 
                         getDrivePoseY(),
                         getDriveSpeedX(),
-                        getDriveSpeedY())));
+                        getDriveSpeedY()).drivetrainAngle()));
         Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
         Command hoodAlign = Commands.none(); // TODO implement
         Command rpmSet = Commands.none(); // TODO implement

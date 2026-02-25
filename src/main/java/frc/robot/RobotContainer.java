@@ -43,26 +43,17 @@ public class RobotContainer {
 
     // Subsystems
     // * Shooter
-    private ShooterMath shooterMath = new ShooterMath();
     private ClimberSubsystem climber = new ClimberSubsystem();
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    // private subsystems subsystems = new subsystems(drivetrain, questNav,
-    // shooterMath, climber, intake, manipulation);
     private subsystems subsystems = new subsystems(drivetrain, questNav, shooter, climber, intake, manipulation);
     private AutoDirector auto = new AutoDirector(subsystems);
     private FileWriter writer = null;
 
     public RobotContainer() {
-        //
-        try {
-            writer = new FileWriter(new File("/U/testlog.csv"));
-        } catch (Exception e) {
-            System.out.println("Failed to create to log");
-        }
         configureBindings();
     }
 
@@ -129,24 +120,4 @@ public class RobotContainer {
             // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
         });
     }
-
-    /**
-     * Prints the drivetrain and questnav pose to a log file. This is used for
-     * offline analysis of the pose estimation performance.
-     * The log file will have the following format:
-     * timestamp, drivetrainX, drivetrainY, questnav2DX, questnav2DY, questnav3DX,
-     * questnav3DY, questnav3DZ
-     * 
-     * @return Command to run the logging action
-     */
-    public Command printPoseInfo() {
-        return Commands.runOnce(() -> {
-            try {
-                writer.write(subsystems.questNav().questPoseInfo() + "\n");
-            } catch (IOException e) {
-                System.out.println("Failed to write to log: " + e.getMessage());
-            }
-        });
-    }
-
 }
