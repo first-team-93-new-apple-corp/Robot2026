@@ -12,10 +12,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Controls.ControllerSchemeIO;
+import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -39,10 +40,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-
-    private final CommandJoystick leftJoystick = new CommandJoystick(1);
-    private final CommandJoystick rightJoystick = new CommandJoystick(2);
+    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -65,9 +63,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-leftJoystick.getY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-leftJoystick.getX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-rightJoystick.getX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-driver.DriveLeft() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driver.DriveUp() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-driver.DriveTheta() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -78,47 +76,44 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        rightJoystick.button(1).whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
+        driver.brake().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))
         ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.x().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
-        joystick.b().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
-        joystick.x().and(joystick.b()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+        driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+        driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+        driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
 
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-        leftJoystick.button(12).onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
+        driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // joystick.b().onTrue(m_IntakeSubsystem.Commands.intake());
-        // joystick.b().onFalse(m_IntakeSubsystem.Commands.stop());
+        // driver.b().onTrue(m_IntakeSubsystem.Commands.intake());
+        // driver.b().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        // joystick.x().onTrue(m_IntakeSubsystem.Commands.outtake());
-        // joystick.x().onFalse(m_IntakeSubsystem.Commands.stop());
+        // driver.x().onTrue(m_IntakeSubsystem.Commands.outtake());
+        // driver.x().onFalse(m_IntakeSubsystem.Commands.stop());
 
-        joystick.y().onTrue(m_ClimberSubsystem.commands.autoRetract());
-        // joystick.y().onFalse(m_ClimberSubsystem.commands.Stop());
+        driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
+        // driver.y().onFalse(m_ClimberSubsystem.commands.Stop());
 
-        joystick.a().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        // joystick.a().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.x().onTrue(m_ClimberSubsystem.commands.Stop());
-        joystick.povUp().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        joystick.povUp().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.povDown().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        joystick.povDown().onFalse(m_ClimberSubsystem.commands.Stop());
-        joystick.povRight().onTrue(m_ClimberSubsystem.commands.resetEncoder());
+        driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
+        // driver.a().onFalse(m_ClimberSubsystem.commands.Stop());
+        // driver.x().onTrue(m_ClimberSubsystem.commands.Stop());
+        driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {

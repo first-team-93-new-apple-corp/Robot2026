@@ -132,14 +132,19 @@ public class TwoStickDriveXboxOp implements ControllerSchemeIO {
 
     @Override
     public Trigger brake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'brake'");
+        return null;
     }
 
     @Override
     public Trigger robotRel() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'robotRel'");
+    }
+
+    @Override
+    public Trigger resetClimberEncoder() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'resetClimberEncoder'");
     }
 
 }

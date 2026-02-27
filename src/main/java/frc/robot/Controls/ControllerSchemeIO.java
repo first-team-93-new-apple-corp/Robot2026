@@ -64,6 +64,8 @@ public interface ControllerSchemeIO {
 
     public Trigger robotRel();
 
+    public Trigger resetClimberEncoder();
+
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }
