@@ -1,6 +1,6 @@
 package frc.robot.Controls;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -8,9 +8,17 @@ import frc.robot.Constants;
 public class XboxDrive implements ControllerSchemeIO {
 
     public CommandXboxController Xbox;
+    public CommandJoystick LeftStick;
+    public CommandJoystick RightStick;
 
     public XboxDrive(int port) {
         Xbox = new CommandXboxController(port);
+    }
+
+    public XboxDrive(int port, int port2, int opPort) {
+        Xbox = new CommandXboxController(opPort);
+        LeftStick = new CommandJoystick(port);
+        RightStick = new CommandJoystick(port2);
     }
 
     public double deadzone(double value) {
@@ -37,20 +45,17 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger Intake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Intake'");
+        return Xbox.x();
     }
 
     @Override
     public Trigger Outtake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Outtake'");
+        return Xbox.b();
     }
 
     @Override
     public Trigger Shoot() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Shoot'");
+        return Xbox.rightTrigger();
     }
 
     @Override
@@ -67,44 +72,37 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger autoRetractClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'autoRetractClimber'");
+        return Xbox.leftStick();
     }
 
     @Override
     public Trigger autoExtendClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'autoExtendClimber'");
+        return Xbox.rightStick();
     }
 
     @Override
     public Trigger WiggleIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'WiggleIntake'");
+        return Xbox.rightBumper();
     }
 
     @Override
     public Trigger LowerIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'LowerIntake'");
+        return Xbox.a();
     }
 
     @Override
     public Trigger RaiseIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'RaiseIntake'");
+        return Xbox.y();
     }
 
     @Override
     public Trigger baseIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'baseIntake'");
+        return Xbox.a();
     }
 
     @Override
     public Trigger maxIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'maxIntake'");
+        return Xbox.y();
     }
 
     @Override
@@ -114,21 +112,18 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger alignShooter() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'alignShooter'");
+    public Trigger primeShooter() {
+        return Xbox.leftTrigger();
     }
 
     @Override
     public Trigger seed() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'seed'");
+        return Xbox.leftBumper();
     }
 
     @Override
     public Trigger brake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'brake'");
+        return Xbox.start();
     }
 
     @Override
@@ -139,7 +134,6 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger resetClimberEncoder() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resetClimberEncoder'");
+        return Xbox.back();
     }
 }
