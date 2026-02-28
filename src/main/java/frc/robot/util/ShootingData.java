@@ -12,5 +12,6 @@ public record ShootingData(
     Rotation2d drivetrainAngle,
     Angle shooterAngle,
     AngularVelocity shooterVelocity
+    
 ) {
 } 

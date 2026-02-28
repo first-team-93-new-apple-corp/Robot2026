@@ -14,14 +14,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 
-//import com.pathplanner.lib.path.PathConstraints;
-
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation3d;
-// import edu.wpi.first.math.geometry.Transform3d;
-// import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
 
@@ -42,6 +37,11 @@ public class Constants {
         public static final int BL_Cancoder = 23;
         public static final int BR_Cancoder = 24;
 
+        public class HeadingController {
+            public static final double kP = 10;
+            public static final double kI = 0.002;
+            public static final double kD = 0.1;
+        }
     }
     public class CAN {
         public static final int climber = 25;
@@ -215,6 +215,35 @@ public class Constants {
             public static final double bottomRollerSpeed = 1.0;
             public static final double sideRollerSpeed = 1.0;
             public static final double kickerSpeed = 1.0;
+        }
+    }
+    public class ShooterConstants {
+        public static final Distance flyWheelDiameter = Inches.of(3);
+        
+        public class ShooterMotorConfigs {
+            public static final double StatorLimit = 80.0;
+            public static final double SupplyLimit = 30.0;
+            public static final boolean StatorLimitEnable = true;
+            public static final boolean SupplyLimitEnable = true;
+            public static final double kS = 0.1;
+            public static final double kV = 0.1;
+            public static final double kP = 0.1;
+            public static final double kI = 0;
+            public static final double kD = 0;
+            public static final AngularVelocity leftSpeed = RotationsPerSecond.of(10);
+            public static final AngularVelocity rightSpeed = RotationsPerSecond.of(10);
+            public static final Angle hoodAngle = Radians.of(Math.PI/4);
+        }
+        public class HoodMotorConfigs {
+            public static final double StatorLimit = 80.0;
+            public static final double SupplyLimit = 30.0;
+            public static final boolean StatorLimitEnable = true;
+            public static final boolean SupplyLimitEnable = true;
+            public static final double kS = 0.1;
+            public static final double kV = 0.1;
+            public static final double kP = 0.1;
+            public static final double kI = 0;
+            public static final double kD = 0;
         }
     }
 public class Swerve {
