@@ -31,6 +31,7 @@ public class LEDSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("LED Red", 0);
         SmartDashboard.putNumber("LED Green", 0);
         SmartDashboard.putNumber("LED Blue", 0);
+        SmartDashboard.putData("toggleVibe", toggleVibe());
     }
 
     public void setColor(Color m_color) {
@@ -57,10 +58,15 @@ public class LEDSubsystem extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        r = SmartDashboard.getNumber("LED Red", 0);
-        g = SmartDashboard.getNumber("LED Green", 0);
-        b = SmartDashboard.getNumber("LED Blue", 0);
-        setColor(r,g,b);
+        SmartDashboard.putBoolean("Vibing?", vibe);
+        if (vibe) {
+            vibing();
+        } else {
+            r = SmartDashboard.getNumber("LED Red", 0);
+            g = SmartDashboard.getNumber("LED Green", 0);
+            b = SmartDashboard.getNumber("LED Blue", 0);
+            setColor(r,g,b);
+        }
     }
 
     public Command TestRed() {
@@ -90,5 +96,9 @@ public class LEDSubsystem extends SubsystemBase {
         } else {
             return;
         }
+    }
+
+    public Command toggleVibe() {
+        return runOnce(() -> vibe = !vibe).ignoringDisable(true);
     }
 }
