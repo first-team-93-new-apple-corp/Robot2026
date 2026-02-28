@@ -13,10 +13,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public class Constants {
+    public class Shooter {
+        public static final Distance flyWheelDiameter = Inches.of(3.615);
+    }
     public class Swerve {
         public static final int[] modules = { 0, 1, 2, 3 };
         public static final int[] steerMotors = { 1, 2, 3, 4 };

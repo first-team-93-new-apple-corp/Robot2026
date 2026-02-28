@@ -1,9 +1,12 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.DistanceUnit;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 
 public class ShooterMath {
@@ -189,6 +192,9 @@ public class ShooterMath {
         
 
         return new Rotation2d(alignAngleMoving);
+    }
+    public static double speedToMotorRotations(double velocity) { // In rpm
+        return (velocity * 60*2)/(Math.PI*Meters.convertFrom(Constants.Shooter.flyWheelDiameter.magnitude(), Units.Inches));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
