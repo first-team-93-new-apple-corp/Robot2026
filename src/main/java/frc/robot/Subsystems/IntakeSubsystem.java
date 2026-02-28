@@ -1,11 +1,9 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -80,7 +78,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);
         m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
-
         // ** Intake Roller Config
         intakeRollerConfig = new TalonFXConfiguration();
         intakeRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -110,6 +107,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Angle getPivotPose() {
         return getPivotPoseRaw().div(IntakeConstants.gearBoxRatio);
     }
+
     public void setPivotPosition(Angle position) {
         if (position.lt(IntakeConstants.pivotDownPosition)) {
             position = IntakeConstants.pivotDownPosition;
@@ -123,6 +121,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean pivotAtSetpoint(Angle setpoint) {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValueAsDouble());
@@ -144,6 +143,10 @@ public class IntakeSubsystem extends SubsystemBase {
             return runOnce(() -> setRollerSpeed(IntakeConstants.outtakeSpeed));
         }
 
+        public Command idle() {
+            return runOnce(() -> setRollerSpeed(IntakeConstants.idleSpeed));
+        }
+
         public Command manPivotUp() {
             return runOnce(() -> setPivotSpeed(IntakeConstants.pivotUpSpeed));
         }
@@ -162,6 +165,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
         public Command autoPivotDown() {
             return runOnce(() -> setPivotPosition(IntakeConstants.pivotDownPosition));
+        }
+
+        public Command autoPivotMiddle() {
+            return runOnce(() -> setPivotPosition(IntakeConstants.pivotMiddlePosition));
         }
 
         public Command wigglePivot() {

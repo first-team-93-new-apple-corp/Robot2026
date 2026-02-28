@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Milliseconds;
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -22,6 +24,7 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+            addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
     }
 
     @Override

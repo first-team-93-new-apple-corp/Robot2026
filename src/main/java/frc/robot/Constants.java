@@ -1,12 +1,18 @@
 package frc.robot;
 
-import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Degrees;
 
+import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
@@ -19,35 +25,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
 
-    // public class Inputs {
-    // public class Cameras {
-    // public record Camera(String CamName, Transform3d camTransform) {
-    // }
-    //
-    // public static Camera FrontCam = new Camera("FrontCam",
-    // new Transform3d(new Translation3d(Inches.of(12.5), Inches.of(-11.125),
-    // Inches.of(11.25)),
-    // new Rotation3d(Degrees.of(0), Degrees.of(-10), Degrees.of(0))));
-    // public static Camera RearCam = new Camera("RearCam",
-    // new Transform3d(new Translation3d(Inches.of(-12.5), Inches.of(11.125),
-    // Inches.of(11.25)),
-    // new Rotation3d(Degrees.of(0), Degrees.of(20), Degrees.of(180))));
-    // public static Camera AlgaeCam = new Camera("AlgaeCam",
-    // new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5),
-    // Inches.of(10.75)),
-    // new Rotation3d(Degrees.of(0), Degrees.of(5), Degrees.of(0))));
-    // public static Camera AlgaeCam2 = new Camera("AlgaeCam2",
-    // new Transform3d(new Translation3d(Inches.of(13), Inches.of(9.5),
-    // Inches.of(9.5)),
-    // new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(0))));
-    // }
-    //
-    // public enum CameraPipeline {
-    // AprilTag,
-    // Coral
-    // }
-    //
-    // }
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
@@ -67,10 +44,19 @@ public class Constants {
 
     }
     public class CAN {
-        public static final int climber = 30;
+        public static final int climber = 25;
         public static final int intakeRoller = 9;
         public static final int intakePivot = 10;
         public static final int intakePivotEncoder = 11;
+        public static final int topLeftShooter = 12;
+        public static final int bottomLeftShooter = 13;
+        public static final int topRightShooter = 14;
+        public static final int bottomRightShooter = 15;
+        public static final int hoodEncoder = 16;
+        public static final int hoodMotor = 17;
+        public static final int kicker = 18;
+        public static final int manipRoller = 19;
+        public static final int manipIndexer = 20;
     }
 
     public class Thrustmaster {
@@ -189,6 +175,7 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 0.1;
         public static final double pivotkI = 0.0;
@@ -230,5 +217,41 @@ public class Constants {
             public static final double kickerSpeed = 1.0;
         }
     }
+public class Swerve {
+        public static final int[] modules = { 0, 1, 2, 3 };
+        public static final int[] steerMotors = { 1, 2, 3, 4 };
+        public static final int[] driveMotors = { 5, 6, 7, 8 };
+        public static final int[] canCoders = { 10, 11, 12, 13 };
 
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+    }
+
+    public class Controls {
+        public static final double Deadzone = 0.04;
+    }
+
+    public class Quest {
+        public static final Distance QuestX = Inches.of(15.5);
+        public static final Distance QuestY = Inches.of(-1.75);
+        public static final Distance QuestZ = Inches.of(20.5);
+
+        public static final Angle QuestYawOffset = Degrees.of(2.0);
+        public static final Angle QuestPitchOffset = Degrees.of(-1.5);
+        public static final Angle QuestRollOffset = Degrees.of(3.0);
+
+        public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
+                QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
+        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters), new Rotation2d(QuestYawOffset.in(Degrees)));
+
+        // public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.01, 0.01, 0.035);
+        public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
+    }
+
+    public class Auto {
+        public static final record AutoSector(Pose2d initPose, Pose2d finalPose) {
+        }
+
+        public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0), MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI), RadiansPerSecondPerSecond.of(Math.PI/2));
+    }
 }
