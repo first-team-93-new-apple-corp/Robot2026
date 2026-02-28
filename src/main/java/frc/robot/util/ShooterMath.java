@@ -1,15 +1,16 @@
 package frc.robot.util;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.*;
 
-import com.google.flatbuffers.Constants;
+
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Subsystems.auto.AutoConstants;
-
+import frc.robot.Constants;
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
     // Static hood angle
@@ -174,7 +175,7 @@ public class ShooterMath {
         double shooter_velocity = ShooterMath.calculateV(shooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);
         // double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
         // double nshooter_velocity = ShooterMath.calculateV(nshooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
-
+        AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
         double alignAngleMoving = ShooterMath.calculateAdjustment(velX, velY, shooter_velocity, alignAngle,shooter_angle);
         
         Angle driveTrainAngle = Radians.of(alignAngle);
@@ -192,7 +193,10 @@ public class ShooterMath {
         // }
         
 
-        return new ShootingData(new Rotation2d(alignAngleMoving), Radians.of(shooter_angle), RotationsPerSecond.of(shooter_velocity));
+        return new ShootingData(new Rotation2d(alignAngle), Radians.of(shooter_angle), rpm);
+    }
+    public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
+        return RotationsPerSecond.of((velocity * 60*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

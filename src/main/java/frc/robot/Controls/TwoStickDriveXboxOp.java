@@ -1,25 +1,25 @@
 package frc.robot.Controls;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
-public class TwoStickDriveXboxOp implements ControllerSchemeIO {
+public class TwoStickDriveXboxOp extends XboxDrive {
 
     public CommandJoystick LeftStick;
     public CommandJoystick RightStick;
     public CommandXboxController operatorController;
 
     public TwoStickDriveXboxOp(int LeftPort, int RightPort, int opPort) {
+        super(LeftPort, RightPort, opPort);
         LeftStick = new CommandJoystick(LeftPort);
         RightStick = new CommandJoystick(RightPort);
         operatorController = new CommandXboxController(opPort);
     }
 
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Controls.Deadzone) {
+        if (Math.abs(value) < Constants.Thrustmaster.Deadzone) {
             return 0.0;
         }
         return value;
@@ -41,51 +41,22 @@ public class TwoStickDriveXboxOp implements ControllerSchemeIO {
     }
 
     @Override
-    public Translation2d POV() {
-        return AngleToPOV(LeftStick.getHID().getPOV());
+    public Trigger brake() {
+        return RightStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
-    public Trigger Seed() {
-        return LeftStick.button(12);
+    public Trigger robotRel() {
+        return RightStick.button(Constants.Thrustmaster.Center_Button);
     }
 
     @Override
-    public Trigger Brake() {
-        return RightStick.trigger();
+    public Trigger primeShooter(){
+        return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
-    public Trigger Menu() {
-        return operatorController.start();
+    public Trigger seed(){
+        return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
     }
-
-    @Override
-    public Trigger Back() {
-        return operatorController.back();
-
-    }
-
-    @Override
-    public Trigger A() {
-        return operatorController.a();
-    }
-
-    @Override
-    public Trigger B() {
-        return operatorController.b();
-
-    }
-
-    @Override
-    public Trigger X() {
-        return operatorController.x();
-
-    }
-
-    @Override
-    public Trigger Y() {
-        return operatorController.y();
-    }
-
 }

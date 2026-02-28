@@ -3,16 +3,10 @@ package frc.robot.Controls;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.TunerConstants;
-
+import frc.robot.generated.TunerConstants;
 import static edu.wpi.first.units.Units.*;
 
-/**
- * The Interface that provides all the controlles of our robot
- *
- */
 public interface ControllerSchemeIO {
-
     public static double MaxSpeed = TunerConstants.kSpeedAt12Volts.baseUnitMagnitude();
     public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     public static double POVDistance = .45;
@@ -29,42 +23,59 @@ public interface ControllerSchemeIO {
             new Translation2d(POVDistanceDiagonal, POVDistanceDiagonal), // up left 8
 
     };
-
+    
     public double InputLeft();
 
     public double InputUp();
 
     public double InputTheta();
 
-    public Translation2d POV();
+    public Trigger Intake();
 
-    public Trigger Seed();
+    public Trigger Outtake();
 
-    public Trigger Brake();
+    public Trigger Shoot();
 
-    public Trigger Menu();
+    public Trigger manRetractClimber();
 
-    public Trigger Back();
+    public Trigger manExtendClimber();
 
-    public Trigger A();
+    public Trigger autoRetractClimber();
 
-    public Trigger B();
+    public Trigger autoExtendClimber();
 
-    public Trigger X();
+    public Trigger WiggleIntake();
 
-    public Trigger Y();
+    public Trigger LowerIntake();
 
+    public Trigger RaiseIntake();
+
+    public Trigger baseIntake();
+
+    public Trigger maxIntake();
+
+    public Trigger middleIntake();
+
+    public Trigger primeShooter();
+
+    public Trigger seed();
+
+    public Trigger brake();
+
+    public Trigger robotRel();
+
+    public Trigger resetClimberEncoder();
 
     public default double DriveLeft() {
-        return InputLeft();
+        return InputLeft() * MaxSpeed;
     }
 
     public default double DriveUp() {
-        return InputUp();
+        return InputUp() * MaxSpeed;
     }
 
     public default double DriveTheta() {
-        return InputTheta();
+        return InputTheta() * MaxAngularRate;
     }
 
     public default ChassisSpeeds Speeds() {

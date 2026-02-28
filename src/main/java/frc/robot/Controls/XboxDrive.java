@@ -1,6 +1,6 @@
 package frc.robot.Controls;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -8,13 +8,21 @@ import frc.robot.Constants;
 public class XboxDrive implements ControllerSchemeIO {
 
     public CommandXboxController Xbox;
+    public CommandJoystick LeftStick;
+    public CommandJoystick RightStick;
 
     public XboxDrive(int port) {
         Xbox = new CommandXboxController(port);
     }
 
+    public XboxDrive(int port, int port2, int opPort) {
+        Xbox = new CommandXboxController(opPort);
+        LeftStick = new CommandJoystick(port);
+        RightStick = new CommandJoystick(port2);
+    }
+
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Controls.Deadzone) {
+        if (Math.abs(value) < Constants.Thrustmaster.Deadzone) {
             return 0.0;
         }
         return value;
@@ -22,78 +30,110 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public double InputLeft() {
-        return deadzone(-Xbox.getLeftY()) * Constants.Swerve.MaxSpeed;
+        return deadzone(-Xbox.getLeftY());
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-Xbox.getLeftX()) * Constants.Swerve.MaxSpeed;
+        return deadzone(-Xbox.getLeftX());
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-Xbox.getRightX()) * Constants.Swerve.MaxAngularRate;
+        return deadzone(-Xbox.getRightX());
     }
 
-
-    public Trigger climbDown(){
-        return Xbox.rightStick();
+    @Override
+    public Trigger Intake() {
+        return Xbox.x();
     }
 
-    public Trigger climbUp(){
+    @Override
+    public Trigger Outtake() {
+        return Xbox.b();
+    }
+
+    @Override
+    public Trigger Shoot() {
+        return Xbox.rightTrigger();
+    }
+
+    @Override
+    public Trigger manRetractClimber() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'manRetractClimber'");
+    }
+
+    @Override
+    public Trigger manExtendClimber() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'manExtendClimber'");
+    }
+
+    @Override
+    public Trigger autoRetractClimber() {
         return Xbox.leftStick();
     }
 
     @Override
-    public Translation2d POV() {
-        switch (Xbox.getHID().getPOV()) {
-            case 0:
-                return POVs[1];
-            case 90:
-                return POVs[3];
-            case 180:
-                return POVs[5];
-            case 270:
-                return POVs[7];
-            default:
-                return POVs[0];
-        }
+    public Trigger autoExtendClimber() {
+        return Xbox.rightStick();
     }
 
     @Override
-    public Trigger Seed() {
-        return Xbox.leftBumper();
-    }
-
-    @Override
-    public Trigger Brake() {
+    public Trigger WiggleIntake() {
         return Xbox.rightBumper();
     }
 
     @Override
-    public Trigger Menu() {
-        return Xbox.start();
-    }
-    @Override
-    public Trigger Back() {
-        return Xbox.back();
-    }
-    @Override
-    public Trigger X() {
-        return Xbox.x();
-    }
-    @Override
-    public Trigger Y() {
-        return Xbox.y();
-    }
-    @Override
-    public Trigger A() {
+    public Trigger LowerIntake() {
         return Xbox.a();
     }
+
     @Override
-    public Trigger B() {
-        return Xbox.b();
+    public Trigger RaiseIntake() {
+        return Xbox.y();
     }
 
-   
+    @Override
+    public Trigger baseIntake() {
+        return Xbox.a();
+    }
+
+    @Override
+    public Trigger maxIntake() {
+        return Xbox.y();
+    }
+
+    @Override
+    public Trigger middleIntake() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'middleIntake'");
+    }
+
+    @Override
+    public Trigger primeShooter() {
+        return Xbox.leftTrigger();
+    }
+
+    @Override
+    public Trigger seed() {
+        return Xbox.leftBumper();
+    }
+
+    @Override
+    public Trigger brake() {
+        return Xbox.start();
+    }
+
+    @Override
+    public Trigger robotRel() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'robotRel'");
+    }
+
+    @Override
+    public Trigger resetClimberEncoder() {
+        return Xbox.back();
+    }
 }
