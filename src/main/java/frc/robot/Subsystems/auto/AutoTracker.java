@@ -17,7 +17,7 @@ public class AutoTracker extends SequentialCommandGroup {
         this.subsystems = subsystems;
     }
 
-    public AutoTracker(subsystems subsystems){
+    public AutoTracker(subsystems subsystems) {
         this(subsystems, new Pose2d());
     }
 
@@ -61,16 +61,19 @@ public class AutoTracker extends SequentialCommandGroup {
         return (subsystems.manipulation().commands.outtakeCommand());
     }
 
-    private double getDrivePoseX(){
+    private double getDrivePoseX() {
         return subsystems.drivetrain().getState().Pose.getX();
     }
-    private double getDrivePoseY(){
+
+    private double getDrivePoseY() {
         return subsystems.drivetrain().getState().Pose.getY();
     }
-    private double getDriveSpeedX(){
+
+    private double getDriveSpeedX() {
         return subsystems.drivetrain().getState().Speeds.vxMetersPerSecond;
     }
-    private double getDriveSpeedY(){
+
+    private double getDriveSpeedY() {
         return subsystems.drivetrain().getState().Speeds.vyMetersPerSecond;
     }
 
@@ -109,7 +112,6 @@ public class AutoTracker extends SequentialCommandGroup {
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
     }
 
-    @Deprecated
     public void shootWhilstGoingTo(Pose2d pose) {
         Command revShooter = Commands.none(); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(1));
@@ -123,14 +125,22 @@ public class AutoTracker extends SequentialCommandGroup {
     public void shootWhilstFollowing(PathPlannerPath path) {
         Command alignCommand = subsystems.drivetrain().commands.applyRequest(
                 () -> AutoConstants.driveFacingAngle.withTargetDirection(subsystems.shooter().getShootingData(
-                        getDrivePoseX(), 
+                        getDrivePoseX(),
                         getDrivePoseY(),
                         getDriveSpeedX(),
                         getDriveSpeedY()).drivetrainAngle()));
         Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        Command hoodAlign = Commands.none(); // TODO implement
-        Command rpmSet = Commands.none(); // TODO implement
-        Command masterShoot = alignCommand.alongWith(rpmSet).alongWith(hoodAlign); 
+        Command hoodAlign = subsystems.shooter().commands.autoAngle(subsystems.shooter().getShootingData(
+                getDrivePoseX(),
+                getDrivePoseY(),
+                getDriveSpeedX(),
+                getDriveSpeedY()).shooterAngle());
+        Command rpmSet = subsystems.shooter().commands.autoShoot(subsystems.shooter().getShootingData(
+                getDrivePoseX(),
+                getDrivePoseY(),
+                getDriveSpeedX(),
+                getDriveSpeedY()).shooterVelocity());
+        Command masterShoot = alignCommand.alongWith(rpmSet).alongWith(hoodAlign);
         ParallelRaceGroup race = pathFollowCmd.raceWith(masterShoot.repeatedly());
         addCommands(race);
     }

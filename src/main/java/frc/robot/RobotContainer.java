@@ -25,25 +25,30 @@ import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
-import frc.robot.util.ShooterMath;
 import frc.robot.util.subsystems;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
+                                                                                        // top
                                                                                         // speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
+                                                                                      // second
                                                                                       // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-            
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                     // motors
+
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-    .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-    .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a 10% deadband
-    .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
+                                                                                                   // 10%
+                                                                                                   // deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                     // motors
+
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -53,7 +58,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  // Network Tables
+    // Network Tables
     private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
     // Vision
@@ -72,70 +77,56 @@ public class RobotContainer {
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-
         configureBindings();
     }
 
     private void configureBindings() {
-
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.DriveLeft() * MaxSpeed) // Drive forward with
-                                                                                                  // negative Y
-                                                                                                  // (forward)
-                        .withVelocityY(-driver.DriveUp() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.DriveTheta() * MaxAngularRate) // Drive counterclockwise with
-                                                                                   // negative X (left)
-                ));
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX(-driver.DriveLeft() * MaxSpeed)
+                        .withVelocityY(-driver.DriveUp() * MaxSpeed)
+                        .withRotationalRate(-driver.DriveTheta() * MaxAngularRate)));
 
-        
-        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP, Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
-        // driver.Shoot().whileTrue(drivetrain.commands.applyRequest(
-        // () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(drivetrain.getState().Pose.getX()
-        // , drivetrain.getState().Pose.getY()
-        // , drivetrain.getState().Speeds.vxMetersPerSecond
-        // ,drivetrain.getState().Speeds.vyMetersPerSecond).drivetrainAngle())
-        // .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
-        // .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
+        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
+                Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
         // Auto Shoot
         driver.Shoot()
-            .whileTrue(shooter.commands
-                .autoShoot(shooter
-                .getShootingData(drivetrain.getState().Pose.getX()
-                ,drivetrain.getState().Pose.getY()
-                ,drivetrain.getState().Speeds.vxMetersPerSecond
-                ,drivetrain.getState().Speeds.vyMetersPerSecond).shooterVelocity()));
+                .whileTrue(shooter.commands
+                        .autoShoot(shooter
+                                .getShootingData(drivetrain.getState().Pose.getX(),
+                                        drivetrain.getState().Pose.getY(),
+                                        drivetrain.getState().Speeds.vxMetersPerSecond,
+                                        drivetrain.getState().Speeds.vyMetersPerSecond)
+                                .shooterVelocity()));
         // Shoot with constant values
         driver.Shoot()
-            .whileTrue(shooter.commands
-                .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed));
-        driver.Shoot()
-            .whileTrue(shooter.commands
-                .autoAngle(Constants.ShooterConstants.ShooterMotorConfigs.hoodAngle));
+                .whileTrue(shooter.commands
+                        .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
+                                Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
+                        .alongWith(shooter.commands
+                                .autoAngle(Constants.ShooterConstants.ShooterMotorConfigs.hoodAngle)));
 
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
         driver.brake().whileTrue(drivetrain
-                .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
+                .applyRequest(() -> point.withModuleDirection(
+                        new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-        driver.Intake().onTrue(manipulation.commands.intakeCommand());
-        driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
-        driver.Intake().and(driver.Outtake()).onFalse(manipulation.commands.idleCommand());
+        driver.Intake().onTrue(intake.commands.intake().alongWith(manipulation.commands.intakeCommand()));
+        driver.Outtake().onTrue(intake.commands.outtake().alongWith(manipulation.commands.outtakeCommand()));
+        driver.Intake().and(driver.Outtake())
+                .onFalse(intake.commands.idle().alongWith(manipulation.commands.idleCommand()));
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        // Climber
         driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
-
         driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
         driver.manExtendClimber().onTrue(climber.commands.manualExtend());
         driver.manExtendClimber().onFalse(climber.commands.Stop());
@@ -160,7 +151,7 @@ public class RobotContainer {
                 drivetrain.applyRequest(() -> idle));
     }
 
-     public void visionPeriodic() {
+    public void visionPeriodic() {
         questNav.visionPeriodic();
     }
 
