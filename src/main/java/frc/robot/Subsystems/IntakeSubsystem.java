@@ -101,11 +101,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Angle getPivotPoseRaw() {
-        return pivotEncoder.getAbsolutePosition().getValue().minus(IntakeConstants.encoderOffset);
+        return pivotEncoder.getAbsolutePosition().getValue();
     }
 
     public Angle getPivotPose() {
-        return getPivotPoseRaw().div(IntakeConstants.gearBoxRatio);
+        return getPivotPoseRaw();
     }
 
     public void setPivotPosition(Angle position) {
@@ -114,7 +114,7 @@ public class IntakeSubsystem extends SubsystemBase {
         } else if (position.gt(IntakeConstants.pivotUpPosition)) {
             position = IntakeConstants.pivotUpPosition;
         }
-        lastSetpoint = position.times(IntakeConstants.gearBoxRatio);
+        lastSetpoint = position;
         intakePivotMotor.setControl(m_request.withPosition(lastSetpoint));
     }
 

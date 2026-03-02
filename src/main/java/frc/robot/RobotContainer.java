@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -59,22 +60,22 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
     // Vision
     // * Quest
-    private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
+    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
 
     // Subsystems
     // * Shooter
-    private ClimberSubsystem climber = new ClimberSubsystem();
-    private IntakeSubsystem intake = new IntakeSubsystem();
-    private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    // private ClimberSubsystem climber = new ClimberSubsystem();
+    // private IntakeSubsystem intake = new IntakeSubsystem();
+    // private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, questNav, shooter, climber, intake, manipulation);
-    private AutoDirector auto = new AutoDirector(subsystems);
+//     private subsystems subsystems = new subsystems(drivetrain, questNav, shooter, climber, intake, manipulation);
+//     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
         configureBindings();
@@ -90,22 +91,23 @@ public class RobotContainer {
         driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
-        // Auto Shoot
-        driver.Shoot()
-                .whileTrue(shooter.commands
-                        .autoShoot(shooter
-                                .getShootingData(drivetrain.getState().Pose.getX(),
-                                        drivetrain.getState().Pose.getY(),
-                                        drivetrain.getState().Speeds.vxMetersPerSecond,
-                                        drivetrain.getState().Speeds.vyMetersPerSecond)
-                                .shooterVelocity()));
-        // Shoot with constant values
+        // // Auto Shoot
+        // driver.Shoot()
+        //         .whileTrue(shooter.commands
+        //                 .autoShoot(shooter
+        //                         .getShootingData(drivetrain.getState().Pose.getX(),
+        //                                 drivetrain.getState().Pose.getY(),
+        //                                 drivetrain.getState().Speeds.vxMetersPerSecond,
+        //                                 drivetrain.getState().Speeds.vyMetersPerSecond)
+        //                         .shooterVelocity()));
+        // // Shoot with constant values
         driver.Shoot()
                 .whileTrue(shooter.commands
                         .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
                                 Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
                         .alongWith(shooter.commands
                                 .autoAngle(Constants.ShooterConstants.ShooterMotorConfigs.hoodAngle)));
+        driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
@@ -116,23 +118,28 @@ public class RobotContainer {
                 .applyRequest(() -> point.withModuleDirection(
                         new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-        driver.Intake().onTrue(intake.commands.intake().alongWith(manipulation.commands.intakeCommand()));
-        driver.Outtake().onTrue(intake.commands.outtake().alongWith(manipulation.commands.outtakeCommand()));
-        driver.Intake().and(driver.Outtake())
-                .onFalse(intake.commands.idle().alongWith(manipulation.commands.idleCommand()));
+        // driver.Intake().onTrue(intake.commands.intake().alongWith(manipulation.commands.intakeCommand()));
+        // driver.Outtake().onTrue(intake.commands.outtake().alongWith(manipulation.commands.outtakeCommand()));
+        // driver.Intake().and(driver.Outtake())
+        //         .onFalse(intake.commands.idle().alongWith(manipulation.commands.idleCommand()));
+
+        // driver.Intake().onTrue(manipulation.commands.intakeCommand());
+        // driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
+        // driver.Intake().and(driver.Outtake())
+        //         .onFalse(manipulation.commands.idleCommand());
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Climber
-        driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
-        driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
-        driver.manExtendClimber().onTrue(climber.commands.manualExtend());
-        driver.manExtendClimber().onFalse(climber.commands.Stop());
-        driver.manRetractClimber().onTrue(climber.commands.manualRetract());
-        driver.manRetractClimber().onFalse(climber.commands.Stop());
-        driver.resetClimberEncoder().onTrue(climber.commands.resetEncoder());
+        // driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
+        // driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
+        // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
+        // driver.manExtendClimber().onFalse(climber.commands.Stop());
+        // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
+        // driver.manRetractClimber().onFalse(climber.commands.Stop());
+        // driver.resetClimberEncoder().onTrue(climber.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {
@@ -152,7 +159,7 @@ public class RobotContainer {
     }
 
     public void visionPeriodic() {
-        questNav.visionPeriodic();
+        // questNav.visionPeriodic();
     }
 
     public Command seed() {

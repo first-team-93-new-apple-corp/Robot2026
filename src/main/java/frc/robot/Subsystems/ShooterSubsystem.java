@@ -1,13 +1,20 @@
 package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants;
@@ -38,7 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
 
-    private StrictFollower follower;
+    private Follower leftFollower;
+    private Follower rightFollower;
 
     private Slot0Configs shooterSlot0Configs;
 
@@ -59,6 +67,11 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
         allShooterConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
+        allShooterConfig.Feedback.RotorToSensorRatio = 1;
+        allShooterConfig.Feedback.SensorToMechanismRatio = 1.25;
+        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.25;
+        allShooterConfig.MotionMagic.MotionMagicAcceleration = 100;
+        allShooterConfig.MotionMagic.MotionMagicJerk = 100;
 
         shooterSlot0Configs = new Slot0Configs();
 
@@ -67,15 +80,13 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterSlot0Configs.kP = ShooterMotorConfigs.kP; 
         shooterSlot0Configs.kI = ShooterMotorConfigs.kI; 
         shooterSlot0Configs.kD = ShooterMotorConfigs.kD; 
-        topLeftShooter.getConfigurator().apply(shooterSlot0Configs);
-        topRightShooter.getConfigurator().apply(shooterSlot0Configs);
-        bottomLeftShooter.getConfigurator().apply(shooterSlot0Configs);
-        bottomRightShooter.getConfigurator().apply(shooterSlot0Configs);
 
-        follower = new StrictFollower(CAN.topLeftShooter);
-        bottomLeftShooter.setControl(follower.withLeaderID(CAN.topLeftShooter));
-        follower = new StrictFollower(CAN.topRightShooter);
-        bottomRightShooter.setControl(follower.withLeaderID(CAN.topRightShooter));
+        allShooterConfig.Slot0 = shooterSlot0Configs;
+
+        leftFollower = new Follower(CAN.topLeftShooter, MotorAlignmentValue.Opposed);
+        bottomLeftShooter.setControl(leftFollower.withLeaderID(CAN.topLeftShooter));
+        rightFollower = new Follower(CAN.topRightShooter, MotorAlignmentValue.Opposed);
+        bottomRightShooter.setControl(rightFollower.withLeaderID(CAN.topRightShooter));
 
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
@@ -95,9 +106,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodSlot0Configs.kP = HoodMotorConfigs.kP; 
         hoodSlot0Configs.kI = HoodMotorConfigs.kI; 
-        hoodSlot0Configs.kD = HoodMotorConfigs.kD; 
+        hoodSlot0Configs.kD = HoodMotorConfigs.kD;
+        hoodSlot0Configs.kS = HoodMotorConfigs.kS; 
 
-        hoodMotor.getConfigurator().apply(hoodSlot0Configs);
+        hoodConfig.Slot0 = hoodSlot0Configs;
+
+        hoodConfig.Feedback.FeedbackRemoteSensorID = CAN.hoodEncoder;
+        hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        hoodConfig.Feedback.RotorToSensorRatio = 2;
+        hoodConfig.Feedback.SensorToMechanismRatio = (360/20) * 0.75;
+
+        hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+
         hoodMotor.getConfigurator().apply(hoodConfig);
     }
 
@@ -130,20 +151,15 @@ public class ShooterSubsystem extends SubsystemBase {
         setRightShooterVelocity(rightVelocity);
     }
     public void setHoodAngle(Angle angle) {
-        PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+        MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
         hoodMotor.setControl(m_request.withPosition(angle));
     }
-
-
-
-
 
     public class ShooterCommands{
         public ShooterCommands(){
             
         }
 
-        
         public Command autoShoot(AngularVelocity calculatedVelocity) {
             return Commands.runOnce(()->{
                 setMasterVelocity(calculatedVelocity);

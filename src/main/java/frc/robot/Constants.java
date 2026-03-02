@@ -193,8 +193,6 @@ public class Constants {
         public static final Angle pivotDownPosition = Degrees.of(135);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
         public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
-        public static final double gearBoxRatio = 9; // 9:1 for torque
-        public static final double chainRatio = 1; // 1:1
     } 
 
     public static class ManipulationConstants {
@@ -229,25 +227,24 @@ public class Constants {
             public static final double SupplyLimit = 30.0;
             public static final boolean StatorLimitEnable = true;
             public static final boolean SupplyLimitEnable = true;
-            public static final double kS = 0.1;
-            public static final double kV = 0.1;
-            public static final double kP = 0.1;
+            public static final double kS = 0;
+            public static final double kV = 0;
+            public static final double kP = 0.75;
             public static final double kI = 0;
             public static final double kD = 0;
-            public static final AngularVelocity leftSpeed = RotationsPerSecond.of(10);
-            public static final AngularVelocity rightSpeed = RotationsPerSecond.of(10);
-            public static final Angle hoodAngle = Degrees.of(45);
+            public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
+            public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
+            public static final Angle hoodAngle = Degrees.of(0);
         }
         public class HoodMotorConfigs {
-            // TODO: get from motor config file (main)
-            public static final double StatorLimit = 80.0;
+            public static final double StatorLimit = 40.0;
             public static final double SupplyLimit = 30.0;
             public static final boolean StatorLimitEnable = true;
             public static final boolean SupplyLimitEnable = true;
-            public static final double kS = 0.1;
-            public static final double kV = 0.1;
-            public static final double kP = 0.1;
-            public static final double kI = 0;
+            public static final double kS = 0.3;
+            public static final double kV = 0;
+            public static final double kP = 20;
+            public static final double kI = 1.5;
             public static final double kD = 0;
         }
     }
