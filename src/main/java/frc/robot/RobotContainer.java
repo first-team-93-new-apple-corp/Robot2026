@@ -9,24 +9,15 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
-import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
-import frc.robot.Subsystems.IntakeSubsystem;
-import frc.robot.Subsystems.ManipulationSubsystem;
-import frc.robot.Subsystems.QuestNavSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
-import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.NTSubsystem;
-import frc.robot.util.subsystems;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
@@ -106,7 +97,7 @@ public class RobotContainer {
                         .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
                                 Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
                         .alongWith(shooter.commands
-                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.baseHoodAngle)));
+                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.minAngle)));
         driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
 
         final var idle = new SwerveRequest.Idle();

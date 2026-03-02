@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
@@ -247,7 +246,9 @@ public class Constants {
             public static final double kP = 20;
             public static final double kI = 1.5;
             public static final double kD = 0;
-            public static final Angle baseHoodAngle = Degrees.of(0);
+            public static final double gearRatio = 2.0; // Reduction
+            public static final Angle minAngle = Degrees.of(0);
+            public static final Angle maxAngle = Degrees.of(40);
         }
     }
 public class Swerve {

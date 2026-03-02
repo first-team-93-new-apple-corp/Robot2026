@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
 public class AutoTracker extends SequentialCommandGroup {
@@ -123,25 +124,21 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void shootWhilstFollowing(PathPlannerPath path) {
-        Command alignCommand = subsystems.drivetrain().commands.applyRequest(
-                () -> AutoConstants.driveFacingAngle.withTargetDirection(subsystems.shooter().getShootingData(
-                        getDrivePoseX(),
-                        getDrivePoseY(),
-                        getDriveSpeedX(),
-                        getDriveSpeedY()).drivetrainAngle()));
+        Command alignCmd = subsystems.drivetrain().commands.applyRequest(
+                () -> AutoConstants.driveFacingAngle
+                        .withTargetDirection(subsystems.shooter().getShootingData().drivetrainAngle()));
         Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        Command hoodAlign = subsystems.shooter().commands.autoAngle(subsystems.shooter().getShootingData(
-                getDrivePoseX(),
-                getDrivePoseY(),
-                getDriveSpeedX(),
-                getDriveSpeedY()).shooterAngle());
-        Command rpmSet = subsystems.shooter().commands.autoShoot(subsystems.shooter().getShootingData(
-                getDrivePoseX(),
-                getDrivePoseY(),
-                getDriveSpeedX(),
-                getDriveSpeedY()).shooterVelocity());
-        Command masterShoot = alignCommand.alongWith(rpmSet).alongWith(hoodAlign);
-        ParallelRaceGroup race = pathFollowCmd.raceWith(masterShoot.repeatedly());
-        addCommands(race);
+        Command hoodCmd = subsystems.shooter().commands
+                .autoAngle(subsystems.shooter().getShootingData().shooterAngle());
+        Command velocityCmd = subsystems.shooter().commands
+                .autoShoot(subsystems.shooter().getShootingData().shooterVelocity());
+        Command masterShootCmd = alignCmd.alongWith(velocityCmd).alongWith(hoodCmd);
+        ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(masterShootCmd.repeatedly());
+        addCommands(raceCmd);
+    }
+
+    public ShootingData getShootingData() {
+        return subsystems.shooter().getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+                getDriveSpeedY());
     }
 }

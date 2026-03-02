@@ -1,15 +1,13 @@
 package frc.robot.Subsystems;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -17,11 +15,12 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.util.ShooterMath;
+import frc.robot.util.ShootingData;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -29,8 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.ShooterMath;
-import frc.robot.util.ShootingData;
+
 
 public class ShooterSubsystem extends SubsystemBase {
     public ShooterCommands commands;
@@ -43,7 +41,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX bottomRightShooter;
 
     private TalonFX hoodMotor;
-    
+
+    private CANcoder hoodEncoder;
+
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
 
@@ -56,9 +56,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private DigitalInput hoodLimitSwitch;
 
-    // private PIDController leftShooterPID = new PIDController(Constants.ShooterConstants.ShooterPID_P, Constants.ShooterConstants.ShooterPID_I, Constants.ShooterConstants.ShooterPID_D);
+    private Angle lastSetpoint;
 
-    public ShooterSubsystem(){
+    private final MotionMagicVelocityVoltage m_velRequest;
+
+    private final MotionMagicVoltage m_volRequest;
+
+    // private PIDController leftShooterPID = new
+    // PIDController(Constants.ShooterConstants.ShooterPID_P,
+    // Constants.ShooterConstants.ShooterPID_I,
+    // Constants.ShooterConstants.ShooterPID_D);
+
+    public ShooterSubsystem() {
         commands = new ShooterCommands();
         topLeftShooter = new TalonFX(Constants.CAN.topLeftShooter);
         topRightShooter = new TalonFX(Constants.CAN.topRightShooter);
@@ -66,6 +75,9 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomRightShooter = new TalonFX(Constants.CAN.bottomRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
+
+        m_velRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
+        m_volRequest = new MotionMagicVoltage(0).withSlot(0);
 
         allShooterConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
         allShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
@@ -80,10 +92,10 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterSlot0Configs = new Slot0Configs();
 
         shooterSlot0Configs.kS = ShooterMotorConfigs.kS;
-        shooterSlot0Configs.kV = ShooterMotorConfigs.kV; 
-        shooterSlot0Configs.kP = ShooterMotorConfigs.kP; 
-        shooterSlot0Configs.kI = ShooterMotorConfigs.kI; 
-        shooterSlot0Configs.kD = ShooterMotorConfigs.kD; 
+        shooterSlot0Configs.kV = ShooterMotorConfigs.kV;
+        shooterSlot0Configs.kP = ShooterMotorConfigs.kP;
+        shooterSlot0Configs.kI = ShooterMotorConfigs.kI;
+        shooterSlot0Configs.kD = ShooterMotorConfigs.kD;
 
         allShooterConfig.Slot0 = shooterSlot0Configs;
 
@@ -99,6 +111,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
 
+        hoodEncoder = new CANcoder(Constants.CAN.hoodEncoder);
+
         hoodConfig = new TalonFXConfiguration();
 
         hoodConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
@@ -108,96 +122,126 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodSlot0Configs = new Slot0Configs();
 
-        hoodSlot0Configs.kP = HoodMotorConfigs.kP; 
-        hoodSlot0Configs.kI = HoodMotorConfigs.kI; 
+        hoodSlot0Configs.kP = HoodMotorConfigs.kP;
+        hoodSlot0Configs.kI = HoodMotorConfigs.kI;
         hoodSlot0Configs.kD = HoodMotorConfigs.kD;
-        hoodSlot0Configs.kS = HoodMotorConfigs.kS; 
+        hoodSlot0Configs.kS = HoodMotorConfigs.kS;
 
         hoodConfig.Slot0 = hoodSlot0Configs;
 
         hoodConfig.Feedback.FeedbackRemoteSensorID = CAN.hoodEncoder;
         hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         hoodConfig.Feedback.RotorToSensorRatio = 2;
-        hoodConfig.Feedback.SensorToMechanismRatio = (360/20) * 0.75;
+        hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
 
         hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
 
         hoodMotor.getConfigurator().apply(hoodConfig);
 
         hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
+
+        lastSetpoint = Rotations.of(0);
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
-        if (getHoodLimit()){
-            hoodMotor.setPosition(HoodMotorConfigs.baseHoodAngle);
+        if (getHoodLimit()) {
+            hoodMotor.setPosition(HoodMotorConfigs.minAngle);
         }
+        SmartDashboard.putNumber("HoodPosition", hoodMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
     }
 
-    public boolean getHoodLimit(){
+    public boolean getHoodLimit() {
         return !hoodLimitSwitch.get();
     }
 
-    public void resetHood(){
-        hoodMotor.setPosition(HoodMotorConfigs.baseHoodAngle);
+    public void resetHood() {
+        hoodMotor.setPosition(HoodMotorConfigs.minAngle);
     }
 
-    public ShootingData getShootingData(double poseX, double poseY, double velX, double velY){
+    public ShootingData getShootingData(double poseX, double poseY, double velX, double velY) {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
         return data;
     }
 
-    public ShootingData getShootingData(){
+    public ShootingData getShootingData() {
         return data;
     }
 
-    public void setLeftShooterVelocity(AngularVelocity velocity){
-        VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-        topLeftShooter.setControl(m_request.withVelocity(velocity.in(RotationsPerSecond)));
+    public void setLeftShooterVelocity(AngularVelocity velocity) {
+        topLeftShooter.setControl(m_velRequest.withVelocity(velocity.in(RotationsPerSecond)));
     }
 
-    public void setRightShooterVelocity(AngularVelocity velocity){
-         VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-         topRightShooter.setControl(m_request.withVelocity(velocity.in(RotationsPerSecond)));
+    public void setRightShooterVelocity(AngularVelocity velocity) {
+        topRightShooter.setControl(m_velRequest.withVelocity(velocity.in(RotationsPerSecond)));
     }
 
-    public void setMasterVelocity(AngularVelocity velocity){
+    public void setMasterVelocity(AngularVelocity velocity) {
         setLeftShooterVelocity(velocity);
         setRightShooterVelocity(velocity);
     }
-    
-    public void setMasterVelocity(AngularVelocity leftVelocity, AngularVelocity rightVelocity){
+
+    public void setMasterVelocity(AngularVelocity leftVelocity, AngularVelocity rightVelocity) {
         setLeftShooterVelocity(leftVelocity);
         setRightShooterVelocity(rightVelocity);
     }
-    public void setHoodAngle(Angle angle) {
-        MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
-        hoodMotor.setControl(m_request.withPosition(angle.div(2)));
+    // public void setHoodAngle(Angle angle) {
+    // MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
+    // hoodMotor.setControl(m_request.withPosition(angle.div(2)));
+    // }
+
+    public boolean atSetpoint() {
+        return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
-    public class ShooterCommands{
-        public ShooterCommands(){
-            
-        }
+    public Angle getHoodPoseRaw() {
+        return hoodEncoder.getAbsolutePosition().getValue();
+    }
 
+    public Angle getHoodPose() {
+        return getHoodPoseRaw();
+    }
+
+    public void setHoodPosition(Angle position) {
+        if (position.lt(IntakeConstants.pivotDownPosition)) {
+            position = IntakeConstants.pivotDownPosition;
+        } else if (position.gt(IntakeConstants.pivotUpPosition)) {
+            position = IntakeConstants.pivotUpPosition;
+        }
+        lastSetpoint = position;
+        hoodMotor.setControl(m_volRequest.withPosition(lastSetpoint));
+    }
+
+    public boolean pivotAtSetpoint(Angle setpoint) {
+        return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Degrees.of(1));
+    }
+
+    public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
-            return Commands.runOnce(()->{
+            return Commands.runOnce(() -> {
                 setMasterVelocity(calculatedVelocity);
             });
         }
 
         public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
-            return Commands.runOnce(()->{
+            return Commands.runOnce(() -> {
                 setMasterVelocity(calculatedLeftVelocity, calculatedRightVelocity);
             });
         }
 
         public Command autoAngle(Angle calculatedAngle) {
-            return Commands.runOnce(()->setHoodAngle(calculatedAngle));
+            return Commands.runOnce(() -> setHoodPosition(calculatedAngle));
+        }
+
+        public Command stopSHooter() {
+            return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(0)));
+        }
+
+        public Command stopHood() {
+            return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPose())));
         }
     }
-       
-}
 
+}
