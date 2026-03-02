@@ -14,4 +14,8 @@ public record subsystems(
     ClimberSubsystem climber,
     IntakeSubsystem intake,
     ManipulationSubsystem manipulation
-) {}
+) {
+    public subsystems(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, ClimberSubsystem climber, IntakeSubsystem intake, ManipulationSubsystem manipulation) {
+        this(drivetrain, null, shooter, climber, intake, manipulation);
+    }
+}

@@ -15,9 +15,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
+import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.subsystems;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
@@ -59,13 +63,13 @@ public class RobotContainer {
 
     // Subsystems
     // * Shooter
-    // private ClimberSubsystem climber = new ClimberSubsystem();
-    // private IntakeSubsystem intake = new IntakeSubsystem();
-    // private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    private ClimberSubsystem climber = new ClimberSubsystem();
+    private IntakeSubsystem intake = new IntakeSubsystem();
+    private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-//     private subsystems subsystems = new subsystems(drivetrain, questNav, shooter, climber, intake, manipulation);
+    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
 //     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -91,14 +95,7 @@ public class RobotContainer {
         //                                 drivetrain.getState().Speeds.vxMetersPerSecond,
         //                                 drivetrain.getState().Speeds.vyMetersPerSecond)
         //                         .shooterVelocity()));
-        // // Shoot with constant values
-        driver.Shoot()
-                .whileTrue(shooter.commands
-                        .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
-                                Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
-                        .alongWith(shooter.commands
-                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.minAngle)));
-        driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+        
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
@@ -123,9 +120,34 @@ public class RobotContainer {
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        //Shooter
+        driver.Shoot()
+                .onTrue(shooter.commands
+                        .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
+                                Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
+                        .alongWith(shooter.commands
+                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.minAngle)));
+        driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+
+        //Manipulation
+        driver.Intake().onTrue(manipulation.commands.intakeCommand());
+        driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
+        driver.Intake().or(driver.Outtake())
+                .onFalse(manipulation.commands.idleCommand());
+
+        //Intake
+        driver.Intake().onTrue(intake.commands.intake());
+        driver.Outtake().onTrue(intake.commands.outtake());
+        driver.Intake().or(driver.Outtake())
+                .onFalse(intake.commands.idle());
+        driver.baseIntake().onTrue(intake.commands.autoPivotDown());
+        driver.maxIntake().onTrue(intake.commands.autoPivotUp());
+        driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
+
         // Climber
-        // driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
-        // driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
+        driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
+        driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
+        
         // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
         // driver.manExtendClimber().onFalse(climber.commands.Stop());
         // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
