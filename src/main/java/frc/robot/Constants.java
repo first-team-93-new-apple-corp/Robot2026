@@ -47,6 +47,7 @@ public class Constants {
         }
     }
     public class CAN {
+        public static final int hoodLimitSwitch = 8;
         public static final int climber = 25;
         public static final int intakeRoller = 9;
         public static final int intakePivot = 10;
@@ -230,11 +231,11 @@ public class Constants {
             public static final double kS = 0;
             public static final double kV = 0;
             public static final double kP = 0.75;
-            public static final double kI = 0;
+            public static final double kI = 0.01;
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
-            public static final Angle hoodAngle = Degrees.of(0);
+            
         }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 40.0;
@@ -246,6 +247,7 @@ public class Constants {
             public static final double kP = 20;
             public static final double kI = 1.5;
             public static final double kD = 0;
+            public static final Angle baseHoodAngle = Degrees.of(0);
         }
     }
 public class Swerve {

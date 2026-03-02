@@ -24,6 +24,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,6 +53,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private Slot0Configs shooterSlot0Configs;
 
     private Slot0Configs hoodSlot0Configs;
+
+    private DigitalInput hoodLimitSwitch;
 
     // private PIDController leftShooterPID = new PIDController(Constants.ShooterConstants.ShooterPID_P, Constants.ShooterConstants.ShooterPID_I, Constants.ShooterConstants.ShooterPID_D);
 
@@ -120,6 +124,24 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
         hoodMotor.getConfigurator().apply(hoodConfig);
+
+        hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
+    }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
+        if (getHoodLimit()){
+            hoodMotor.setPosition(HoodMotorConfigs.baseHoodAngle);
+        }
+    }
+
+    public boolean getHoodLimit(){
+        return !hoodLimitSwitch.get();
+    }
+
+    public void resetHood(){
+        hoodMotor.setPosition(HoodMotorConfigs.baseHoodAngle);
     }
 
     public ShootingData getShootingData(double poseX, double poseY, double velX, double velY){
@@ -152,7 +174,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     public void setHoodAngle(Angle angle) {
         MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
-        hoodMotor.setControl(m_request.withPosition(angle));
+        hoodMotor.setControl(m_request.withPosition(angle.div(2)));
     }
 
     public class ShooterCommands{

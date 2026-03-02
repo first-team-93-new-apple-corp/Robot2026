@@ -106,7 +106,7 @@ public class RobotContainer {
                         .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
                                 Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
                         .alongWith(shooter.commands
-                                .autoAngle(Constants.ShooterConstants.ShooterMotorConfigs.hoodAngle)));
+                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.baseHoodAngle)));
         driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
 
         final var idle = new SwerveRequest.Idle();
