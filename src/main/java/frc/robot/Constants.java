@@ -243,12 +243,12 @@ public class Constants {
             public static final boolean SupplyLimitEnable = true;
             public static final double kS = 0.3;
             public static final double kV = 0;
-            public static final double kP = 20;
-            public static final double kI = 1.5;
+            public static final double kP = 30;
+            public static final double kI = 5;
             public static final double kD = 0;
             public static final double gearRatio = 2.0; // Reduction
             public static final Angle minAngle = Degrees.of(0);
-            public static final Angle maxAngle = Degrees.of(40);
+            public static final Angle maxAngle = Degrees.of(20);
         }
     }
 public class Swerve {

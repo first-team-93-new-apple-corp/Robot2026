@@ -24,6 +24,7 @@ import frc.robot.util.ShootingData;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -134,6 +135,12 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodConfig.Feedback.RotorToSensorRatio = 2;
         hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
 
+        hoodConfig.MotionMagic.MotionMagicAcceleration = 80;
+        hoodConfig.MotionMagic.MotionMagicJerk = 160;
+        hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
+        hoodConfig.MotionMagic.MotionMagicExpo_kV = 0.01;
+        hoodConfig.MotionMagic.MotionMagicExpo_kA = 0.01;
+
         hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         hoodMotor.getConfigurator().apply(hoodConfig);
@@ -146,15 +153,18 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
-        if (getHoodLimit()) {
-            hoodMotor.setPosition(HoodMotorConfigs.minAngle);
-        }
-        SmartDashboard.putNumber("HoodPosition", hoodMotor.getPosition().getValueAsDouble());
+        // if (getHoodLimit()) {
+        //     hoodMotor.setPosition(HoodMotorConfigs.minAngle);
+        // }
+        SmartDashboard.putNumber("HoodPosition", hoodMotor.getPosition().getValueAsDouble()*360);
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
+        SmartDashboard.putNumber("Motor Error", hoodMotor.getClosedLoopError().getValueAsDouble()*360);
+        SmartDashboard.putNumber("Motor Setpoint", hoodMotor.getClosedLoopReference().getValueAsDouble()*360);
+
     }
 
     public boolean getHoodLimit() {
-        return !hoodLimitSwitch.get();
+        return hoodLimitSwitch.get();
     }
 
     public void resetHood() {
@@ -203,15 +213,21 @@ public class ShooterSubsystem extends SubsystemBase {
     public Angle getHoodPose() {
         return getHoodPoseRaw();
     }
+    public TalonFX getHood() {
+        return hoodMotor;
+    }
+    public MotionMagicVoltage getMMHood() {
+        return m_volRequest;
+    }
 
     public void setHoodPosition(Angle position) {
-        if (position.lt(IntakeConstants.pivotDownPosition)) {
-            position = IntakeConstants.pivotDownPosition;
-        } else if (position.gt(IntakeConstants.pivotUpPosition)) {
-            position = IntakeConstants.pivotUpPosition;
-        }
+        // if (position.lt(HoodMotorConfigs.minAngle)) {
+        //     position = HoodMotorConfigs.minAngle;
+        // } else if (position.gt(HoodMotorConfigs.maxAngle)) {
+        //     position =HoodMotorConfigs.maxAngle;
+        // }
         lastSetpoint = position;
-        hoodMotor.setControl(m_volRequest.withPosition(lastSetpoint));
+        hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
     }
 
     public boolean pivotAtSetpoint(Angle setpoint) {
@@ -235,7 +251,7 @@ public class ShooterSubsystem extends SubsystemBase {
             return Commands.runOnce(() -> setHoodPosition(calculatedAngle));
         }
 
-        public Command stopSHooter() {
+        public Command stopShooter() {
             return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(0)));
         }
 

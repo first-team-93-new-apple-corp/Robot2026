@@ -24,12 +24,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.subsystems;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
-                                                                                        // top
-                                                                                        // speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
-                                                                                      // second
-                                                                                      // max angular velocity
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -64,12 +60,12 @@ public class RobotContainer {
     // Subsystems
     // * Shooter
     private ClimberSubsystem climber = new ClimberSubsystem();
-    private IntakeSubsystem intake = new IntakeSubsystem();
-    private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    // private IntakeSubsystem intake = new IntakeSubsystem();
+    // private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
+    // private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
 //     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -121,28 +117,24 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //Shooter
-        driver.Shoot()
-                .onTrue(shooter.commands
-                        .autoShoot(Constants.ShooterConstants.ShooterMotorConfigs.leftSpeed,
-                                Constants.ShooterConstants.ShooterMotorConfigs.rightSpeed)
-                        .alongWith(shooter.commands
-                                .autoAngle(Constants.ShooterConstants.HoodMotorConfigs.minAngle)));
-        driver.Shoot().onFalse(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(20)));
+        driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(0)));
+        // driver.Shoot().onTrue(Commands.runOnce(() -> shooter.getHood().setControl(shooter.getMMHood().withPosition(Degrees.of(20)).withSlot(0))));
 
         //Manipulation
-        driver.Intake().onTrue(manipulation.commands.intakeCommand());
-        driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
-        driver.Intake().or(driver.Outtake())
-                .onFalse(manipulation.commands.idleCommand());
+        // driver.Intake().onTrue(manipulation.commands.intakeCommand());
+        // driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
+        // driver.Intake().or(driver.Outtake())
+        //         .onFalse(manipulation.commands.idleCommand());
 
-        //Intake
-        driver.Intake().onTrue(intake.commands.intake());
-        driver.Outtake().onTrue(intake.commands.outtake());
-        driver.Intake().or(driver.Outtake())
-                .onFalse(intake.commands.idle());
-        driver.baseIntake().onTrue(intake.commands.autoPivotDown());
-        driver.maxIntake().onTrue(intake.commands.autoPivotUp());
-        driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
+        // //Intake
+        // driver.Intake().onTrue(intake.commands.intake());
+        // driver.Outtake().onTrue(intake.commands.outtake());
+        // driver.Intake().or(driver.Outtake())
+        //         .onFalse(intake.commands.idle());
+        // driver.baseIntake().onTrue(intake.commands.autoPivotDown());
+        // driver.maxIntake().onTrue(intake.commands.autoPivotUp());
+        // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
 
         // Climber
         driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
