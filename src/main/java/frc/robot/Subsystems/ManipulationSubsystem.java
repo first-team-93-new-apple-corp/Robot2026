@@ -49,6 +49,11 @@ public class ManipulationSubsystem {
         bottomRollerMotor.set(Constants.ManipulationConstants.idle.bottomRollerSpeed);
         sideRollerMotor.set(Constants.ManipulationConstants.idle.sideRollerSpeed);
     }
+    public void shoot(){
+        kickerMotor.set(Constants.ManipulationConstants.shoot.kickerSpeed);
+        bottomRollerMotor.set(Constants.ManipulationConstants.shoot.bottomRollerSpeed);
+        sideRollerMotor.set(Constants.ManipulationConstants.shoot.sideRollerSpeed);
+    }
     public class manipulationCommands {
         public Command intakeCommand() {
             return Commands.runOnce(() -> intake());
@@ -58,6 +63,9 @@ public class ManipulationSubsystem {
         }
         public Command idleCommand() {
             return Commands.runOnce(() -> idle());
+        }
+        public Command shootCommand(){
+            return Commands.runOnce(()->shoot());
         }
     }
 }

@@ -197,9 +197,9 @@ public class Constants {
 
     public static class ManipulationConstants {
         //TODO: reverse indexer
-        public static final int bottomRollerMotorID = 41; // Bottom Rollers
-        public static final int sideRollerMotorID = 42; // Side Rollers
-        public static final int kickerMotorID = 43; // Top Rollers
+        public static final int bottomRollerMotorID = 19; // Bottom Rollers
+        public static final int sideRollerMotorID = 20; // Side Rollers
+        public static final int kickerMotorID = 18; // Top Rollers
 
         public static class intake {
             public static final double bottomRollerSpeed = 1.0;
@@ -207,16 +207,22 @@ public class Constants {
             public static final double kickerSpeed = 0.0;
         }
 
-        public static class outtake {
+        public static class shoot {
             public static final double bottomRollerSpeed = 1.0;
-            public static final double sideRollerSpeed = 1.0;
+            public static final double sideRollerSpeed = -1.0;
             public static final double kickerSpeed = 1.0;
         }
 
         public static class idle {
             public static final double bottomRollerSpeed = 0.2;
-            public static final double sideRollerSpeed = 0.0;
+            public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
+        }
+
+        public static class outtake {
+            public static final double bottomRollerSpeed = -0.2;
+            public static final double sideRollerSpeed = 0.2;
+            public static final double kickerSpeed = -0.2;
         }
     }
     public class ShooterConstants {

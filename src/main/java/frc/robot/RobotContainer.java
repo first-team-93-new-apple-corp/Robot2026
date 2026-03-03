@@ -60,8 +60,8 @@ public class RobotContainer {
     // Subsystems
     // * Shooter
     private ClimberSubsystem climber = new ClimberSubsystem();
-    // private IntakeSubsystem intake = new IntakeSubsystem();
-    // private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    private IntakeSubsystem intake = new IntakeSubsystem();
+    private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
@@ -117,22 +117,25 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //Shooter
-        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(30)).andThen(shooter.commands.autoShoot(RotationsPerSecond.of(35))));
+        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(45)));
+        driver.Shoot().onTrue(shooter.commands.autoShoot(RotationsPerSecond.of(150)));
+        driver.Shoot().onTrue(manipulation.commands.shootCommand());
         driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
+        driver.Shoot().onFalse(manipulation.commands.idleCommand());
 
         //Manipulation
-        // driver.Intake().onTrue(manipulation.commands.intakeCommand());
-        // driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
-        // driver.Intake().or(driver.Outtake())
-        //         .onFalse(manipulation.commands.idleCommand());
+        driver.Intake().onTrue(manipulation.commands.intakeCommand());
+        driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
+        driver.Intake().or(driver.Outtake())
+                .onFalse(manipulation.commands.idleCommand());
 
         // //Intake
-        // driver.Intake().onTrue(intake.commands.intake());
-        // driver.Outtake().onTrue(intake.commands.outtake());
-        // driver.Intake().or(driver.Outtake())
-        //         .onFalse(intake.commands.idle());
-        // driver.baseIntake().onTrue(intake.commands.autoPivotDown());
-        // driver.maxIntake().onTrue(intake.commands.autoPivotUp());
+        driver.Intake().onTrue(intake.commands.intake());
+        driver.Outtake().onTrue(intake.commands.outtake());
+        driver.Intake().or(driver.Outtake())
+                .onFalse(intake.commands.idle());
+        driver.baseIntake().onTrue(intake.commands.autoPivotDown());
+        driver.maxIntake().onTrue(intake.commands.autoPivotUp());
         // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
 
         // Climber
