@@ -4,15 +4,15 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
@@ -58,6 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MotionMagicVoltage m_volRequest;
 
+    private final NeutralOut m_neutral;
+
     // private PIDController leftShooterPID = new
     // PIDController(Constants.ShooterConstants.ShooterPID_P,
     // Constants.ShooterConstants.ShooterPID_I,
@@ -89,6 +91,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         shooterSlot0Configs.kS = ShooterMotorConfigs.kS;
         shooterSlot0Configs.kV = ShooterMotorConfigs.kV;
+        shooterSlot0Configs.kA = ShooterMotorConfigs.kA;
         shooterSlot0Configs.kP = ShooterMotorConfigs.kP;
         shooterSlot0Configs.kI = ShooterMotorConfigs.kI;
         shooterSlot0Configs.kD = ShooterMotorConfigs.kD;
@@ -120,6 +123,8 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodSlot0Configs.kI = HoodMotorConfigs.kI;
         hoodSlot0Configs.kD = HoodMotorConfigs.kD;
         hoodSlot0Configs.kS = HoodMotorConfigs.kS;
+        hoodSlot0Configs.kA = HoodMotorConfigs.kA;
+        hoodSlot0Configs.kV = HoodMotorConfigs.kV;
 
         hoodConfig.Slot0 = hoodSlot0Configs;
 
@@ -128,9 +133,9 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodConfig.Feedback.RotorToSensorRatio = 2;
         hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
 
-        hoodConfig.MotionMagic.MotionMagicAcceleration = 80;
-        hoodConfig.MotionMagic.MotionMagicJerk = 160;
-        hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
+        hoodConfig.MotionMagic.MotionMagicAcceleration = 250;
+        hoodConfig.MotionMagic.MotionMagicJerk = 500;
+        hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
         hoodConfig.MotionMagic.MotionMagicExpo_kV = 0.01;
         hoodConfig.MotionMagic.MotionMagicExpo_kA = 0.01;
 
@@ -141,12 +146,15 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
 
         lastSetpoint = Rotations.of(0);
+
+        m_neutral = new NeutralOut();
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
-        // if (getHoodLimit()) { // Shouldn't need this at all since the encoder is absolute, leave commented out
+        // if (getHoodLimit()) { // Shouldn't need this at all since the encoder is
+        // absolute, leave commented out
         // hoodMotor.setPosition(HoodMotorConfigs.minAngle);
         // }
         SmartDashboard.putNumber("Hood Position",
@@ -190,17 +198,17 @@ public class ShooterSubsystem extends SubsystemBase {
         setRightShooterVelocity(rightVelocity);
     }
 
-    public boolean atSetpoint() {
-        return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
-    }
-
     public Angle getHoodPositionNoOffset() {
         return hoodMotor.getPosition().getValue();
     }
+
     public Angle getHoodPosition() {
         return hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle);
     }
-
+    public void setShooterControl(ControlRequest signal) {
+        topLeftShooter.setControl(signal);
+        topRightShooter.setControl(signal);
+    }
     public void setHoodPosition(Angle position) {
         if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
             position = HoodMotorConfigs.minAngleNoOffset;
@@ -212,25 +220,32 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setHoodPositionWithOffset(Angle position) {
-        position = position.plus(HoodMotorConfigs.offsetAngle);
-        if (position.lt(HoodMotorConfigs.minAngle)) {
-            position = HoodMotorConfigs.minAngle;
-        } else if (position.gt(HoodMotorConfigs.maxAngle)) {
-            position = HoodMotorConfigs.maxAngle;
+        position = position.minus(HoodMotorConfigs.offsetAngle);
+        if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
+            position = HoodMotorConfigs.minAngleNoOffset;
+        } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
+            position = HoodMotorConfigs.maxAngleNoOffset;
         }
         lastSetpoint = position;
         hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
     }
 
-    public boolean pivotAtSetpoint(Angle setpoint) {
+    public boolean hoodAtSetpoint(Angle setpoint) {
         return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Degrees.of(1));
+    }
+    public boolean shooterAtSetpoint(AngularVelocity velocity) {
+        return topLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+        && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+        && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+        && bottomRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
     }
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
-            return Commands.runOnce(() -> {
-                setMasterVelocity(calculatedVelocity);
-            });
+            return Commands.sequence(
+                Commands.runOnce(() -> setMasterVelocity(calculatedVelocity), ShooterSubsystem.this),
+                Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity))
+            );
         }
 
         public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
@@ -242,16 +257,17 @@ public class ShooterSubsystem extends SubsystemBase {
         public Command autoAngleNoOffset(Angle calculatedAngle) {
             return Commands.sequence(
                     Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this),
-                    Commands.waitUntil(() -> pivotAtSetpoint(calculatedAngle)));
+                    Commands.waitUntil(() -> hoodAtSetpoint(calculatedAngle)));
         }
+
         public Command autoAngle(Angle calculatedAngle) {
             return Commands.sequence(
                     Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this),
-                    Commands.waitUntil(() -> pivotAtSetpoint(calculatedAngle.plus(HoodMotorConfigs.offsetAngle))));
+                    Commands.waitUntil(() -> hoodAtSetpoint(calculatedAngle.plus(HoodMotorConfigs.offsetAngle))));
         }
 
         public Command stopShooter() {
-            return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(0)));
+            return Commands.runOnce(() -> setShooterControl(m_neutral));
         }
 
         public Command stopHood() {

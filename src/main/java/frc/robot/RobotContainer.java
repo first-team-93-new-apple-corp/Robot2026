@@ -117,8 +117,8 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //Shooter
-        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(45)).andThen(shooter.commands.autoShoot(RotationsPerSecond.of(35))));
-        driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).andThen(shooter.commands.stopShooter()));
+        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(30)).andThen(shooter.commands.autoShoot(RotationsPerSecond.of(35))));
+        driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
 
         //Manipulation
         // driver.Intake().onTrue(manipulation.commands.intakeCommand());

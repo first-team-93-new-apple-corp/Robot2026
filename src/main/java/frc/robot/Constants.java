@@ -229,6 +229,7 @@ public class Constants {
             public static final boolean SupplyLimitEnable = true;
             public static final double kS = 0;
             public static final double kV = 0;
+            public static final double kA = 0;
             public static final double kP = 0.75;
             public static final double kI = 0.01;
             public static final double kD = 0;
@@ -237,21 +238,22 @@ public class Constants {
             
         }
         public class HoodMotorConfigs {
-            public static final double StatorLimit = 40.0;
-            public static final double SupplyLimit = 30.0;
+            public static final double StatorLimit = 60.0;
+            public static final double SupplyLimit = 40.0;
             public static final boolean StatorLimitEnable = true;
             public static final boolean SupplyLimitEnable = true;
-            public static final double kS = 0.3;
-            public static final double kV = 0;
-            public static final double kP = 30;
-            public static final double kI = 5;
+            public static final double kS = 0.35;
+            public static final double kV = 0.15;
+            public static final double kA = 0.15;
+            public static final double kP = 100;
+            public static final double kI = 35;
             public static final double kD = 0;
             public static final double gearRatio = 2.0; // Reduction
             public static final Angle minAngle = Degrees.of(25);
-            public static final Angle maxAngle = Degrees.of(45);
+            public static final Angle maxAngle = Degrees.of(42);
             public static final Angle minAngleNoOffset = Degrees.of(0);
             public static final Angle maxAngleNoOffset = Degrees.of(20);
-            public static final Angle offsetAngle = Degrees.of(20);
+            public static final Angle offsetAngle = Degrees.of(25);
             
         }
     }
