@@ -247,8 +247,12 @@ public class Constants {
             public static final double kI = 5;
             public static final double kD = 0;
             public static final double gearRatio = 2.0; // Reduction
-            public static final Angle minAngle = Degrees.of(0);
-            public static final Angle maxAngle = Degrees.of(20);
+            public static final Angle minAngle = Degrees.of(25);
+            public static final Angle maxAngle = Degrees.of(45);
+            public static final Angle minAngleNoOffset = Degrees.of(0);
+            public static final Angle maxAngleNoOffset = Degrees.of(20);
+            public static final Angle offsetAngle = Degrees.of(20);
+            
         }
     }
 public class Swerve {

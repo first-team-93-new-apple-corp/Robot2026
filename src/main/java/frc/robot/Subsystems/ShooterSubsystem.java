@@ -15,7 +15,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.ShooterMath;
@@ -24,12 +23,10 @@ import frc.robot.util.ShootingData;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 
 public class ShooterSubsystem extends SubsystemBase {
     public ShooterCommands commands;
@@ -42,8 +39,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX bottomRightShooter;
 
     private TalonFX hoodMotor;
-
-    private CANcoder hoodEncoder;
 
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
@@ -112,8 +107,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
 
-        hoodEncoder = new CANcoder(Constants.CAN.hoodEncoder);
-
         hoodConfig = new TalonFXConfiguration();
 
         hoodConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
@@ -153,13 +146,12 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
-        // if (getHoodLimit()) {
-        //     hoodMotor.setPosition(HoodMotorConfigs.minAngle);
+        // if (getHoodLimit()) { // Shouldn't need this at all since the encoder is absolute, leave commented out
+        // hoodMotor.setPosition(HoodMotorConfigs.minAngle);
         // }
-        SmartDashboard.putNumber("HoodPosition", hoodMotor.getPosition().getValueAsDouble()*360);
+        SmartDashboard.putNumber("Hood Position",
+                hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
-        SmartDashboard.putNumber("Motor Error", hoodMotor.getClosedLoopError().getValueAsDouble()*360);
-        SmartDashboard.putNumber("Motor Setpoint", hoodMotor.getClosedLoopReference().getValueAsDouble()*360);
 
     }
 
@@ -197,35 +189,35 @@ public class ShooterSubsystem extends SubsystemBase {
         setLeftShooterVelocity(leftVelocity);
         setRightShooterVelocity(rightVelocity);
     }
-    // public void setHoodAngle(Angle angle) {
-    // MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
-    // hoodMotor.setControl(m_request.withPosition(angle.div(2)));
-    // }
 
     public boolean atSetpoint() {
         return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
-    public Angle getHoodPoseRaw() {
-        return hoodEncoder.getAbsolutePosition().getValue();
+    public Angle getHoodPositionNoOffset() {
+        return hoodMotor.getPosition().getValue();
     }
-
-    public Angle getHoodPose() {
-        return getHoodPoseRaw();
-    }
-    public TalonFX getHood() {
-        return hoodMotor;
-    }
-    public MotionMagicVoltage getMMHood() {
-        return m_volRequest;
+    public Angle getHoodPosition() {
+        return hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle);
     }
 
     public void setHoodPosition(Angle position) {
-        // if (position.lt(HoodMotorConfigs.minAngle)) {
-        //     position = HoodMotorConfigs.minAngle;
-        // } else if (position.gt(HoodMotorConfigs.maxAngle)) {
-        //     position =HoodMotorConfigs.maxAngle;
-        // }
+        if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
+            position = HoodMotorConfigs.minAngleNoOffset;
+        } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
+            position = HoodMotorConfigs.maxAngleNoOffset;
+        }
+        lastSetpoint = position;
+        hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
+    }
+
+    public void setHoodPositionWithOffset(Angle position) {
+        position = position.plus(HoodMotorConfigs.offsetAngle);
+        if (position.lt(HoodMotorConfigs.minAngle)) {
+            position = HoodMotorConfigs.minAngle;
+        } else if (position.gt(HoodMotorConfigs.maxAngle)) {
+            position = HoodMotorConfigs.maxAngle;
+        }
         lastSetpoint = position;
         hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
     }
@@ -247,8 +239,15 @@ public class ShooterSubsystem extends SubsystemBase {
             });
         }
 
+        public Command autoAngleNoOffset(Angle calculatedAngle) {
+            return Commands.sequence(
+                    Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> pivotAtSetpoint(calculatedAngle)));
+        }
         public Command autoAngle(Angle calculatedAngle) {
-            return Commands.runOnce(() -> setHoodPosition(calculatedAngle));
+            return Commands.sequence(
+                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> pivotAtSetpoint(calculatedAngle.plus(HoodMotorConfigs.offsetAngle))));
         }
 
         public Command stopShooter() {
@@ -256,7 +255,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         public Command stopHood() {
-            return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPose())));
+            return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
         }
     }
 
