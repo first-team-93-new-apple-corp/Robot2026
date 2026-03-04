@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.auto;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -8,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
+import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -114,10 +118,20 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void shootWhilstGoingTo(Pose2d pose) {
-        Command revShooter = Commands.none(); // TODO Implement shooting
+        SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
+                                                                                                   // 10%                                                                  // deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); 
+        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
+                Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
+
+        Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(1));
         addCommands(parrallel.andThen(manipOuttake()));
-        Command alignFunction = Commands.none(); // TODO Implement shooting aligning
+        Command alignFunction = subsystems.drivetrain().commands.applyRequest(
+                () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
+        
         ParallelCommandGroup followShootingPathThingy = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints)
                 .alongWith(alignFunction);
         addCommands(followShootingPathThingy);
@@ -126,12 +140,12 @@ public class AutoTracker extends SequentialCommandGroup {
     public void shootWhilstFollowing(PathPlannerPath path) {
         Command alignCmd = subsystems.drivetrain().commands.applyRequest(
                 () -> AutoConstants.driveFacingAngle
-                        .withTargetDirection(subsystems.shooter().getShootingData().drivetrainAngle()));
+                        .withTargetDirection(getShootingData().drivetrainAngle()));
         Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
         Command hoodCmd = subsystems.shooter().commands
-                .autoAngle(subsystems.shooter().getShootingData().shooterAngle());
+                .autoAngle(getShootingData().shooterAngle());
         Command velocityCmd = subsystems.shooter().commands
-                .autoShoot(subsystems.shooter().getShootingData().shooterVelocity());
+                .autoShoot(getShootingData().shooterVelocity());
         Command masterShootCmd = alignCmd.alongWith(velocityCmd).alongWith(hoodCmd);
         ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(masterShootCmd.repeatedly());
         addCommands(raceCmd);

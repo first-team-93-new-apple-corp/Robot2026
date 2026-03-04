@@ -136,4 +136,10 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger resetClimberEncoder() {
         return Xbox.back();
     }
+
+    @Override
+    public Trigger AlignToHub() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'AlignToHub'");
+    }
 }
