@@ -66,6 +66,8 @@ public interface ControllerSchemeIO {
 
     public Trigger resetClimberEncoder();
 
+    public Trigger AlignToHub();
+    
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

@@ -21,6 +21,8 @@ import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.ShooterMath;
+import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
 public class RobotContainer {
@@ -82,15 +84,15 @@ public class RobotContainer {
         driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
-        // // Auto Shoot
-        // driver.Shoot()
-        //         .whileTrue(shooter.commands
-        //                 .autoShoot(shooter
-        //                         .getShootingData(drivetrain.getState().Pose.getX(),
-        //                                 drivetrain.getState().Pose.getY(),
-        //                                 drivetrain.getState().Speeds.vxMetersPerSecond,
-        //                                 drivetrain.getState().Speeds.vyMetersPerSecond)
-        //                         .shooterVelocity()));
+        // // Auto Align
+        // driver.AlignToHub().whileTrue(drivetrain.commands.applyRequest(
+        //         () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(drivetrain.getState().Pose.getX()
+        //         , drivetrain.getState().Pose.getY()
+        //         , drivetrain.getState().Speeds.vxMetersPerSecond
+        //         ,drivetrain.getState().Speeds.vyMetersPerSecond).drivetrainAngle())
+        //         .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
+        //         .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
+       
         
 
         final var idle = new SwerveRequest.Idle();
@@ -122,6 +124,13 @@ public class RobotContainer {
         driver.Shoot().onTrue(manipulation.commands.shootCommand());
         driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
         driver.Shoot().onFalse(manipulation.commands.idleCommand());
+
+        // // Cmds to test auto shoot
+        // driver.Shoot().whileTrue(shooter.commands.autoAngle(getShootingData().shooterAngle()));
+        // driver.Shoot().onTrue(shooter.commands.autoShoot(getShootingData().shooterVelocity()));
+        // driver.Shoot().onTrue(manipulation.commands.shootCommand());
+        // driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
+        // driver.Shoot().onFalse(manipulation.commands.idleCommand());
 
         //Manipulation
         driver.Intake().onTrue(manipulation.commands.intakeCommand());
@@ -174,5 +183,26 @@ public class RobotContainer {
             drivetrain.seedFieldCentric();
             // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
         });
+    }
+
+    private double getDrivePoseX() {
+        return drivetrain.getState().Pose.getX();
+    }
+
+    private double getDrivePoseY() {
+        return drivetrain.getState().Pose.getY();
+    }
+
+    private double getDriveSpeedX() {
+        return drivetrain.getState().Speeds.vxMetersPerSecond;
+    }
+
+    private double getDriveSpeedY() {
+        return drivetrain.getState().Speeds.vyMetersPerSecond;
+    }
+
+    public ShootingData getShootingData() {
+        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+                getDriveSpeedY());
     }
 }

@@ -226,7 +226,7 @@ public class Constants {
         }
     }
     public class ShooterConstants {
-        public static final Distance flyWheelDiameter = Inches.of(3);
+        public static final Distance flyWheelDiameter = Inches.of(4);
         
         public class ShooterMotorConfigs {
             public static final double StatorLimit = 80.0;
