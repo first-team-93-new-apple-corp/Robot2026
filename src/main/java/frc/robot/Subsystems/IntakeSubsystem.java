@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -48,7 +49,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeRollerMotor = new TalonFX(CAN.intakeRoller);
         intakePivotMotor = new TalonFX(CAN.intakePivot);
 
-        pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
@@ -67,15 +67,22 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.withSlot0(slot0);
         intakePivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 30;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 30;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.5;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 0.25;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 0.5;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
 
+        intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
+        intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        intakePivotConfig.Feedback.RotorToSensorRatio = 27;
+        intakePivotConfig.Feedback.FeedbackRotorOffset = 0;
+
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);
+
         m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
         // ** Intake Roller Config
@@ -124,8 +131,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Rotations));
+        SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
+        SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
         SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
     }
@@ -177,9 +184,10 @@ public class IntakeSubsystem extends SubsystemBase {
             Command moveToDown = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotDownPosition));
             Command moveToUp = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotUpPosition));
             Command wait = Commands.waitSeconds(delay);
-            Command sequence = Commands.sequence(moveToMiddle, wait, moveToDown, wait, moveToUp);
-            Command parallel = Commands.parallel(sequence, intake());
-            return parallel;
+            Command wait2 = Commands.waitSeconds(delay);
+            Command sequence = Commands.sequence(moveToMiddle, wait, moveToDown, wait2, moveToUp);
+            // Command parallel = Commands.parallel(sequence, intake());
+            return sequence;
         }
 
         public Command brakePivotMotor(boolean brake) {

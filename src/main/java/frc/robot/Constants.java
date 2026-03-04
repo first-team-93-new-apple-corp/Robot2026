@@ -180,19 +180,18 @@ public class Constants {
         public static final double outtakeSpeed = -1.0;
         public static final double idleSpeed = 0.2;
         // Pivot
-        public static final double pivotkP = 0.1;
+        public static final double pivotkP = 40;
         public static final double pivotkI = 0.0;
-        public static final double pivotkD = 0.0;
+        public static final double pivotkD = 5;
         public static final double pivotkV = 0.0;
         public static final double pivotkA = 0.0;
-        public static final double pivotkG = 0.02;
+        public static final double pivotkG = 0.05;
         public static final double pivotkS = 0.0;
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
         public static final Angle pivotDownPosition = Degrees.of(135);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
-        public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
     } 
 
     public static class ManipulationConstants {
@@ -226,18 +225,17 @@ public class Constants {
         }
     }
     public class ShooterConstants {
-        public static final Distance flyWheelDiameter = Inches.of(3);
-        
         public class ShooterMotorConfigs {
-            public static final double StatorLimit = 80.0;
-            public static final double SupplyLimit = 30.0;
-            public static final boolean StatorLimitEnable = true;
-            public static final boolean SupplyLimitEnable = true;
+            public static final Distance flyWheelDiameter = Inches.of(4);
+            public static final double StatorLimit = 200.0;
+            public static final double SupplyLimit = 50.0;
+            public static final boolean StatorLimitEnable = false;
+            public static final boolean SupplyLimitEnable = false;
             public static final double kS = 0;
-            public static final double kV = 0;
+            public static final double kV = 0.148; //0.39 reca.lc
             public static final double kA = 0;
-            public static final double kP = 0.75;
-            public static final double kI = 0.01;
+            public static final double kP = 0;
+            public static final double kI = 0;
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);

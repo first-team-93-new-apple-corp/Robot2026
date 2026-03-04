@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.XboxDrive;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -46,7 +47,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+//     private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final ControllerSchemeIO driver = new XboxDrive(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -75,9 +77,9 @@ public class RobotContainer {
     private void configureBindings() {
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> drive
-                        .withVelocityX(-driver.DriveLeft() * MaxSpeed)
-                        .withVelocityY(-driver.DriveUp() * MaxSpeed)
-                        .withRotationalRate(-driver.DriveTheta() * MaxAngularRate)));
+                        .withVelocityX(driver.DriveLeft())
+                        .withVelocityY(driver.DriveUp())
+                        .withRotationalRate(driver.DriveTheta())));
 
         driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
@@ -117,13 +119,17 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         //Shooter
-        driver.Shoot().whileTrue(shooter.commands.autoAngle(Degrees.of(45)));
-        driver.Shoot().onTrue(shooter.commands.autoShoot(RotationsPerSecond.of(150)));
-        driver.Shoot().onTrue(manipulation.commands.shootCommand());
-        driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
-        driver.Shoot().onFalse(manipulation.commands.idleCommand());
+        // driver.Prime().whileTrue(shooter.commands.autoAngle(Degrees.of(40)));
+        // driver.Prime().whileTrue(shooter.commands.autoShoot(RotationsPerSecond.of(50)));
+        driver.Prime().whileFalse(shooter.commands.testingHood());
+        driver.Prime().whileFalse(shooter.commands.testingShooter());
+        // driver.Prime().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
+        
 
         //Manipulation
+        // driver.Shoot().onTrue(manipulation.commands.shootCommand());
+        driver.Shoot().onTrue(manipulation.commands.shootCommand());
+        driver.Shoot().onFalse(manipulation.commands.idleCommand());
         driver.Intake().onTrue(manipulation.commands.intakeCommand());
         driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
         driver.Intake().or(driver.Outtake())
@@ -134,9 +140,9 @@ public class RobotContainer {
         driver.Outtake().onTrue(intake.commands.outtake());
         driver.Intake().or(driver.Outtake())
                 .onFalse(intake.commands.idle());
-        driver.baseIntake().onTrue(intake.commands.autoPivotDown());
-        driver.maxIntake().onTrue(intake.commands.autoPivotUp());
-        // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
+        driver.LowerIntake().onTrue(intake.commands.autoPivotDown());
+        driver.RaiseIntake().onTrue(intake.commands.autoPivotUp());
+        driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
 
         // Climber
         driver.autoRetractClimber().onTrue(climber.commands.autoRetract());

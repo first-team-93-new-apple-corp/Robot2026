@@ -112,7 +112,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger primeShooter() {
+    public Trigger Prime() {
         return Xbox.leftTrigger();
     }
 

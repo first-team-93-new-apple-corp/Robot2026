@@ -60,6 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final NeutralOut m_neutral;
 
+    private double onTheFlyHoodDegrees = 0;
+    private double onTheFlyRPM = 0;
+    private double lastOTFH = 0;
+    private double lastOTFS = 0;
+
     // private PIDController leftShooterPID = new
     // PIDController(Constants.ShooterConstants.ShooterPID_P,
     // Constants.ShooterConstants.ShooterPID_I,
@@ -83,9 +88,9 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
         allShooterConfig.Feedback.SensorToMechanismRatio = 1.25;
-        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.25;
+        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.005; // 10 ms
         allShooterConfig.MotionMagic.MotionMagicAcceleration = 100;
-        allShooterConfig.MotionMagic.MotionMagicJerk = 100;
+        allShooterConfig.MotionMagic.MotionMagicJerk = 200;
 
         shooterSlot0Configs = new Slot0Configs();
 
@@ -148,6 +153,22 @@ public class ShooterSubsystem extends SubsystemBase {
         lastSetpoint = Rotations.of(0);
 
         m_neutral = new NeutralOut();
+        SmartDashboard.putNumber("setVelocity (RPS)", 0);
+        SmartDashboard.putNumber("setHood (Degrees)", 0);
+    }
+
+    public double getAvgVelocity() {
+        return (topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 4;
+    }
+
+    public double getAvgVelocityFeet() {
+        return (((topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
+                + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 4) * 4 * Math.PI) / 12;
     }
 
     @Override
@@ -161,6 +182,16 @@ public class ShooterSubsystem extends SubsystemBase {
                 hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
 
+        SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
+        SmartDashboard.putNumber("Velocity Feet/s (avg)", getAvgVelocityFeet());
+        onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
+        onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
+        // if (onTheFlyHoodDegrees != lastOTFH) {
+        //     setHoodPosition(Degrees.of(onTheFlyHoodDegrees));
+        // }
+        // if (onTheFlyRPM != lastOTFS) {
+        //     setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM));
+        // }
     }
 
     public boolean getHoodLimit() {
@@ -205,10 +236,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public Angle getHoodPosition() {
         return hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle);
     }
+
     public void setShooterControl(ControlRequest signal) {
         topLeftShooter.setControl(signal);
         topRightShooter.setControl(signal);
     }
+
     public void setHoodPosition(Angle position) {
         if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
             position = HoodMotorConfigs.minAngleNoOffset;
@@ -233,19 +266,19 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean hoodAtSetpoint(Angle setpoint) {
         return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Degrees.of(1));
     }
+
     public boolean shooterAtSetpoint(AngularVelocity velocity) {
         return topLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-        && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-        && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-        && bottomRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
+                && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+                && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+                && bottomRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
     }
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
             return Commands.sequence(
-                Commands.runOnce(() -> setMasterVelocity(calculatedVelocity), ShooterSubsystem.this),
-                Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity))
-            );
+                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity)));
         }
 
         public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
@@ -272,6 +305,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
         public Command stopHood() {
             return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
+        }
+
+        public Command testingHood(){
+        return
+        Commands.runOnce(()->setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));
+        }
+
+        public Command testingShooter(){
+        return Commands.runOnce(()-> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
         }
     }
 

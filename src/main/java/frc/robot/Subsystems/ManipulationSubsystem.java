@@ -23,7 +23,7 @@ public class ManipulationSubsystem {
      */
 
     public ManipulationSubsystem() {
-        motorConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
         motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 

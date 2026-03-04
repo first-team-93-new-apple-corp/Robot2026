@@ -22,7 +22,7 @@ public class ClimberSubsystem extends SubsystemBase {
     final MotionMagicVoltage m_request;
 
     public ClimberSubsystem() {
-        climberMotor = new TalonFX(30);
+        climberMotor = new TalonFX(Constants.CAN.climber);
 
         // PID Slot 0 Configuration
         var slot0Configs = new Slot0Configs();

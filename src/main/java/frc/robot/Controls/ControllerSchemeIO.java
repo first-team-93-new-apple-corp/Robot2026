@@ -56,7 +56,7 @@ public interface ControllerSchemeIO {
 
     public Trigger middleIntake();
 
-    public Trigger primeShooter();
+    public Trigger Prime();
 
     public Trigger seed();
 

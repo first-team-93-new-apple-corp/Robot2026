@@ -51,7 +51,7 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     }
 
     @Override
-    public Trigger primeShooter(){
+    public Trigger Prime(){
         return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
