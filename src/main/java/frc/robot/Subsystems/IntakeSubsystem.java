@@ -14,9 +14,11 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 
@@ -29,6 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private TalonFX intakePivotMotor;
 
     private CANcoder pivotEncoder;
+    private CANcoderConfiguration pivotEncoderConfig;
 
     private TalonFXConfiguration intakePivotConfig;
     private TalonFXConfiguration intakeRollerConfig;
@@ -48,10 +51,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intakeRollerMotor = new TalonFX(CAN.intakeRoller);
         intakePivotMotor = new TalonFX(CAN.intakePivot);
-
+        pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
+        pivotEncoderConfig = new CANcoderConfiguration();
+
+        // Encoder 
+        pivotEncoderConfig.FutureProofConfigs = true;
+        pivotEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+        pivotEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        pivotEncoderConfig.MagnetSensor.MagnetOffset = 0.154296875;
+        pivotEncoder.getConfigurator().apply(pivotEncoderConfig);
 
         // PID Slot 0 Configuration
         slot0 = new Slot0Configs();
@@ -69,9 +80,9 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.5;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 0.25;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 0.5;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.75;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 0.5;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 1;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;

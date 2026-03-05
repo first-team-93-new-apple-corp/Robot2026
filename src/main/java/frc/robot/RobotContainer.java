@@ -149,9 +149,9 @@ public class RobotContainer {
         driver.Outtake().onTrue(intake.commands.outtake());
         driver.Intake().or(driver.Outtake())
                 .onFalse(intake.commands.idle());
-        driver.LowerIntake().onTrue(intake.commands.autoPivotDown());
-        driver.RaiseIntake().onTrue(intake.commands.autoPivotUp());
-        driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
+        // driver.LowerIntake().onTrue(intake.commands.autoPivotDown());
+        // driver.RaiseIntake().onTrue(intake.commands.autoPivotUp());
+        // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
 
         // Climber
         driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
