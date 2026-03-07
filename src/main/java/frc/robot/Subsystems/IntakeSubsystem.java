@@ -61,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
         pivotEncoderConfig.FutureProofConfigs = true;
         pivotEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
         pivotEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        pivotEncoderConfig.MagnetSensor.MagnetOffset = 0.154296875;
+        pivotEncoderConfig.MagnetSensor.MagnetOffset = -0.211669921875;
         pivotEncoder.getConfigurator().apply(pivotEncoderConfig);
 
         // PID Slot 0 Configuration
@@ -80,11 +80,11 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.75;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 0.5;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 1;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 1;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 1;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 2;
 
-        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;

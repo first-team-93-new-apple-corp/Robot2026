@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -35,7 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private TalonFX topLeftShooter;
     private TalonFX topRightShooter;
-    private TalonFX bottomLeftShooter;
+    // private TalonFX bottomLeftShooter;
     private TalonFX bottomRightShooter;
 
     private TalonFX hoodMotor;
@@ -45,6 +46,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private Follower leftFollower;
     private Follower rightFollower;
+    private CoastOut leftCoast;
+    private CoastOut rightCoast;
 
     private Slot0Configs shooterSlot0Configs;
 
@@ -74,7 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
         commands = new ShooterCommands();
         topLeftShooter = new TalonFX(Constants.CAN.topLeftShooter);
         topRightShooter = new TalonFX(Constants.CAN.topRightShooter);
-        bottomLeftShooter = new TalonFX(Constants.CAN.bottomLeftShooter);
+        // bottomLeftShooter = new TalonFX(Constants.CAN.bottomLeftShooter);
         bottomRightShooter = new TalonFX(Constants.CAN.bottomRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
@@ -87,8 +90,8 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
-        allShooterConfig.Feedback.SensorToMechanismRatio = 1.25;
-        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.005; // 10 ms
+        allShooterConfig.Feedback.SensorToMechanismRatio = 18/24; //teeth
+        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0;
         allShooterConfig.MotionMagic.MotionMagicAcceleration = 100;
         allShooterConfig.MotionMagic.MotionMagicJerk = 200;
 
@@ -104,13 +107,15 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.Slot0 = shooterSlot0Configs;
 
         leftFollower = new Follower(CAN.topLeftShooter, MotorAlignmentValue.Opposed);
-        bottomLeftShooter.setControl(leftFollower.withLeaderID(CAN.topLeftShooter));
+        leftCoast = new CoastOut();
+        // bottomLeftShooter.setControl(leftCoast);
         rightFollower = new Follower(CAN.topRightShooter, MotorAlignmentValue.Opposed);
-        bottomRightShooter.setControl(rightFollower.withLeaderID(CAN.topRightShooter));
+        rightCoast = new CoastOut();
+        bottomRightShooter.setControl(rightCoast);
 
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
-        bottomLeftShooter.getConfigurator().apply(allShooterConfig);
+        // bottomLeftShooter.getConfigurator().apply(allShooterConfig);
         bottomRightShooter.getConfigurator().apply(allShooterConfig);
 
         hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
@@ -159,16 +164,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getAvgVelocity() {
         return (topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
+                // + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
                 + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 4;
+                // + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)
+                ) / 2;
     }
 
     public double getAvgVelocityFeet() {
-        return (((topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 4) * 4 * Math.PI) / 12;
+        return ((getAvgVelocity()) * 4 * Math.PI) / 12;
     }
 
     @Override
@@ -270,7 +273,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean shooterAtSetpoint(AngularVelocity velocity) {
         return topLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
                 && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-                && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
+                // && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
                 && bottomRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
     }
 

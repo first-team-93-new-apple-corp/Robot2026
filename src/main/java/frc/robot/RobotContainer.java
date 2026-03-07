@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -73,15 +74,16 @@ public class RobotContainer {
 //     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
+        RobotController.setBrownoutVoltage(Volts.of(6.0));
         configureBindings();
     }
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> drive
-                        .withVelocityX(driver.DriveLeft())
-                        .withVelocityY(driver.DriveUp())
-                        .withRotationalRate(driver.DriveTheta())));
+                        .withVelocityX(driver.DriveLeft()*0.5)
+                        .withVelocityY(driver.DriveUp()*0.5)
+                        .withRotationalRate(driver.DriveTheta()*0.5)));
 
         driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
@@ -154,13 +156,13 @@ public class RobotContainer {
         // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
 
         // Climber
-        driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
-        driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
+        //driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
+        // driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
         
-        // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
-        // driver.manExtendClimber().onFalse(climber.commands.Stop());
-        // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
-        // driver.manRetractClimber().onFalse(climber.commands.Stop());
+        driver.manExtendClimber().onTrue(climber.commands.manualExtend());
+        driver.manExtendClimber().onFalse(climber.commands.Stop());
+        driver.manRetractClimber().onTrue(climber.commands.manualRetract());
+        driver.manRetractClimber().onFalse(climber.commands.Stop());
         // driver.resetClimberEncoder().onTrue(climber.commands.resetEncoder());
     }
 

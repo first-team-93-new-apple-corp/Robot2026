@@ -60,14 +60,13 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger manRetractClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'manRetractClimber'");
+        return Xbox.pov(180);
+
     }
 
     @Override
     public Trigger manExtendClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'manExtendClimber'");
+        return Xbox.pov(0);
     }
 
     @Override

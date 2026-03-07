@@ -10,13 +10,14 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 public class ClimberSubsystem extends SubsystemBase {
     
     private TalonFX climberMotor;
     private TalonFXConfiguration climberMotorConfig;
-    private NeutralOut neutral = new NeutralOut();
+    private StaticBrake neutral = new StaticBrake();
     private DigitalInput climberLimitSwitch = new DigitalInput(9);
     private boolean HasReset = false;
     final MotionMagicVoltage m_request;

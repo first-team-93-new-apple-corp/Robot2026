@@ -178,10 +178,10 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-        public static final double idleSpeed = 0.2;
+        public static final double idleSpeed = 0;
         // Pivot
-        public static final double pivotkP = 40;
-        public static final double pivotkI = 0.0;
+        public static final double pivotkP = 45;
+        public static final double pivotkI = 0.5;
         public static final double pivotkD = 5;
         public static final double pivotkV = 0.0;
         public static final double pivotkA = 0.0;
@@ -195,7 +195,6 @@ public class Constants {
     } 
 
     public static class ManipulationConstants {
-        //TODO: reverse indexer
         public static final int bottomRollerMotorID = 19; // Bottom Rollers
         public static final int sideRollerMotorID = 20; // Side Rollers
         public static final int kickerMotorID = 18; // Top Rollers
@@ -219,9 +218,9 @@ public class Constants {
         }
 
         public static class outtake {
-            public static final double bottomRollerSpeed = -0.2;
-            public static final double sideRollerSpeed = 0.2;
-            public static final double kickerSpeed = -0.2;
+            public static final double bottomRollerSpeed = -1;
+            public static final double sideRollerSpeed = 1;
+            public static final double kickerSpeed = -1;
         }
     }
     public class ShooterConstants {
@@ -232,9 +231,9 @@ public class Constants {
             public static final boolean StatorLimitEnable = false;
             public static final boolean SupplyLimitEnable = false;
             public static final double kS = 0;
-            public static final double kV = 0.148; //0.39 reca.lc
-            public static final double kA = 0;
-            public static final double kP = 0;
+            public static final double kV = 0.12;
+            public static final double kA = 0.01;
+            public static final double kP = 0.5;
             public static final double kI = 0;
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);

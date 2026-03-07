@@ -24,7 +24,7 @@ public class ManipulationSubsystem {
 
     public ManipulationSubsystem() {
         motorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
-        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         kickerMotor.getConfigurator().apply(motorConfig);
