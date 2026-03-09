@@ -1,10 +1,12 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -189,16 +191,20 @@ public class IntakeSubsystem extends SubsystemBase {
             return runOnce(() -> setPivotPosition(IntakeConstants.pivotMiddlePosition));
         }
 
-        public Command wigglePivot() {
+        public Command wigglePivot(Trigger trigger) {
             double delay = 0.5; // seconds
-            Command moveToMiddle = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotMiddlePosition));
-            Command moveToDown = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotDownPosition));
-            Command moveToUp = Commands.runOnce(() -> setPivotPosition(IntakeConstants.pivotUpPosition));
             Command wait = Commands.waitSeconds(delay);
-            Command wait2 = Commands.waitSeconds(delay);
-            Command sequence = Commands.sequence(moveToMiddle, wait, moveToDown, wait2, moveToUp);
-            // Command parallel = Commands.parallel(sequence, intake());
-            return sequence;
+            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
+
+            return sequence.repeatedly().until(()->!trigger.getAsBoolean());
+        }
+
+        public Command wigglePivot(Time time) {
+            double delay = 0.5; // seconds
+            Command wait = Commands.waitSeconds(delay);
+            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
+
+            return sequence.repeatedly().until(()->Commands.waitTime(time).isFinished());
         }
 
         public Command brakePivotMotor(boolean brake) {
