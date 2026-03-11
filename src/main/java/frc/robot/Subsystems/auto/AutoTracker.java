@@ -5,6 +5,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -38,8 +39,8 @@ public class AutoTracker extends SequentialCommandGroup {
         return (subsystems.intake().commands.idle());
     }
 
-    private Command wigglePivot() {
-        return (subsystems.intake().commands.wigglePivot());
+    private Command wigglePivot(Time time) {
+        return (subsystems.intake().commands.wigglePivot(time));
     }
 
     private Command pivotUp() {
@@ -101,7 +102,6 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void Intake(PathPlannerPath path) {
-        double secondsDelay = 2; // Waiting for balls to drop from outpost
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
         addCommands(pivotDown());
         addCommands(Idle());
