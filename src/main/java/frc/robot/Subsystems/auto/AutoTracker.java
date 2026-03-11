@@ -3,8 +3,10 @@ package frc.robot.Subsystems.auto;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -83,52 +85,76 @@ public class AutoTracker extends SequentialCommandGroup {
         return subsystems.drivetrain().getState().Speeds.vyMetersPerSecond;
     }
 
-    public void addGroundIntakePath(String pathName) {
+    public void addGroundIntakePath(String pathName, LinearVelocity startSpeed, LinearVelocity endSpeed) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-            groundIntake(path);
+            groundIntake(path, startSpeed, endSpeed);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addIntakePath(String pathName) {
+    /**
+     * Loads a path and adds commands to intake as the robot drives to the first point in the path.
+     * @param pathName
+     * @param endSpeed
+     */
+    public void addIntakePath(String pathName, LinearVelocity endSpeed) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-            Intake(path);
+            Intake(path, endSpeed);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public void Intake(PathPlannerPath path) {
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
-        addCommands(pivotDown());
-        addCommands(Idle());
-        addCommands(manipIdle());
+    /**
+     * 
+     * @param path
+     * The arm deploys and intakes as the robot drives to the first point in the path.
+     * @param endSpeed
+     * The goal speed at the end of the path.
+     */
+    public void Intake(PathPlannerPath path, LinearVelocity endSpeed) {
+        addCommands(subsystems.intakeProtocol());
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
     }
 
-    public void groundIntake(PathPlannerPath path) {
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
-        addCommands(pivotDown());
+    /**
+     * Intakes while following the path, then stops intaking and pivots up at the end of the path.
+     * @param path
+     * @param startSpeed
+     * @param endSpeed
+     */
+    public void groundIntake(PathPlannerPath path,  LinearVelocity startSpeed, LinearVelocity endSpeed) {
+        // Find the first point in the path and drive to it while intaking, then lower the arm and continue intaking as we follow the path, then stop intaking and pivot up at the end of the path.
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, startSpeed));
+        addCommands(subsystems.intakeProtocol());
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        ParallelCommandGroup parrallel = followPath.alongWith(manipIdle().alongWith(Intake()));
+        ParallelCommandGroup parrallel = followPath.alongWith(subsystems.intakeProtocol());
         addCommands(parrallel);
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints));
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
+    }
+
+    public void addShootPath(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            shootWhilstFollowing(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void shootWhilstGoingTo(Pose2d pose) {
         SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
-                                                                                                   // 10%                                                                  // deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); 
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
         Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
-        ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(1));
-        addCommands(parrallel.andThen(manipOuttake()));
+        ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
+        addCommands(parrallel.andThen(subsystems.shootProtocol(3)));
         Command alignFunction = subsystems.drivetrain().commands.applyRequest(
                 () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
         
@@ -149,6 +175,12 @@ public class AutoTracker extends SequentialCommandGroup {
         Command masterShootCmd = alignCmd.alongWith(velocityCmd).alongWith(hoodCmd);
         ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(masterShootCmd.repeatedly());
         addCommands(raceCmd);
+    }
+
+    public void goToAndThenShoot(Pose2d pose) {
+        Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
+        Command shootCmd = subsystems.shootProtocol(3);
+        addCommands(driveCmd.andThen(shootCmd));
     }
 
     public ShootingData getShootingData() {

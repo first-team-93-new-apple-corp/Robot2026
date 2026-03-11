@@ -268,6 +268,13 @@ public class Swerve {
 
         public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+
+        public class Auto {
+            public static final double SnapkP = 10;
+            public static final double SnapkI = 0.002;
+            public static final double SnapkD = 0.1;
+        }
+
     }
 
     public class Controls {

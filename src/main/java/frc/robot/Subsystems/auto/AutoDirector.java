@@ -161,15 +161,24 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
-        return null;
+        tracker.shootWhilstGoingTo(new Pose2d(startPose.getX(), startPose.getY()-1, startPose.getRotation()));
+        return new Auto("Score Preload Only", tracker, startPose);
     }
 
-    public Auto PreloadClimb(){
+    public Auto PreloadClimbLeft(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
-        tracker.shootWhilstGoingTo(new Pose2d());
-        return null;
+        tracker.addShootPath("null");
+        return new Auto("Score Preload Climb", tracker, startPose);
+    }
+
+    public Auto PreloadClimbRight(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addShootPath("shootingPath");
+        return new Auto("Score Preload Climb", tracker, startPose);
     }
 
     public Auto PreloadDepot(){
