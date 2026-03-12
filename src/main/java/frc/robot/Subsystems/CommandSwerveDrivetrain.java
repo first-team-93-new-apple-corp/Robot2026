@@ -11,10 +11,15 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -22,7 +27,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.Constants;
 import frc.robot.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -50,7 +55,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-   
+    // Pose Correction Stuffs
+    private final PIDController xController = new PIDController(3.0, 0, 0);
+    private final PIDController yController = new PIDController(3.0, 0, 0);
+
+    private final ProfiledPIDController thetaController = new ProfiledPIDController(
+            4.0,
+            0,
+            0,
+            new TrapezoidProfile.Constraints(Constants.Swerve.MaxSpeed, 5));
+
+    private final HolonomicDriveController snapController = new HolonomicDriveController(xController, yController,
+            thetaController);
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -79,7 +95,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
-      /**
+    /**
      * Returns a command that applies the specified control request to this swerve
      * drivetrain.
      *
@@ -90,6 +106,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(request.get()));
     }
 
+    public void snapToPose(Pose2d targetPose) {
+
+        Pose2d currentPose = getState().Pose;
+
+        ChassisSpeeds speeds = snapController.calculate(
+                currentPose,
+                targetPose,
+                0.0,
+                targetPose.getRotation());
+
+        applyRequest(() -> new SwerveRequest.FieldCentric()
+                .withVelocityX(speeds.vxMetersPerSecond)
+                .withVelocityY(speeds.vyMetersPerSecond)
+                .withRotationalRate(speeds.omegaRadiansPerSecond));
+    }
+
+    public boolean nearPose(Pose2d pose, double translationTolerance, double rotationToleranceDeg) {
+
+        Pose2d currentPose = getState().Pose;
+
+        double distance = currentPose.getTranslation().getDistance(
+                pose.getTranslation());
+
+        double rotationError = Math.abs(currentPose.getRotation()
+                .minus(pose.getRotation()).getDegrees());
+
+        return distance <= translationTolerance && rotationError <= rotationToleranceDeg;
+    }
 
     public class SysID implements Subsystem {
         private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(new SysIdRoutine.Config(null, // Use
@@ -198,8 +242,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);
     }
-    //TODO implement pose get with photon camera
-    public Pose2d getStartingPose(){
+
+    // TODO implement pose get with photon camera
+    public Pose2d getStartingPose() {
         return new Pose2d();
     }
 

@@ -27,6 +27,15 @@ public record subsystems(
 
     public Command Intake() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(intake.commands.autoPivotDown());
+        cmds.addCommands(intake.commands.intake());
+        cmds.addCommands(manipulation.commands.intakeCommand());
+        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
+        return cmds;
+    }
+
+    public Command intakeDepot() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.intake());
         cmds.addCommands(manipulation.commands.intakeCommand());
         cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
@@ -41,10 +50,10 @@ public record subsystems(
         return cmds;
     }
 
-    public Command Shooter() {
+    public Command Shooter(double secondsBeforeWiggle) {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(manipulation.commands.shootCommand());
-        return cmds.alongWith(Commands.waitSeconds(4)).andThen(intake.commands.wigglePivot(new Trigger(()->Commands.waitSeconds(5).isFinished())));
+        return cmds.alongWith(Commands.waitSeconds(secondsBeforeWiggle)).andThen(intake.commands.wigglePivot(new Trigger(()->Commands.waitSeconds(5).isFinished())));
     }
 
      public Command ShooterFalse() {
