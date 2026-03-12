@@ -25,7 +25,7 @@ public record subsystems(
         this(drivetrain, null, shooter, climber, intake, manipulation);
     }
 
-    public Command intakeProtocol() {
+    public Command Intake() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.intake());
         cmds.addCommands(manipulation.commands.intakeCommand());
@@ -33,7 +33,7 @@ public record subsystems(
         return cmds;
     }
 
-    public Command intakeProtocolOnFalse() {
+    public Command IntakeFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
@@ -41,13 +41,13 @@ public record subsystems(
         return cmds;
     }
 
-    public Command shootProtocol() {
+    public Command Shooter() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(manipulation.commands.shootCommand());
         return cmds.alongWith(Commands.waitSeconds(4)).andThen(intake.commands.wigglePivot(new Trigger(()->Commands.waitSeconds(5).isFinished())));
     }
 
-     public Command shootProtocolOnFalse() {
+     public Command ShooterFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
@@ -55,10 +55,11 @@ public record subsystems(
         return cmds;
      }
 
-     public Command primeProtocol() {
+     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter.commands.testingHood()); // Comment out after testing
         cmds.addCommands(shooter.commands.testingShooter()); // Comment out after testing
         return cmds;
      }
+     
 }
