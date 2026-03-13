@@ -22,7 +22,7 @@ import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
-import frc.robot.Subsystems.PowerDistributionHubsystem;
+import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
@@ -69,7 +69,7 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
-     public final PowerDistributionHubsystem DistributionHubsystem = new PowerDistributionHubsystem();
+     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
     // private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);

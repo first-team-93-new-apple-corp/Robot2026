@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.ShooterMath;
@@ -194,11 +195,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setLeftShooterVelocity(AngularVelocity velocity) {
-        topLeftShooter.setControl(m_velRequest.withVelocity(velocity.in(RotationsPerSecond)));
+        topLeftShooter.setControl(m_velRequest.withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
     }
 
     public void setRightShooterVelocity(AngularVelocity velocity) {
-        topRightShooter.setControl(m_velRequest.withVelocity(velocity.in(RotationsPerSecond)));
+        topRightShooter.setControl(m_velRequest.withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
     }
 
     public void setMasterVelocity(AngularVelocity velocity) {
