@@ -4,16 +4,13 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
@@ -25,6 +22,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import frc.robot.util.UniversalNTLogger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,18 +34,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private TalonFX topLeftShooter;
     private TalonFX topRightShooter;
-    // private TalonFX bottomLeftShooter;
-    private TalonFX bottomRightShooter;
 
     private TalonFX hoodMotor;
 
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
-
-    private Follower leftFollower;
-    private Follower rightFollower;
-    private CoastOut leftCoast;
-    private CoastOut rightCoast;
 
     private Slot0Configs shooterSlot0Configs;
 
@@ -61,24 +52,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MotionMagicVoltage m_volRequest;
 
-    private final NeutralOut m_neutral;
-
     private double onTheFlyHoodDegrees = 0;
     private double onTheFlyRPM = 0;
-    private double lastOTFH = 0;
-    private double lastOTFS = 0;
 
-    // private PIDController leftShooterPID = new
-    // PIDController(Constants.ShooterConstants.ShooterPID_P,
-    // Constants.ShooterConstants.ShooterPID_I,
-    // Constants.ShooterConstants.ShooterPID_D);
+    private final NeutralOut m_neutral;
+
+    // Telemetry registry
+    // private UniversalNTLogger uniLogger;
 
     public ShooterSubsystem() {
         commands = new ShooterCommands();
         topLeftShooter = new TalonFX(Constants.CAN.topLeftShooter);
         topRightShooter = new TalonFX(Constants.CAN.topRightShooter);
-        // bottomLeftShooter = new TalonFX(Constants.CAN.bottomLeftShooter);
-        bottomRightShooter = new TalonFX(Constants.CAN.bottomRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
 
@@ -106,17 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         allShooterConfig.Slot0 = shooterSlot0Configs;
 
-        leftFollower = new Follower(CAN.topLeftShooter, MotorAlignmentValue.Opposed);
-        leftCoast = new CoastOut();
-        // bottomLeftShooter.setControl(leftCoast);
-        rightFollower = new Follower(CAN.topRightShooter, MotorAlignmentValue.Opposed);
-        rightCoast = new CoastOut();
-        bottomRightShooter.setControl(rightCoast);
-
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
-        // bottomLeftShooter.getConfigurator().apply(allShooterConfig);
-        bottomRightShooter.getConfigurator().apply(allShooterConfig);
 
         hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
 
@@ -158,15 +134,28 @@ public class ShooterSubsystem extends SubsystemBase {
         lastSetpoint = Rotations.of(0);
 
         m_neutral = new NeutralOut();
+
         SmartDashboard.putNumber("setVelocity (RPS)", 0);
         SmartDashboard.putNumber("setHood (Degrees)", 0);
+
+    // Initialize universal telemetry logger
+    // uniLogger = new UniversalNTLogger("ShooterMirror");
+
+    // // Register TalonFX motors and useful values
+    // uniLogger.registerTalonFX("topLeft", topLeftShooter);
+    // uniLogger.registerTalonFX("topRight", topRightShooter);
+    // uniLogger.registerDouble("hood/position", () -> hoodMotor.getPosition().getValue().in(Degrees));
+    // uniLogger.registerDouble("avg/velocity", () -> getAvgVelocity());
+    // uniLogger.registerDouble("setpoint/rps", () -> SmartDashboard.getNumber("setVelocity (RPS)", 0));
+    // uniLogger.registerBoolean("hood/limit", () -> getHoodLimit());
+
+    // // Cap signals per flush to avoid saturation
+    // uniLogger.setMaxSignalsPerFlush(10);
     }
 
     public double getAvgVelocity() {
         return (topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                // + bottomLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
                 + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
-                // + bottomRightShooter.getVelocity().getValue().in(RotationsPerSecond)
                 ) / 2;
     }
 
@@ -176,11 +165,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("hoodLimit", getHoodLimit());
-        // if (getHoodLimit()) { // Shouldn't need this at all since the encoder is
-        // absolute, leave commented out
-        // hoodMotor.setPosition(HoodMotorConfigs.minAngle);
-        // }
         SmartDashboard.putNumber("Hood Position",
                 hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
@@ -189,12 +173,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Velocity Feet/s (avg)", getAvgVelocityFeet());
         onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
         onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
-        // if (onTheFlyHoodDegrees != lastOTFH) {
-        //     setHoodPosition(Degrees.of(onTheFlyHoodDegrees));
-        // }
-        // if (onTheFlyRPM != lastOTFS) {
-        //     setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM));
-        // }
+        // if (uniLogger != null) uniLogger.flushAll();
     }
 
     public boolean getHoodLimit() {
@@ -272,9 +251,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public boolean shooterAtSetpoint(AngularVelocity velocity) {
         return topLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-                && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-                // && bottomLeftShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1))
-                && bottomRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
+                && topRightShooter.getVelocity().isNear(velocity, RotationsPerSecond.of(1));
     }
 
     public class ShooterCommands {

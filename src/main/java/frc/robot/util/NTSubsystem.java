@@ -41,7 +41,6 @@ public class NTSubsystem {
 		SmartDashboard.putData("Field", m_field);
 		m_field.setRobotPose(robotPose);
 		m_field.getObject("Quest").setPose(questPose);
-		SignalLogger.start();
 	}
 
 	public NTSubsystem(Pose3d robotPose, Pose3d questPose) {

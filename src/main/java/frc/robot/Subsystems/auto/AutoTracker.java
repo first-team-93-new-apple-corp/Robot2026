@@ -115,7 +115,7 @@ public class AutoTracker extends SequentialCommandGroup {
      * The goal speed at the end of the path.
      */
     public void Intake(PathPlannerPath path, LinearVelocity endSpeed) {
-        addCommands(subsystems.intakeProtocol());
+        addCommands(subsystems.Intake());
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
     }
 
@@ -128,9 +128,9 @@ public class AutoTracker extends SequentialCommandGroup {
     public void groundIntake(PathPlannerPath path,  LinearVelocity startSpeed, LinearVelocity endSpeed) {
         // Find the first point in the path and drive to it while intaking, then lower the arm and continue intaking as we follow the path, then stop intaking and pivot up at the end of the path.
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, startSpeed));
-        addCommands(subsystems.intakeProtocol());
+        addCommands(subsystems.Intake());
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        ParallelCommandGroup parrallel = followPath.alongWith(subsystems.intakeProtocol());
+        ParallelCommandGroup parrallel = followPath.alongWith(subsystems.Intake());
         addCommands(parrallel);
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
     }
@@ -154,7 +154,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
-        addCommands(parrallel.andThen(subsystems.shootProtocol(3)));
+        addCommands(parrallel.andThen(subsystems.Shooter(3)));
         Command alignFunction = subsystems.drivetrain().commands.applyRequest(
                 () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
         
@@ -179,7 +179,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void goToAndThenShoot(Pose2d pose) {
         Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
-        Command shootCmd = subsystems.shootProtocol(3);
+        Command shootCmd = subsystems.Shooter(3);
         addCommands(driveCmd.andThen(shootCmd));
     }
 
