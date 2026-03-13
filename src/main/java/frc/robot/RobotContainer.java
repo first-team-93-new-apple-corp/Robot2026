@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +24,9 @@ import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
+import frc.robot.Subsystems.QuestNavSubsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.NTSubsystem;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
@@ -72,7 +75,7 @@ public class RobotContainer {
      public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    // private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
+    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
 //     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -124,42 +127,24 @@ public class RobotContainer {
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        //Shooter
-        // driver.Prime().whileTrue(shooter.commands.autoAngle(Degrees.of(40)));
-        // driver.Prime().whileTrue(shooter.commands.autoShoot(RotationsPerSecond.of(50)));
-        driver.Prime().whileFalse(shooter.commands.testingHood());
-        driver.Prime().whileFalse(shooter.commands.testingShooter());
-        // driver.Prime().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
+        driver.Shoot().onTrue(subsystems.Shooter(99));
+        driver.Shoot().onFalse(subsystems.ShooterFalse());
+
+        driver.Prime().onTrue(subsystems.Prime());
+        driver.Prime().onFalse(subsystems.PrimeFalse());
+
+        driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
+
+        driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+
+        driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+
+        driver.Intake().onTrue(subsystems.Intake());
+        driver.Intake().onFalse(subsystems.IntakeFalse());
+
+
+
         
-
-        // // Cmds to test auto shoot
-        // driver.Shoot().whileTrue(shooter.commands.autoAngle(getShootingData().shooterAngle()));
-        // driver.Shoot().onTrue(shooter.commands.autoShoot(getShootingData().shooterVelocity()));
-        // driver.Shoot().onTrue(manipulation.commands.shootCommand());
-        // driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
-        // driver.Shoot().onFalse(manipulation.commands.idleCommand());
-
-        //Manipulation
-        // driver.Shoot().onTrue(manipulation.commands.shootCommand());
-        driver.Shoot().onTrue(manipulation.commands.shootCommand());
-        driver.Shoot().onFalse(manipulation.commands.idleCommand());
-        driver.Intake().onTrue(manipulation.commands.intakeCommand());
-        driver.Outtake().onTrue(manipulation.commands.outtakeCommand());
-        driver.Intake().or(driver.Outtake())
-                .onFalse(manipulation.commands.idleCommand());
-
-        // //Intake
-        driver.Intake().onTrue(intake.commands.intake());
-        driver.Outtake().onTrue(intake.commands.outtake());
-        driver.Intake().or(driver.Outtake())
-                .onFalse(intake.commands.idle());
-        // driver.LowerIntake().onTrue(intake.commands.autoPivotDown());
-        // driver.RaiseIntake().onTrue(intake.commands.autoPivotUp());
-        // driver.WiggleIntake().onTrue(intake.commands.wigglePivot());
-
-        // Climber
-        //driver.autoRetractClimber().onTrue(climber.commands.autoRetract());
-        // driver.autoExtendClimber().onTrue(climber.commands.autoExtend());
         
         driver.manExtendClimber().onTrue(climber.commands.manualExtend());
         driver.manExtendClimber().onFalse(climber.commands.Stop());
