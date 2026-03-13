@@ -195,16 +195,16 @@ public class IntakeSubsystem extends SubsystemBase {
         public Command wigglePivot(Trigger trigger) {
             double delay = 0.5; // seconds
             Command wait = Commands.waitSeconds(delay);
-            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
-
+            Command wait2 = Commands.waitSeconds(delay);
+            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait2));
             return sequence.repeatedly().until(()->!trigger.getAsBoolean());
         }
 
         public Command wigglePivot(Time time) {
             double delay = 0.5; // seconds
             Command wait = Commands.waitSeconds(delay);
-            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
-
+            Command wait2 = Commands.waitSeconds(delay);
+            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait2));
             return sequence.repeatedly().until(()->Commands.waitTime(time).isFinished());
         }
 
