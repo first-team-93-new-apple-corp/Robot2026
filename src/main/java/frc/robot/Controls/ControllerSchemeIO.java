@@ -56,7 +56,7 @@ public interface ControllerSchemeIO {
 
     public Trigger middleIntake();
 
-    public Trigger Prime();
+    public Trigger primeShooter();
 
     public Trigger seed();
 
@@ -66,8 +66,6 @@ public interface ControllerSchemeIO {
 
     public Trigger resetClimberEncoder();
 
-    public Trigger AlignToHub();
-    
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

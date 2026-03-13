@@ -60,13 +60,14 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger manRetractClimber() {
-        return Xbox.pov(180);
-
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'manRetractClimber'");
     }
 
     @Override
     public Trigger manExtendClimber() {
-        return Xbox.pov(0);
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'manExtendClimber'");
     }
 
     @Override
@@ -111,7 +112,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger Prime() {
+    public Trigger primeShooter() {
         return Xbox.leftTrigger();
     }
 
@@ -134,11 +135,5 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public Trigger resetClimberEncoder() {
         return Xbox.back();
-    }
-
-    @Override
-    public Trigger AlignToHub() {
-        // TODO Auto-generated method stub
-        return Prime();
     }
 }

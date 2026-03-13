@@ -4,21 +4,7 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.pathplanner.lib.path.PathConstraints;
-
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-
 public class Constants {
-
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
@@ -190,6 +176,9 @@ public class Constants {
         public static final Angle pivotUpPosition = Degrees.of(0);
         public static final Angle pivotDownPosition = Degrees.of(135);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
+        public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
+        public static final double gearBoxRatio = 9; // 9:1 for torque
+        public static final double chainRatio = 1; // 1:1
     }
 
     public static class ManipulationConstants {
