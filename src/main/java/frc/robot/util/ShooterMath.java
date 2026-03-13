@@ -170,10 +170,10 @@ public class ShooterMath {
         // double nshooter_angle = ShooterMath.calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
         // double nshooter_velocity = ShooterMath.calculateV(nshooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);     
         AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
-        double alignAngleMoving = ShooterMath.calculateAdjustment(velX, velY, shooter_velocity, alignAngle,shooter_angle);
+        // double alignAngleMoving = ShooterMath.calculateAdjustment(velX, velY, shooter_velocity, alignAngle,shooter_angle);
         
         Angle driveTrainAngle = Radians.of(alignAngle);
-        Angle driveTrainAngleWhileMoving = Radians.of(alignAngleMoving);
+        // Angle driveTrainAngleWhileMoving = Radians.of(alignAngleMoving);
         // if (Math.abs(robotRelZ)>0.5) {
         //     System.out.println("Angle of drivetrain " + driveTrainAngle.in(Degrees));
         //     // System.out.println("Speed to shoot at " + shooter_velocity);
@@ -187,7 +187,7 @@ public class ShooterMath {
         // }
         
 
-        return new ShootingData(new Rotation2d(alignAngle), Radians.of(shooter_angle), rpm);
+        return new ShootingData(new Rotation2d(driveTrainAngle), Radians.of(shooter_angle), rpm);
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
         return RotationsPerSecond.of((velocity * 60*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));

@@ -91,13 +91,13 @@ public class RobotContainer {
                 Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
         // // Auto Align
-        // driver.AlignToHub().whileTrue(drivetrain.commands.applyRequest(
-        //         () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(drivetrain.getState().Pose.getX()
-        //         , drivetrain.getState().Pose.getY()
-        //         , drivetrain.getState().Speeds.vxMetersPerSecond
-        //         ,drivetrain.getState().Speeds.vyMetersPerSecond).drivetrainAngle())
-        //         .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
-        //         .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
+        driver.Prime().whileTrue(drivetrain.commands.applyRequest(
+                () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(getDrivePoseX()
+                , getDrivePoseY()
+                , getDriveSpeedX()
+                ,getDriveSpeedY()).drivetrainAngle())
+                .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
+                .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
        
         
 
