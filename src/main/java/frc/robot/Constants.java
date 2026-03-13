@@ -305,7 +305,7 @@ public class constants {
     public class Photon {
         public static final Transform3d kRobotToCam = new Transform3d(
                 new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
-                new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(0)));
+                new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(180)));
 
         public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
 
