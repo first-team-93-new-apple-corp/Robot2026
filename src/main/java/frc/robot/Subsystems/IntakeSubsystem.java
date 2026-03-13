@@ -60,11 +60,12 @@ public class IntakeSubsystem extends SubsystemBase {
         pivotEncoderConfig = new CANcoderConfiguration();
 
         // Encoder 
-        pivotEncoderConfig.FutureProofConfigs = true;
-        pivotEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
-        pivotEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-        pivotEncoderConfig.MagnetSensor.MagnetOffset = -0.211669921875;
-        pivotEncoder.getConfigurator().apply(pivotEncoderConfig);
+        // Encoder is handled entirly through Phoenix tuner and if you wish to zero it you can do so in Phoenix tuner.
+        // pivotEncoderConfig.FutureProofConfigs = true;
+        // pivotEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+        // pivotEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        // pivotEncoderConfig.MagnetSensor.MagnetOffset = -0.211669921875;
+        // pivotEncoder.getConfigurator().apply(pivotEncoderConfig);
 
         // PID Slot 0 Configuration
         slot0 = new Slot0Configs();

@@ -238,6 +238,7 @@ public class Constants {
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
+            public static final double ShootToFlyGearRatio = 24/18;
             
         }
         public class HoodMotorConfigs {

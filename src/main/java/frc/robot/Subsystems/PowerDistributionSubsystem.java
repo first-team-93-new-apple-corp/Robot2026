@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class PowerDistributionHubsystem extends SubsystemBase{
+public class PowerDistributionSubsystem extends SubsystemBase{
 
     public final PowerDistribution PDH = new PowerDistribution(1, ModuleType.kRev);
 
