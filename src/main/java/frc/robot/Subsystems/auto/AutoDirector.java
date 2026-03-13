@@ -13,6 +13,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -88,7 +89,7 @@ public class AutoDirector {
 
     public void resetAutoPose(Pose2d pose) {
         autoSubsystems.drivetrain().resetPose(pose);
-        autoSubsystems.questNav().commands.resetQuestPose(pose);
+        autoSubsystems.questNav().commands.setRobotPose(new Pose3d(pose));
     }
 
     // This is the basis of the Auto. It contains the name of the auto, the command
@@ -141,7 +142,7 @@ public class AutoDirector {
         // Shhh definintly not doing this vvv
         // Assuming the position of the robot is correct, we tell the robot that it is
         // at the starting pose of the path
-        list.add(autoSubsystems.questNav().commands.resetQuestPose(correctedStartPose));
+        list.add(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         // Shhh definintly not doing this ^^^
         list.add(Commands.print("Running Demo Auto"));
         list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
@@ -160,7 +161,7 @@ public class AutoDirector {
     public Auto Preload() {
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         tracker.shootWhilstGoingTo(new Pose2d(startPose.getX(), startPose.getY()-1, startPose.getRotation()));
         return new Auto("Score Preload Only", tracker, startPose);
     }
@@ -168,7 +169,7 @@ public class AutoDirector {
     public Auto PreloadClimbLeft(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         tracker.addShootPath("null");
         return new Auto("Score Preload Climb", tracker, startPose);
     }
@@ -176,7 +177,7 @@ public class AutoDirector {
     public Auto PreloadClimbRight(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         tracker.addShootPath("shootingPath");
         return new Auto("Score Preload Climb", tracker, startPose);
     }
@@ -184,28 +185,28 @@ public class AutoDirector {
     public Auto PreloadDepot(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         return null;
     }
 
     public Auto PreloadOutPost(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         return null;
     }
 
     public Auto PreloadDepotClimb(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         return null;
     }
 
     public Auto PreloadOutpostCLimb(){
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.resetQuestPose(startPose));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         return null;
     }
 
