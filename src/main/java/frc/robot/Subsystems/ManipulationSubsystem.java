@@ -1,7 +1,6 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -24,8 +23,8 @@ public class ManipulationSubsystem {
      */
 
     public ManipulationSubsystem() {
-        motorConfig.CurrentLimits.SupplyCurrentLimit = 20.0;
-        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = false;
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         kickerMotor.getConfigurator().apply(motorConfig);
@@ -50,6 +49,11 @@ public class ManipulationSubsystem {
         bottomRollerMotor.set(Constants.ManipulationConstants.idle.bottomRollerSpeed);
         sideRollerMotor.set(Constants.ManipulationConstants.idle.sideRollerSpeed);
     }
+    public void shoot(){
+        kickerMotor.set(Constants.ManipulationConstants.shoot.kickerSpeed);
+        bottomRollerMotor.set(Constants.ManipulationConstants.shoot.bottomRollerSpeed);
+        sideRollerMotor.set(Constants.ManipulationConstants.shoot.sideRollerSpeed);
+    }
     public class manipulationCommands {
         public Command intakeCommand() {
             return Commands.runOnce(() -> intake());
@@ -59,6 +63,9 @@ public class ManipulationSubsystem {
         }
         public Command idleCommand() {
             return Commands.runOnce(() -> idle());
+        }
+        public Command shootCommand(){
+            return Commands.runOnce(()->shoot());
         }
     }
 }

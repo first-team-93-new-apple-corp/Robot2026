@@ -9,7 +9,9 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -21,15 +23,23 @@ import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.generated.TunerConstants;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                        // speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
-                                                                                      // max angular velocity
+    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                     // motors
+
+    private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
+                                                                                                   // 10%
+                                                                                                   // deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                     // motors
+
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -39,11 +49,24 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    // public final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+    // Network Tables
+    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
-    public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+    // Vision
+    // * Quest
+    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
 
-    public final ManipulationSubsystem m_ManipulationSubsystem = new ManipulationSubsystem();
+    // Subsystems
+    // * Shooter
+    private ClimberSubsystem climber = new ClimberSubsystem();
+    private IntakeSubsystem intake = new IntakeSubsystem();
+    private ManipulationSubsystem manipulation = new ManipulationSubsystem();
+    private ShooterSubsystem shooter = new ShooterSubsystem();
+     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
+
+    // subsytems var, contains all subsytems, less to implemnt into classes
+    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
+//     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
 
@@ -64,8 +87,6 @@ public class RobotContainer {
                                                                                    // negative X (left)
                 ));
 
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
@@ -106,5 +127,37 @@ public class RobotContainer {
                         .withTimeout(5.0),
                 // Finally idle for the rest of auton
                 drivetrain.applyRequest(() -> idle));
+    }
+
+    public void visionPeriodic() {
+        // questNav.visionPeriodic();
+    }
+
+    public Command seed() {
+        return Commands.runOnce(() -> {
+            drivetrain.seedFieldCentric();
+            // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
+        });
+    }
+
+    private double getDrivePoseX() {
+        return drivetrain.getState().Pose.getX();
+    }
+
+    private double getDrivePoseY() {
+        return drivetrain.getState().Pose.getY();
+    }
+
+    private double getDriveSpeedX() {
+        return drivetrain.getState().Speeds.vxMetersPerSecond;
+    }
+
+    private double getDriveSpeedY() {
+        return drivetrain.getState().Speeds.vyMetersPerSecond;
+    }
+
+    public ShootingData getShootingData() {
+        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+                getDriveSpeedY());
     }
 }

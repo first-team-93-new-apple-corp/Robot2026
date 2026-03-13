@@ -1,0 +1,232 @@
+package frc.robot.Subsystems.auto;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
+import frc.robot.util.subsystems;
+
+public class AutoDirector {
+    // This is the chooser that will be displayed on the dashboard to select the
+    // auto.
+    public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
+    public final List<Auto> Autos = new ArrayList<>();
+    private final subsystems autoSubsystems;
+    private final PathConstraints constraints = Constants.Auto.pathConstraints;
+    private static RobotConfig config = null;
+
+    // Auto
+    private ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
+            .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
+
+    public AutoDirector(subsystems autoSubsystems) {
+        this.autoSubsystems = autoSubsystems;
+        try {
+            config = RobotConfig.fromGUISettings();
+
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+        }
+
+        // Configure AutoBuilder last
+        AutoBuilder.configure(
+                this::getPose,
+                this::resetAutoPose,
+                this::getSpeeds,
+                (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
+                new PPHolonomicDriveController(
+                        new PIDConstants(0.75, 0.0, 0),
+                        new PIDConstants(0.5, 0.0, 0.0)),
+                config,
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                autoSubsystems.drivetrain() // Reference to this subsystem to set requirements
+        );
+        addAutos();
+    }
+
+    public static RobotConfig getRobotConfig() {
+        return config;
+    }
+
+    private Pose2d getPose() {
+        return autoSubsystems.drivetrain().getState().Pose;
+    }
+
+    private ChassisSpeeds getSpeeds() {
+        return autoSubsystems.drivetrain().getState().Speeds;
+    }
+
+    public void resetAutoPose(Pose2d pose) {
+        autoSubsystems.drivetrain().resetPose(pose);
+        autoSubsystems.questNav().commands.setRobotPose(new Pose3d(pose));
+    }
+
+    // This is the basis of the Auto. It contains the name of the auto, the command
+    // to run, and the initial pose.
+    public record Auto(String name, Command command, Pose2d initPose) {
+        // This allows us to create an Auto without specifying an initial pose,
+        // defaulting to field origin.
+        public Auto(String name, Command command) {
+            this(name, command, new Pose2d());
+        }
+    }
+
+    public Auto selection() {
+        return autoChooser.getSelected();
+    }
+
+    public void addAutos() {
+        autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
+        Autos.add(Demo());
+        for (Auto auto : Autos) {
+            autoChooser.addOption(auto.name, auto);
+        }
+        SmartDashboard.putData("AutoChooser", autoChooser);
+    }
+
+    public Auto combineAutos(Auto... autos) {
+        List<Command> list = new ArrayList<>();
+        for (Auto auto : autos) {
+            list.add(Commands.print("Starting Auto: " + auto.name));
+            list.add(auto.command);
+        }
+        SequentialCommandGroup cmds = new SequentialCommandGroup();
+        for (Command command : list) {
+            cmds.addCommands(command);
+        }
+        return new Auto("Combined Auto", cmds, new Pose2d());
+    }
+
+    public Auto Demo() {
+        PathPlannerPath testPath = null;
+        List<Command> list = new ArrayList<>();
+
+        try {
+            testPath = PathPlannerPath.fromPathFile("Demo Path");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Pose2d startPose = testPath.getStartingDifferentialPose();
+        Pose2d correctedStartPose = new Pose2d(startPose.getX(), startPose.getY(), new Rotation2d());
+        // Shhh definintly not doing this vvv
+        // Assuming the position of the robot is correct, we tell the robot that it is
+        // at the starting pose of the path
+        list.add(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        // Shhh definintly not doing this ^^^
+        list.add(Commands.print("Running Demo Auto"));
+        list.add(Commands.print("****************************************** START POSE: " + startPose.toString()));
+        list.add(Commands
+                .print("****************************************** Better POSE: " + correctedStartPose.toString()));
+
+        list.add(AutoBuilder.followPath(testPath));
+        SequentialCommandGroup cmds = new SequentialCommandGroup();
+        for (Command command : list) {
+            cmds.addCommands(command);
+        }
+
+        return new Auto("Demo", cmds, correctedStartPose);
+    }
+
+    public Auto Preload() {
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        tracker.shootWhilstGoingTo(new Pose2d(startPose.getX(), startPose.getY()-1, startPose.getRotation()));
+        return new Auto("Score Preload Only", tracker, startPose);
+    }
+
+    public Auto PreloadClimbLeft(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        tracker.addShootPath("null");
+        return new Auto("Score Preload Climb", tracker, startPose);
+    }
+
+    public Auto PreloadClimbRight(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        tracker.addShootPath("shootingPath");
+        return new Auto("Score Preload Climb", tracker, startPose);
+    }
+
+    public Auto PreloadDepot(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        return null;
+    }
+
+    public Auto PreloadOutPost(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        return null;
+    }
+
+    public Auto PreloadDepotClimb(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        return null;
+    }
+
+    public Auto PreloadOutpostCLimb(){
+        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        return null;
+    }
+
+
+    public Auto doNothing(){
+        return null;
+    }
+
+    public Auto moveForward(){
+        return null;
+    }
+    /* TODO 
+     *  Score preload before intake?
+     * Intake then score intake and preload?
+     * What to do before climb
+     * shooting positions? / path to shoot on.
+     *   farther away to get out of the way of other robots
+     *     Follow up question: timing to score
+     *        figure out how to implement custom delays in paths to avoid robots
+     * 
+     * */ 
+    
+}
