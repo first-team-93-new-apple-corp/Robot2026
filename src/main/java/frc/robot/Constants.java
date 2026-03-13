@@ -286,16 +286,17 @@ public class constants {
     }
 
     public class Quest {
-        public static final Distance QuestX = Inches.of(15.5);
-        public static final Distance QuestY = Inches.of(-1.75);
-        public static final Distance QuestZ = Inches.of(20.5);
+        public static final Distance QuestX = Inches.of(-11);
+        public static final Distance QuestY = Inches.of(-9.75);
+        public static final Distance QuestZ = Inches.of(17);
 
-        public static final Angle QuestYawOffset = Degrees.of(2.0);
-        public static final Angle QuestPitchOffset = Degrees.of(-1.5);
-        public static final Angle QuestRollOffset = Degrees.of(3.0);
+        public static final Angle QuestYawOffset = Degrees.of(180);
+        public static final Angle QuestPitchOffset = Degrees.of(0);
+        public static final Angle QuestRollOffset = Degrees.of(90);
 
-        public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
-                QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
+        public static Transform3d RobotToQuest3D = 
+                new Transform3d(QuestX.in(Meters), QuestY.in(Meters), QuestZ.in(Meters), 
+                new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
         public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
                 new Rotation2d(QuestYawOffset.in(Degrees)));
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
@@ -303,8 +304,8 @@ public class constants {
 
     public class Photon {
         public static final Transform3d kRobotToCam = new Transform3d(
-                new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
-                new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
+                new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
+                new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(0)));
 
         public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
 
