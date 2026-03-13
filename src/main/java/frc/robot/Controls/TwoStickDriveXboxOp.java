@@ -3,7 +3,7 @@ package frc.robot.Controls;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.constants;
 
 public class TwoStickDriveXboxOp extends XboxDrive {
 
@@ -19,7 +19,7 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     }
 
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Thrustmaster.Deadzone) {
+        if (Math.abs(value) < constants.Thrustmaster.Deadzone) {
             return 0.0;
         }
         return value;
@@ -42,21 +42,21 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public Trigger brake() {
-        return RightStick.button(Constants.Thrustmaster.Trigger);
+        return RightStick.button(constants.Thrustmaster.Trigger);
     }
 
     @Override
     public Trigger robotRel() {
-        return RightStick.button(Constants.Thrustmaster.Center_Button);
+        return RightStick.button(constants.Thrustmaster.Center_Button);
     }
 
     @Override
     public Trigger primeShooter(){
-        return LeftStick.button(Constants.Thrustmaster.Trigger);
+        return LeftStick.button(constants.Thrustmaster.Trigger);
     }
 
     @Override
     public Trigger seed(){
-        return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
+        return LeftStick.button(constants.Thrustmaster.Left_Buttons.Top_Middle);
     }
 }

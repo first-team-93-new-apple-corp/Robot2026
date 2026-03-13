@@ -24,8 +24,8 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 // import com.ctre.phoenix6.controls.DutyCycleOut;
 
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.constants.CAN;
+import frc.robot.constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
 

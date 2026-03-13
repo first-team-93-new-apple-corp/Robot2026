@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.constants;
 import frc.robot.util.NTSubsystem;
 import frc.robot.util.RollingAveragePose3d;
 import gg.questnav.questnav.PoseFrame;
@@ -50,7 +50,7 @@ public class VisionSubsystem extends SubsystemBase {
     private boolean hasPoseInit = false;
     private boolean hasPiPoseData = false;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
+    private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, constants.Photon.kRobotToCam);
 
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
         this.drivetrain = drivetrain;
@@ -67,8 +67,8 @@ public class VisionSubsystem extends SubsystemBase {
      * @param newRobotPose new pose to set
      */
     public void setPose(Pose3d newRobotPose) {
-        Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest3D);
-        Pose3d piPose = newRobotPose.transformBy(Constants.Photon.kRobotToCam);
+        Pose3d questPose = newRobotPose.transformBy(constants.Quest.RobotToQuest3D);
+        Pose3d piPose = newRobotPose.transformBy(constants.Photon.kRobotToCam);
         quest.setPose(questPose);
 
         // Reset our estimators with the new pose
@@ -114,7 +114,7 @@ public class VisionSubsystem extends SubsystemBase {
                     questPose3d = questFrame.questPose3d();
                     // Get timestamp for when the data was sent
                     // Transform by the mount pose to get your robot pose
-                    robotPose3d = questPose3d.transformBy(Constants.Quest.RobotToQuest3D.inverse());
+                    robotPose3d = questPose3d.transformBy(constants.Quest.RobotToQuest3D.inverse());
 
                     // Add the measurement to our estimator
                     addVisionMeasurement(drivetrain, robotPose3d);
@@ -162,7 +162,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     public void addVisionMeasurement(CommandSwerveDrivetrain drivetrain, Pose3d pose) {
         drivetrain.addVisionMeasurement(pose.toPose2d(), RobotController.getFPGATime(),
-                Constants.Quest.QUESTNAV_STD_DEVS);
+                constants.Quest.QUESTNAV_STD_DEVS);
     }
 
     /**

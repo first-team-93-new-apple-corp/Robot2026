@@ -4,7 +4,20 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
-public class Constants {
+import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
+public class constants {
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
@@ -181,30 +194,30 @@ public class Constants {
         public static final double chainRatio = 1; // 1:1
     }
 
-    public static class ManipulationConstants {
+    public class ManipulationConstants {
         public static final int bottomRollerMotorID = 19; // Bottom Rollers
         public static final int sideRollerMotorID = 20; // Side Rollers
         public static final int kickerMotorID = 18; // Top Rollers
 
-        public static class intake {
+        public class intake {
             public static final double bottomRollerSpeed = 1.0;
             public static final double sideRollerSpeed = 0.0;
             public static final double kickerSpeed = 0.0;
         }
 
-        public static class shoot {
+        public class shoot {
             public static final double bottomRollerSpeed = 1.0;
             public static final double sideRollerSpeed = -1.0;
             public static final double kickerSpeed = 1.0;
         }
 
-        public static class idle {
+        public class idle {
             public static final double bottomRollerSpeed = 0.2;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
 
-        public static class outtake {
+        public class outtake {
             public static final double bottomRollerSpeed = -1;
             public static final double sideRollerSpeed = 1;
             public static final double kickerSpeed = -1;

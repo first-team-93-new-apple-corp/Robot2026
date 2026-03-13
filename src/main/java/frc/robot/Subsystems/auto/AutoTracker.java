@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
+import frc.robot.constants;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
@@ -146,11 +146,11 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void shootWhilstGoingTo(Pose2d pose) {
         SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
+            .withDeadband(constants.Swerve.MaxSpeed * constants.Controls.Deadzone)
+            .withRotationalDeadband(constants.Swerve.MaxAngularRate * constants.Controls.Deadzone)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
-                Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
+        driveFacingAngle.HeadingController.setPID(constants.Drivetrain.HeadingController.kP,
+                constants.Drivetrain.HeadingController.kI, constants.Drivetrain.HeadingController.kD);
 
         Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));

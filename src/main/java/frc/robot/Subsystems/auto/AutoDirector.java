@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
+import frc.robot.constants;
 import frc.robot.util.subsystems;
 
 public class AutoDirector {
@@ -31,7 +31,7 @@ public class AutoDirector {
     public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
     public final List<Auto> Autos = new ArrayList<>();
     private final subsystems autoSubsystems;
-    private final PathConstraints constraints = Constants.Auto.pathConstraints;
+    // private final PathConstraints constraints = Constants.Auto.pathConstraints;
     private static RobotConfig config = null;
 
     // Auto

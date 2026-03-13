@@ -19,8 +19,13 @@ import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
+import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
+import frc.robot.Subsystems.PowerDistributionSubsystem;
+import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.ShootingData;
+import frc.robot.util.subsystems;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -33,8 +38,8 @@ public class RobotContainer {
                                                                      // motors
 
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
+            .withDeadband(constants.Swerve.MaxSpeed * constants.Controls.Deadzone)
+            .withRotationalDeadband(constants.Swerve.MaxAngularRate * constants.Controls.Deadzone) // Add a
                                                                                                    // 10%
                                                                                                    // deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
@@ -95,22 +100,22 @@ public class RobotContainer {
         driver.brake().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-        driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
-        driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
-        driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+        // driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+        // driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+        // driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
+        // driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
 
-        driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
+        // driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
+        // driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        // driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        // driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        // driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        // driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {

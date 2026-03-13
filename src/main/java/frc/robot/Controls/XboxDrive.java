@@ -3,7 +3,7 @@ package frc.robot.Controls;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.constants;
 
 public class XboxDrive implements ControllerSchemeIO {
 
@@ -22,7 +22,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     public double deadzone(double value) {
-        if (Math.abs(value) < Constants.Thrustmaster.Deadzone) {
+        if (Math.abs(value) < constants.Thrustmaster.Deadzone) {
             return 0.0;
         }
         return value;

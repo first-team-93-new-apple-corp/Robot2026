@@ -6,12 +6,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants;
+import frc.robot.constants;
 
 public class ManipulationSubsystem {
-    private TalonFX bottomRollerMotor = new TalonFX(Constants.ManipulationConstants.bottomRollerMotorID); // Bottom Rollers
-    private TalonFX sideRollerMotor = new TalonFX(Constants.ManipulationConstants.sideRollerMotorID); // Side Rollers
-    private TalonFX kickerMotor = new TalonFX(Constants.ManipulationConstants.kickerMotorID); // Top Rollers
+    private TalonFX bottomRollerMotor = new TalonFX(constants.ManipulationConstants.bottomRollerMotorID); // Bottom Rollers
+    private TalonFX sideRollerMotor = new TalonFX(constants.ManipulationConstants.sideRollerMotorID); // Side Rollers
+    private TalonFX kickerMotor = new TalonFX(constants.ManipulationConstants.kickerMotorID); // Top Rollers
 
     private TalonFXConfiguration motorConfig = new TalonFXConfiguration();
     public manipulationCommands commands = new manipulationCommands();
@@ -33,26 +33,26 @@ public class ManipulationSubsystem {
     }
 
     public void intake() {
-        kickerMotor.set(Constants.ManipulationConstants.intake.kickerSpeed);
-        bottomRollerMotor.set(Constants.ManipulationConstants.intake.bottomRollerSpeed);
-        sideRollerMotor.set(Constants.ManipulationConstants.intake.sideRollerSpeed);
+        kickerMotor.set(constants.ManipulationConstants.intake.kickerSpeed);
+        bottomRollerMotor.set(constants.ManipulationConstants.intake.bottomRollerSpeed);
+        sideRollerMotor.set(constants.ManipulationConstants.intake.sideRollerSpeed);
     }
 
      public void outtake() {
-        kickerMotor.set(Constants.ManipulationConstants.outtake.kickerSpeed);
-        bottomRollerMotor.set(Constants.ManipulationConstants.outtake.bottomRollerSpeed);
-        sideRollerMotor.set(Constants.ManipulationConstants.outtake.sideRollerSpeed);
+        kickerMotor.set(constants.ManipulationConstants.outtake.kickerSpeed);
+        bottomRollerMotor.set(constants.ManipulationConstants.outtake.bottomRollerSpeed);
+        sideRollerMotor.set(constants.ManipulationConstants.outtake.sideRollerSpeed);
     }
 
      public void idle() {
-        kickerMotor.set(Constants.ManipulationConstants.idle.kickerSpeed);
-        bottomRollerMotor.set(Constants.ManipulationConstants.idle.bottomRollerSpeed);
-        sideRollerMotor.set(Constants.ManipulationConstants.idle.sideRollerSpeed);
+        kickerMotor.set(constants.ManipulationConstants.idle.kickerSpeed);
+        bottomRollerMotor.set(constants.ManipulationConstants.idle.bottomRollerSpeed);
+        sideRollerMotor.set(constants.ManipulationConstants.idle.sideRollerSpeed);
     }
     public void shoot(){
-        kickerMotor.set(Constants.ManipulationConstants.shoot.kickerSpeed);
-        bottomRollerMotor.set(Constants.ManipulationConstants.shoot.bottomRollerSpeed);
-        sideRollerMotor.set(Constants.ManipulationConstants.shoot.sideRollerSpeed);
+        kickerMotor.set(constants.ManipulationConstants.shoot.kickerSpeed);
+        bottomRollerMotor.set(constants.ManipulationConstants.shoot.bottomRollerSpeed);
+        sideRollerMotor.set(constants.ManipulationConstants.shoot.sideRollerSpeed);
     }
     public class manipulationCommands {
         public Command intakeCommand() {

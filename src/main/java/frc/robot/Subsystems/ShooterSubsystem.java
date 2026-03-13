@@ -11,11 +11,11 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import frc.robot.Constants;
-import frc.robot.Constants.CAN;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
-import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
+import frc.robot.constants;
+import frc.robot.constants.CAN;
+import frc.robot.constants.ShooterConstants;
+import frc.robot.constants.ShooterConstants.HoodMotorConfigs;
+import frc.robot.constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 
@@ -63,8 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         commands = new ShooterCommands();
-        topLeftShooter = new TalonFX(Constants.CAN.topLeftShooter);
-        topRightShooter = new TalonFX(Constants.CAN.topRightShooter);
+        topLeftShooter = new TalonFX(constants.CAN.topLeftShooter);
+        topRightShooter = new TalonFX(constants.CAN.topRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
 
@@ -95,7 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
 
-        hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
+        hoodMotor = new TalonFX(constants.CAN.hoodMotor);
 
         hoodConfig = new TalonFXConfiguration();
 
@@ -130,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor.getConfigurator().apply(hoodConfig);
 
-        hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
+        hoodLimitSwitch = new DigitalInput(constants.CAN.hoodLimitSwitch);
 
         lastSetpoint = Rotations.of(0);
 
