@@ -48,6 +48,7 @@ public class VisionSubsystem extends SubsystemBase {
     // PhotonVision
     private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
+    private boolean hasPiPoseData = false;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
 
@@ -60,7 +61,9 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets a new pose and sets all our vision devices to that pose (with transforms)
+     * Sets a new pose and sets all our vision devices to that pose (with
+     * transforms)
+     * 
      * @param newRobotPose new pose to set
      */
     public void setPose(Pose3d newRobotPose) {
@@ -85,7 +88,21 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
         SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
-        
+        // PhotonVision Estimation
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEst.isEmpty()) {
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                hasPiPoseData = false;
+            }
+
+            visionEst.ifPresent(
+                    est -> {
+                        piPose3d = est.estimatedPose;
+                        hasPiPoseData = true;
+                    });
+        }
         if (hasPoseInit) { // Skip quest if it hasn't started up yet
             if (quest.isTracking()) {
                 // Get the latest pose data frames from the Quest
@@ -106,34 +123,26 @@ public class VisionSubsystem extends SubsystemBase {
             }
         } else {
             if (quest.isTracking()) {
-                // Clears the queue of pose frames to prevent old data from being processed when the Quest starts up
-                PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
+                // Clears the queue of pose frames to prevent old data from being processed when
+                // the Quest starts up
+                quest.getAllUnreadPoseFrames();
+            }
+            if (piPose3d != null && hasPiPoseData) {
+                quest.setPose(piPose3d);
+                hasPoseInit = true;
             }
         }
 
         // Update NetworkTables
         networkTables.quest.updateQuestPose(questPose3d);
         networkTables.quest.updateRobotPose(robotPose3d);
-        networkTables.quest.updateAvgQuestPose(getAverageQuestPose3D());
+
         networkTables.quest.updateAvgRobotPose(getAverageRobotPose3D());
 
         // Pose Averaging
         questPoseAverager.addPose(questPose3d);
         robotPoseAverager.addPose(robotPose3d);
-
-        // PhotonVision Estimation
-        Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var result : camera.getAllUnreadResults()) {
-            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-            if (visionEst.isEmpty()) {
-                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
-            }
-
-            visionEst.ifPresent(
-                    est -> {
-                        piPose3d = est.estimatedPose;
-                    });
-        }
+        piPoseAverager.addPose(piPose3d);
     }
 
     public String questPoseInfo() {
@@ -149,18 +158,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     public Pose3d getAverageRobotPose3D() {
         return robotPoseAverager.getAveragePose();
-    }
-
-    public Pose2d getAverageRobotPose2D() {
-        return robotPoseAverager.getAveragePose().toPose2d();
-    }
-
-    public Pose3d getAverageQuestPose3D() {
-        return questPoseAverager.getAveragePose();
-    }
-
-    public Pose2d getAverageQuestPose2D() {
-        return questPoseAverager.getAveragePose().toPose2d();
     }
 
     public void addVisionMeasurement(CommandSwerveDrivetrain drivetrain, Pose3d pose) {
