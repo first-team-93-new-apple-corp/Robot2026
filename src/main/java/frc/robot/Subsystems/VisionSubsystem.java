@@ -1,7 +1,10 @@
 package frc.robot.Subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 
 // import org.photonvision.PhotonPoseEstimator;
 
@@ -10,8 +13,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,56 +24,54 @@ import frc.robot.util.RollingAveragePose3d;
 import gg.questnav.questnav.PoseFrame;
 import gg.questnav.questnav.QuestNav;
 
-public class QuestNavSubsystem extends SubsystemBase {
+public class VisionSubsystem extends SubsystemBase {
     private CommandSwerveDrivetrain drivetrain;
     private QuestNav quest;
-
     // http://10.0.93.200:5801/
 
+    // Quest Commands
     public QuestCommands commands = new QuestCommands();
+
+    // Network Tables
     private NTSubsystem networkTables;
 
-    // private Pose2d questPose2d = new Pose2d();
+    // Last poses
     private Pose3d questPose3d = new Pose3d();
-
-    private Pose2d robotPose2d = new Pose2d();
     private Pose3d robotPose3d = new Pose3d();
+    private Pose3d piPose3d = new Pose3d();
 
+    // Pose Averagers
     private RollingAveragePose3d robotPoseAverager = new RollingAveragePose3d(10);
     private RollingAveragePose3d questPoseAverager = new RollingAveragePose3d(10);
+    private RollingAveragePose3d piPoseAverager = new RollingAveragePose3d(10);
 
-    // private Pose3d piPose3d = new Pose3d();
-
-    // private PhotonCamera camera = new PhotonCamera("MainCam");
-    // private boolean hasPoseInit = false;
+    // PhotonVision
+    private PhotonCamera camera = new PhotonCamera("MainCam");
+    private boolean hasPoseInit = false;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    public static final Transform3d kRobotToCam = new Transform3d(
-            new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
-            new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
-    // private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, kRobotToCam);
+    private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
 
-    public QuestNavSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
+    public VisionSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
         this.drivetrain = drivetrain;
         this.networkTables = nt;
+        // Quest Initialization
         quest = new QuestNav();
-
-        // Transform by the offset to get the Quest pose
-        questPose3d = robotPose3d.transformBy(Constants.Quest.RobotToQuest3D);
-
-        // Send the reset operation
-        quest.setPose(questPose3d);
-
-        // this.networkTables = networkTables;
-
         quest.setVersionCheckEnabled(false);
-
-        robotPoseAverager.addPose(robotPose3d);
-        questPoseAverager.addPose(questPose3d);
     }
 
+    /**
+     * Sets a new pose and sets all our vision devices to that pose (with transforms)
+     * @param newRobotPose new pose to set
+     */
     public void setPose(Pose3d newRobotPose) {
         Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest3D);
+        Pose3d piPose = newRobotPose.transformBy(Constants.Photon.kRobotToCam);
         quest.setPose(questPose);
+
+        // Reset our estimators with the new pose
+        questPoseAverager.reset();
+        robotPoseAverager.reset();
+        piPoseAverager.reset();
     }
 
     /**
@@ -86,34 +85,55 @@ public class QuestNavSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
         SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
+        
+        if (hasPoseInit) { // Skip quest if it hasn't started up yet
+            if (quest.isTracking()) {
+                // Get the latest pose data frames from the Quest
+                PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
 
-        if (quest.isTracking()) {
-            // Get the latest pose data frames from the Quest
-            PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
+                // Loop over the pose data frames and send them to the pose estimator
+                for (PoseFrame questFrame : questFrames) {
+                    // Get the pose of the Quest
+                    questPose3d = questFrame.questPose3d();
+                    // Get timestamp for when the data was sent
+                    // Transform by the mount pose to get your robot pose
+                    robotPose3d = questPose3d.transformBy(Constants.Quest.RobotToQuest3D.inverse());
 
-            // Loop over the pose data frames and send them to the pose estimator
-            for (PoseFrame questFrame : questFrames) {
-                // Get the pose of the Quest
-                questPose3d = questFrame.questPose3d();
-                // Get timestamp for when the data was sent
-                // Transform by the mount pose to get your robot pose
-                robotPose3d = questPose3d.transformBy(Constants.Quest.RobotToQuest3D.inverse());
-                robotPose2d = robotPose3d.toPose2d();
+                    // Add the measurement to our estimator
+                    addVisionMeasurement(drivetrain, robotPose3d);
 
-                // Add the measurement to our estimator
-                addVisionMeasurement(drivetrain, robotPose3d);
-
+                }
+            }
+        } else {
+            if (quest.isTracking()) {
+                // Clears the queue of pose frames to prevent old data from being processed when the Quest starts up
+                PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
             }
         }
 
+        // Update NetworkTables
         networkTables.quest.updateQuestPose(questPose3d);
         networkTables.quest.updateRobotPose(robotPose3d);
-
         networkTables.quest.updateAvgQuestPose(getAverageQuestPose3D());
         networkTables.quest.updateAvgRobotPose(getAverageRobotPose3D());
 
+        // Pose Averaging
         questPoseAverager.addPose(questPose3d);
         robotPoseAverager.addPose(robotPose3d);
+
+        // PhotonVision Estimation
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEst.isEmpty()) {
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+            }
+
+            visionEst.ifPresent(
+                    est -> {
+                        piPose3d = est.estimatedPose;
+                    });
+        }
     }
 
     public String questPoseInfo() {
@@ -121,8 +141,8 @@ public class QuestNavSubsystem extends SubsystemBase {
         String logEntry = String.format(
                 "%f,%f,%f",
                 timestamp,
-                robotPose2d.getX(),
-                robotPose2d.getY());
+                robotPose3d.getX(),
+                robotPose3d.getY());
         return logEntry;
 
     }
@@ -144,8 +164,10 @@ public class QuestNavSubsystem extends SubsystemBase {
     }
 
     public void addVisionMeasurement(CommandSwerveDrivetrain drivetrain, Pose3d pose) {
-        drivetrain.addVisionMeasurement(pose.toPose2d(), RobotController.getFPGATime(), Constants.Quest.QUESTNAV_STD_DEVS);
+        drivetrain.addVisionMeasurement(pose.toPose2d(), RobotController.getFPGATime(),
+                Constants.Quest.QUESTNAV_STD_DEVS);
     }
+
     /**
      * Gets the Quest battery %
      * 
@@ -159,35 +181,10 @@ public class QuestNavSubsystem extends SubsystemBase {
      * Class of quest commands
      */
     public class QuestCommands {
-        public Command resetQuestPose(Pose3d newRobotPose) {
+        public Command setRobotPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
-                Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest3D);
-                quest.setPose(questPose);
-                questPoseAverager.reset();
-                robotPoseAverager.reset();
-            }).andThen(Commands.print("Reset Quest Pose!"));
+                setRobotPose(newRobotPose);
+            }).andThen(Commands.print("Set Robot Pose!"));
         }
-
-        public Command resetQuestPose(Pose2d newRobotPose) {
-            return Commands.runOnce(() -> {
-                Pose3d newRobotPose3d = new Pose3d(newRobotPose.getX(), newRobotPose.getY(), 0,
-                        new Rotation3d(0, 0, newRobotPose.getRotation().getDegrees()));
-                Pose3d questPose = newRobotPose3d.transformBy(Constants.Quest.RobotToQuest3D);
-
-                quest.setPose(questPose);
-
-                questPoseAverager.reset();
-                robotPoseAverager.reset();
-            });
-        }
-
-        // public Command updateNT() {
-        // return new RunCommand(() -> {
-        // networkTables.quest.updateQuestPose(questPose3d);
-        // networkTables.quest.updateRobotPose(robotPose3d);
-        // // networkTables.quest.updatePiPose(piPose3d);
-        // });
-        // }
-
     }
 }

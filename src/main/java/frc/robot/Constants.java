@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.units.Units.Degrees;
 
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -14,11 +13,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-
-//import com.pathplanner.lib.path.PathConstraints;
-
 
 public class Constants {
 
@@ -45,6 +42,7 @@ public class Constants {
             public static final double kD = 0.1;
         }
     }
+
     public class CAN {
         public static final int hoodLimitSwitch = 8;
         public static final int climber = 25;
@@ -192,7 +190,7 @@ public class Constants {
         public static final Angle pivotUpPosition = Degrees.of(0);
         public static final Angle pivotDownPosition = Degrees.of(135);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
-    } 
+    }
 
     public static class ManipulationConstants {
         public static final int bottomRollerMotorID = 19; // Bottom Rollers
@@ -223,6 +221,7 @@ public class Constants {
             public static final double kickerSpeed = -1;
         }
     }
+
     public class ShooterConstants {
         public class ShooterMotorConfigs {
             public static final Distance flyWheelDiameter = Inches.of(4);
@@ -241,6 +240,7 @@ public class Constants {
             public static final double ShootToFlyGearRatio = 24/18;
             
         }
+
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;
@@ -258,10 +258,11 @@ public class Constants {
             public static final Angle minAngleNoOffset = Degrees.of(0);
             public static final Angle maxAngleNoOffset = Degrees.of(20);
             public static final Angle offsetAngle = Degrees.of(25);
-            
+
         }
     }
-public class Swerve {
+
+    public class Swerve {
         public static final int[] modules = { 0, 1, 2, 3 };
         public static final int[] steerMotors = { 1, 2, 3, 4 };
         public static final int[] driveMotors = { 5, 6, 7, 8 };
@@ -293,16 +294,26 @@ public class Swerve {
 
         public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
                 QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
-        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters), new Rotation2d(QuestYawOffset.in(Degrees)));
-
-        // public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0.01, 0.01, 0.035);
+        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
+                new Rotation2d(QuestYawOffset.in(Degrees)));
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
+    }
+
+    public class Photon {
+        public static final Transform3d kRobotToCam = new Transform3d(
+                new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
+                new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
+
+        public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
+
     }
 
     public class Auto {
         public static final record AutoSector(Pose2d initPose, Pose2d finalPose) {
         }
 
-        public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0), MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI), RadiansPerSecondPerSecond.of(Math.PI/2));
+        public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0),
+                MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI),
+                RadiansPerSecondPerSecond.of(Math.PI / 2));
     }
 }
