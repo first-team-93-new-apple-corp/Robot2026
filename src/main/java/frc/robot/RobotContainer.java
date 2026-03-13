@@ -133,11 +133,11 @@ public class RobotContainer {
         
 
         // // Cmds to test auto shoot
-        // driver.Shoot().whileTrue(shooter.commands.autoAngle(getShootingData().shooterAngle()));
-        // driver.Shoot().onTrue(shooter.commands.autoShoot(getShootingData().shooterVelocity()));
-        // driver.Shoot().onTrue(manipulation.commands.shootCommand());
-        // driver.Shoot().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
-        // driver.Shoot().onFalse(manipulation.commands.idleCommand());
+        // driver.Prime().whileTrue(shooter.commands.autoAngle(getShootingData().shooterAngle()));
+        // driver.Prime().onTrue(shooter.commands.autoShoot(getShootingData().shooterVelocity()));
+        // driver.Prime().onTrue(manipulation.commands.shootCommand());
+        // driver.Prime().onFalse(shooter.commands.autoAngle(Degrees.of(25)).alongWith(shooter.commands.stopShooter()));
+        // driver.Prime().onFalse(manipulation.commands.idleCommand());
 
         //Manipulation
         // driver.Shoot().onTrue(manipulation.commands.shootCommand());

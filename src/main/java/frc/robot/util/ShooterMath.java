@@ -190,7 +190,7 @@ public class ShooterMath {
         return new ShootingData(new Rotation2d(driveTrainAngle), Radians.of(shooter_angle), rpm);
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((velocity * 60*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+        return RotationsPerSecond.of((velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
