@@ -139,6 +139,6 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public Trigger AlignToHub() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'AlignToHub'");
+        return Prime();
     }
 }
