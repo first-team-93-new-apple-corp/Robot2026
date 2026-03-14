@@ -32,7 +32,6 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands(cmd1.andThen(intake.commands.intake()));
-        // cmds.addCommands(intake.commands.intake());
         cmds.addCommands(manipulation.commands.intakeCommand());
         cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
         return cmds;
