@@ -23,7 +23,9 @@ import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.NTSubsystem;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -55,11 +57,11 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
     // Vision
     // * Quest
-    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
+    private VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain, networkTables);
 
     // Subsystems
     // * Shooter
@@ -135,13 +137,12 @@ public class RobotContainer {
     }
 
     public void visionPeriodic() {
-        // questNav.visionPeriodic();
+        visionSubsystem.visionPeriodic();
     }
 
     public Command seed() {
         return Commands.runOnce(() -> {
             drivetrain.seedFieldCentric();
-            // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
         });
     }
 
