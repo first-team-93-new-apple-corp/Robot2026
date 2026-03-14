@@ -2,7 +2,7 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import frc.robot.constants;
+import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -64,7 +64,7 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
-        cmds.addCommands(shooter.commands.stopShooter());
+        // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
      }
 
@@ -78,7 +78,7 @@ public record subsystems(
      public Command PrimeFalse(){
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter.commands.stopShooter());
-        cmds.addCommands(shooter.commands.autoAngle(constants.ShooterConstants.HoodMotorConfigs.minAngle));
+        cmds.addCommands(shooter.commands.autoAngle(Constants.ShooterConstants.HoodMotorConfigs.minAngle));
         return cmds;
      }
      

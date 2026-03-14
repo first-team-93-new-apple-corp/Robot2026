@@ -38,8 +38,8 @@ public class RobotContainer {
                                                                      // motors
 
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(constants.Swerve.MaxSpeed * constants.Controls.Deadzone)
-            .withRotationalDeadband(constants.Swerve.MaxAngularRate * constants.Controls.Deadzone) // Add a
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
                                                                                                    // 10%
                                                                                                    // deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive

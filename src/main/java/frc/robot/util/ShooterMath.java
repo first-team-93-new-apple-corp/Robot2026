@@ -10,7 +10,7 @@ import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Subsystems.auto.AutoConstants;
-import frc.robot.constants;
+import frc.robot.Constants;
 public class ShooterMath {
     // https://www.analyzemath.com/stepbystep_mathworksheets/parabola/parabola_3_points.html
     // Static hood angle
@@ -190,7 +190,7 @@ public class ShooterMath {
         return new ShootingData(new Rotation2d(driveTrainAngle), Radians.of(shooter_angle), rpm);
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((velocity)/(Math.PI*Units.inchesToMeters(constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+        return RotationsPerSecond.of((velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

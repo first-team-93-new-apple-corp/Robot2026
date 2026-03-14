@@ -17,7 +17,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
-public class constants {
+public class Constants {
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
