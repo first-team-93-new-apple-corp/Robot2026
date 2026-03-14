@@ -32,12 +32,12 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public double InputUp() {
-        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getX());
     }
 
     @Override
     public double InputTheta() {
-        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-RightStick.getY());
     }
 
     @Override
@@ -61,18 +61,25 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     }
 
     @Override
-    public Trigger fieldRel() {
-        return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
-    }
-
-    @Override
     public Trigger robotRel() {
         return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
     public Trigger primeShooter(){
-        return LeftStick.button(Constants.Thrustmaster.Trigger);
+        System.out.println("Warning: Function unbound: primeShooter");
+        return new Trigger(() -> false); // Unbound
+    }
+
+    @Override
+    public Trigger Shoot(){
+        return RightStick.button(Constants.Thrustmaster.Trigger);
+    }
+
+    @Override
+    public Trigger faceHub() {
+        System.out.println("Warning: No current function for faceHub");
+        return RightStick.button(Constants.Thrustmaster.Center_Button); //Binding for when we have implementation
     }
 
     @Override
