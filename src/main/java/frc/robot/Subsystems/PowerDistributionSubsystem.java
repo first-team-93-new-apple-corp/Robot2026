@@ -10,9 +10,13 @@ public class PowerDistributionSubsystem extends SubsystemBase{
     public final PowerDistribution PDH = new PowerDistribution(1, ModuleType.kRev);
 
     public double totalCurrent;
+    public double voltage;
+
     @Override
     public void periodic() {
         totalCurrent = PDH.getTotalCurrent();
+        voltage = PDH.getVoltage();
         SmartDashboard.putNumber("Total Current", totalCurrent);
+        SmartDashboard.putNumber("Voltage", voltage);
     }
 }

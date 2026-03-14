@@ -189,7 +189,7 @@ public class Constants {
         public static final Angle pivotUpPosition = Degrees.of(0);
         public static final Angle pivotDownPosition = Degrees.of(120);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
-        public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
+        // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1
     }
@@ -200,27 +200,27 @@ public class Constants {
         public static final int kickerMotorID = 18; // Top Rollers
 
         public class intake {
-            public static final double bottomRollerSpeed = 1.0;
-            public static final double sideRollerSpeed = 0.0;
+            public static final double bottomRollerSpeed = 0.1;
+            public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 1.0;
-            public static final double sideRollerSpeed = -1.0;
-            public static final double kickerSpeed = 1.0;
+            public static final double bottomRollerSpeed = 0.3;
+            public static final double sideRollerSpeed = -0.4;
+            public static final double kickerSpeed = 0.75;
         }
 
         public class idle {
-            public static final double bottomRollerSpeed = 0.2;
+            public static final double bottomRollerSpeed = 0.01;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
 
         public class outtake {
-            public static final double bottomRollerSpeed = -1;
-            public static final double sideRollerSpeed = 1;
-            public static final double kickerSpeed = -1;
+            public static final double bottomRollerSpeed = -0.1;
+            public static final double sideRollerSpeed = 0.3;
+            public static final double kickerSpeed = -0.5;
         }
     }
 
