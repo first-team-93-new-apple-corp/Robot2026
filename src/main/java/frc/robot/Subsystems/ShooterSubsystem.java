@@ -78,8 +78,8 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
         allShooterConfig.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
         allShooterConfig.Feedback.VelocityFilterTimeConstant = 0;
-        allShooterConfig.MotionMagic.MotionMagicAcceleration = 100;
-        allShooterConfig.MotionMagic.MotionMagicJerk = 200;
+        allShooterConfig.MotionMagic.MotionMagicAcceleration = 50;
+        allShooterConfig.MotionMagic.MotionMagicJerk = 100;
 
         shooterSlot0Configs = new Slot0Configs();
 
@@ -169,6 +169,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Hood Position",
                 hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
+        SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
 
         SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
@@ -287,9 +288,9 @@ public class ShooterSubsystem extends SubsystemBase {
             return Commands.runOnce(() -> setShooterControl(m_neutral));
         }
 
-        public Command stopHood() {
-            return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
-        }
+        // public Command stopHood() {
+        //     return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
+        // }
 
         public Command testingHood() {
             return Commands.runOnce(() -> setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));

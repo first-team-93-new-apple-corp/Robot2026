@@ -154,7 +154,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
-        addCommands(parrallel.andThen(subsystems.Shooter(3)));
+        addCommands(parrallel.andThen(subsystems.shoot(3)));
         Command alignFunction = subsystems.drivetrain().commands.applyRequest(
                 () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
         
@@ -179,7 +179,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void goToAndThenShoot(Pose2d pose) {
         Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
-        Command shootCmd = subsystems.Shooter(3);
+        Command shootCmd = subsystems.shoot(3);
         addCommands(driveCmd.andThen(shootCmd));
     }
 

@@ -258,7 +258,7 @@ public class Constants {
             public static final Angle minAngle = Degrees.of(25);
             public static final Angle maxAngle = Degrees.of(42);
             public static final Angle minAngleNoOffset = Degrees.of(0);
-            public static final Angle maxAngleNoOffset = Degrees.of(20);
+            public static final Angle maxAngleNoOffset = Degrees.of(15);
             public static final Angle offsetAngle = Degrees.of(25);
 
         }
