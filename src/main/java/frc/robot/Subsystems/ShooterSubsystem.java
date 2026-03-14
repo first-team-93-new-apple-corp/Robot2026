@@ -80,7 +80,7 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
         allShooterConfig.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
-        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0;
+        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.005;
         allShooterConfig.MotionMagic.MotionMagicAcceleration = 50;
         allShooterConfig.MotionMagic.MotionMagicJerk = 100;
 
