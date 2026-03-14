@@ -55,11 +55,13 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new
+    // Pose2d());
 
     // Vision
     // * Quest
-    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
+    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain,
+    // networkTables);
 
     // Subsystems
     // * Shooter
@@ -67,11 +69,11 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
-     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
+    public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
     private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
-//     private AutoDirector auto = new AutoDirector(subsystems);
+    // private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
 
@@ -107,6 +109,25 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
+        driver.Shoot().onTrue(subsystems.Shooter(99));
+        driver.Shoot().onFalse(subsystems.ShooterFalse());
+
+        driver.primeShooter().onTrue(subsystems.Prime());
+        driver.primeShooter().onFalse(subsystems.PrimeFalse());
+
+        driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
+
+        driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+
+        // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+
+        driver.Intake().onTrue(subsystems.Intake());
+        driver.Intake().onFalse(subsystems.IntakeFalse());
+
+        // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
+        // driver.manExtendClimber().onFalse(climber.commands.Stop());
+        // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
+        // driver.manRetractClimber().onFalse(climber.commands.Stop());
 
         // driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
 

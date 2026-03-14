@@ -187,7 +187,7 @@ public class constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(135);
+        public static final Angle pivotDownPosition = Degrees.of(120);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
         public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
