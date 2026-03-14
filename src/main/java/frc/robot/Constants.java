@@ -297,8 +297,10 @@ public class Constants {
         public static Transform3d RobotToQuest3D = 
                 new Transform3d(QuestX.in(Meters), QuestY.in(Meters), QuestZ.in(Meters), 
                 new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
-        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
-                new Rotation2d(QuestYawOffset.in(Degrees)));
+
+                
+        // public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
+        //         new Rotation2d(QuestYawOffset.in(Degrees)));
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
     }
 

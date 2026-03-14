@@ -88,6 +88,7 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
         SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
+        
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         for (var result : camera.getAllUnreadResults()) {
@@ -128,7 +129,7 @@ public class VisionSubsystem extends SubsystemBase {
                 quest.getAllUnreadPoseFrames();
             }
             if (piPose3d != null && hasPiPoseData) {
-                quest.setPose(piPose3d);
+                quest.setPose(piPose3d.transformBy(Constants.Quest.RobotToQuest3D));
                 hasPoseInit = true;
             }
         }
