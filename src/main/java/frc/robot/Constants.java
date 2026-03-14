@@ -200,15 +200,15 @@ public class Constants {
         public static final int kickerMotorID = 18; // Top Rollers
 
         public class intake {
-            public static final double bottomRollerSpeed = 0.1;
+            public static final double bottomRollerSpeed = 0.2;
             public static final double sideRollerSpeed = -0.1;
-            public static final double kickerSpeed = 0.0;
+            public static final double kickerSpeed = 0.1;
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 0.3;
+            public static final double bottomRollerSpeed = 0.75;
             public static final double sideRollerSpeed = -0.4;
-            public static final double kickerSpeed = 0.75;
+            public static final double kickerSpeed = 0.9;
         }
 
         public class idle {
@@ -299,7 +299,7 @@ public class Constants {
                 new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
         public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
                 new Rotation2d(QuestYawOffset.in(Degrees)));
-        public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
+        public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, Integer.MAX_VALUE);
     }
 
     public class Photon {
@@ -307,7 +307,7 @@ public class Constants {
                 new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
                 new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(180)));
 
-        public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
+        public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, Integer.MAX_VALUE); // probably not used
 
     }
 

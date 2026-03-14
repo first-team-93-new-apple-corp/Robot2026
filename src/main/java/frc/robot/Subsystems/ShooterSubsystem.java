@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -37,6 +38,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX topRightShooter;
 
     private TalonFX hoodMotor;
+
+    // public CANcoder hoodCanCoder;
 
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
@@ -119,6 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         hoodConfig.Feedback.RotorToSensorRatio = 2;
         hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
+        hoodConfig.Feedback.FeedbackRotorOffset = -0.117;
 
         hoodConfig.MotionMagic.MotionMagicAcceleration = 250;
         hoodConfig.MotionMagic.MotionMagicJerk = 500;
@@ -130,9 +134,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor.getConfigurator().apply(hoodConfig);
 
-        hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
+        // hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
 
         lastSetpoint = Rotations.of(0);
+
+        // hoodCanCoder = new CANcoder(Constants.CAN.hoodEncoder);
 
         m_neutral = new NeutralOut();
 
@@ -154,6 +160,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // // Cap signals per flush to avoid saturation
         // uniLogger.setMaxSignalsPerFlush(10);
+        // resetHood();
     }
 
     public double getAvgVelocity() {
@@ -170,6 +177,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Hood Position",
                 hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
+
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
 
         SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
@@ -183,9 +191,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return hoodLimitSwitch.get();
     }
 
-    public void resetHood() {
-        hoodMotor.setPosition(HoodMotorConfigs.minAngle);
-    }
+    // public void resetHood() {
+    //     hoodMotor.setPosition(HoodMotorConfigs.minAngleNoOffset);
+    //     System.out.println("Rest HOod!!!!!!**********************");
+    // }
 
     public ShootingData getShootingData(double poseX, double poseY, double velX, double velY) {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);

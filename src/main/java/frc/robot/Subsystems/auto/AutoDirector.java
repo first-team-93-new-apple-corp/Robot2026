@@ -108,7 +108,7 @@ public class AutoDirector {
 
     public void addAutos() {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
-        Autos.add(Demo());
+        // Autos.add(Demo());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
         }
