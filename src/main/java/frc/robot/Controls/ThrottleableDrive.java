@@ -1,5 +1,8 @@
 package frc.robot.Controls;
 
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
+
 public class ThrottleableDrive extends TwoStickDriveXboxOp{
     public ThrottleableDrive(int LeftPort, int RightPort, int opPort){
         super(LeftPort, RightPort, opPort);
@@ -9,16 +12,16 @@ public class ThrottleableDrive extends TwoStickDriveXboxOp{
     }
     @Override
     public double InputLeft() {
-        return deadzone(-LeftStick.getY() )* Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfLeft() : deadzone(-LeftStick.getY() )* Speedthrottle();
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-LeftStick.getX() ) * Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getY() )* Speedthrottle();
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-RightStick.getX() ) * Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-LeftStick.getY() )* Speedthrottle();
     }
 }

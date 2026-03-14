@@ -86,12 +86,9 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()) // Drive forward with
-                                                                                      // negative Y
-                                                                                      // (forward)
+                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()) // Drive forward with negative Y (forward)
                         .withVelocityY(driver.DriveUp()) // Drive left with negative X (left)
-                        .withRotationalRate(driver.DriveTheta()) // Drive counterclockwise with
-                                                                 // negative X (left)
+                        .withRotationalRate(driver.DriveTheta()) // Drive counterclockwise with negative X (left)
                 ));
 
         final var idle = new SwerveRequest.Idle();

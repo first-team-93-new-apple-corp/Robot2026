@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
 public interface ControllerSchemeIO {
     public static double MaxSpeed = TunerConstants.kSpeedAt12Volts.baseUnitMagnitude();
     public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -29,6 +31,20 @@ public interface ControllerSchemeIO {
     public double InputUp();
 
     public double InputTheta();
+
+    public default double halfLeft() {
+        System.out.println("Warning: Function unbound: halfInputs");
+        return 0.0;//Keeps unbound
+    }
+
+    public default double halfUp() {
+        System.out.println("Warning: Function unbound: halfInputs");
+        return 0.0;//Keeps unbound
+    }
+
+    public double halfRotate();
+
+    public Trigger halfSpeeds();
 
     public Trigger Intake();
 
@@ -62,6 +78,11 @@ public interface ControllerSchemeIO {
 
     public Trigger brake();
 
+    public default Trigger fieldRel() {
+        System.out.println("Warning: Function unbound: FieldRel.");
+        return new Trigger(() -> false); //Keeps unbound
+    }
+    
     public Trigger robotRel();
 
     public Trigger resetClimberEncoder();

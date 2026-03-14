@@ -27,27 +27,47 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public double InputLeft() {
-        return deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? halfLeft() : deadzone(-LeftStick.getY());
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-LeftStick.getX());
+        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getY());
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-RightStick.getX());
+        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-LeftStick.getY());
+    }
+
+    @Override
+    public double halfLeft() {
+        return InputLeft() * 0.5;
+    }
+    
+    @Override
+    public double halfUp() {
+        return InputUp() * 0.5;
+    }
+
+    @Override
+    public double halfRotate() {
+        return InputTheta() * 0.5;
     }
 
     @Override
     public Trigger brake() {
-        return RightStick.button(Constants.Thrustmaster.Trigger);
+        return LeftStick.button(Constants.Thrustmaster.Center_Button);
+    }
+
+    @Override
+    public Trigger fieldRel() {
+        return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
     }
 
     @Override
     public Trigger robotRel() {
-        return RightStick.button(Constants.Thrustmaster.Center_Button);
+        return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
@@ -58,5 +78,10 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     @Override
     public Trigger seed(){
         return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
+    }
+
+    @Override 
+    public Trigger halfSpeeds(){
+        return LeftStick.button(Constants.Thrustmaster.Right_Button).or(RightStick.button(Constants.Thrustmaster.Left_Button));
     }
 }
