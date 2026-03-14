@@ -1,8 +1,9 @@
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import frc.robot.constants;
+import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -53,18 +54,18 @@ public record subsystems(
         return cmds;
     }
 
-    public Command Shooter(double secondsBeforeWiggle) {
+    public Command shoot(double secondsBeforeWiggle) {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(manipulation.commands.shootCommand());
         // return cmds.alongWith(Commands.waitSeconds(secondsBeforeWiggle)).andThen(intake.commands.wigglePivot(new Trigger(()->Commands.waitSeconds(5).isFinished())));
         return cmds;
     }
 
-     public Command ShooterFalse() {
+     public Command shootFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
-        cmds.addCommands(shooter.commands.stopShooter());
+        // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
      }
 
@@ -78,7 +79,7 @@ public record subsystems(
      public Command PrimeFalse(){
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter.commands.stopShooter());
-        cmds.addCommands(shooter.commands.autoAngle(constants.ShooterConstants.HoodMotorConfigs.minAngle));
+        cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
      }
      

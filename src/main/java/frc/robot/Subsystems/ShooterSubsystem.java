@@ -11,11 +11,11 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
-import frc.robot.constants;
-import frc.robot.constants.CAN;
-import frc.robot.constants.ShooterConstants;
-import frc.robot.constants.ShooterConstants.HoodMotorConfigs;
-import frc.robot.constants.ShooterConstants.ShooterMotorConfigs;
+import frc.robot.Constants;
+import frc.robot.Constants.CAN;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
+import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 
@@ -63,8 +63,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         commands = new ShooterCommands();
-        topLeftShooter = new TalonFX(constants.CAN.topLeftShooter);
-        topRightShooter = new TalonFX(constants.CAN.topRightShooter);
+        topLeftShooter = new TalonFX(Constants.CAN.topLeftShooter);
+        topRightShooter = new TalonFX(Constants.CAN.topRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
 
@@ -76,10 +76,10 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
-        allShooterConfig.Feedback.SensorToMechanismRatio = 18/24; //teeth
+        allShooterConfig.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
         allShooterConfig.Feedback.VelocityFilterTimeConstant = 0;
-        allShooterConfig.MotionMagic.MotionMagicAcceleration = 100;
-        allShooterConfig.MotionMagic.MotionMagicJerk = 200;
+        allShooterConfig.MotionMagic.MotionMagicAcceleration = 50;
+        allShooterConfig.MotionMagic.MotionMagicJerk = 100;
 
         shooterSlot0Configs = new Slot0Configs();
 
@@ -95,7 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
 
-        hoodMotor = new TalonFX(constants.CAN.hoodMotor);
+        hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
 
         hoodConfig = new TalonFXConfiguration();
 
@@ -130,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor.getConfigurator().apply(hoodConfig);
 
-        hoodLimitSwitch = new DigitalInput(constants.CAN.hoodLimitSwitch);
+        hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
 
         lastSetpoint = Rotations.of(0);
 
@@ -139,25 +139,26 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("setVelocity (RPS)", 0);
         SmartDashboard.putNumber("setHood (Degrees)", 0);
 
-    // Initialize universal telemetry logger
-    // uniLogger = new UniversalNTLogger("ShooterMirror");
+        // Initialize universal telemetry logger
+        // uniLogger = new UniversalNTLogger("ShooterMirror");
 
-    // // Register TalonFX motors and useful values
-    // uniLogger.registerTalonFX("topLeft", topLeftShooter);
-    // uniLogger.registerTalonFX("topRight", topRightShooter);
-    // uniLogger.registerDouble("hood/position", () -> hoodMotor.getPosition().getValue().in(Degrees));
-    // uniLogger.registerDouble("avg/velocity", () -> getAvgVelocity());
-    // uniLogger.registerDouble("setpoint/rps", () -> SmartDashboard.getNumber("setVelocity (RPS)", 0));
-    // uniLogger.registerBoolean("hood/limit", () -> getHoodLimit());
+        // // Register TalonFX motors and useful values
+        // uniLogger.registerTalonFX("topLeft", topLeftShooter);
+        // uniLogger.registerTalonFX("topRight", topRightShooter);
+        // uniLogger.registerDouble("hood/position", () ->
+        // hoodMotor.getPosition().getValue().in(Degrees));
+        // uniLogger.registerDouble("avg/velocity", () -> getAvgVelocity());
+        // uniLogger.registerDouble("setpoint/rps", () ->
+        // SmartDashboard.getNumber("setVelocity (RPS)", 0));
+        // uniLogger.registerBoolean("hood/limit", () -> getHoodLimit());
 
-    // // Cap signals per flush to avoid saturation
-    // uniLogger.setMaxSignalsPerFlush(10);
+        // // Cap signals per flush to avoid saturation
+        // uniLogger.setMaxSignalsPerFlush(10);
     }
 
     public double getAvgVelocity() {
         return (topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)
-                ) / 2;
+                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     }
 
     public double getAvgVelocityFeet() {
@@ -168,6 +169,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Hood Position",
                 hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
+        SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
         SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
 
         SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
@@ -195,11 +197,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setLeftShooterVelocity(AngularVelocity velocity) {
-        topLeftShooter.setControl(m_velRequest.withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
+        topLeftShooter.setControl(m_velRequest
+                .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
     }
 
     public void setRightShooterVelocity(AngularVelocity velocity) {
-        topRightShooter.setControl(m_velRequest.withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
+        topRightShooter.setControl(m_velRequest
+                .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
     }
 
     public void setMasterVelocity(AngularVelocity velocity) {
@@ -284,17 +288,16 @@ public class ShooterSubsystem extends SubsystemBase {
             return Commands.runOnce(() -> setShooterControl(m_neutral));
         }
 
-        public Command stopHood() {
-            return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
+        // public Command stopHood() {
+        //     return Commands.runOnce(() -> hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
+        // }
+
+        public Command testingHood() {
+            return Commands.runOnce(() -> setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));
         }
 
-        public Command testingHood(){
-        return
-        Commands.runOnce(()->setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));
-        }
-
-        public Command testingShooter(){
-        return Commands.runOnce(()-> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
+        public Command testingShooter() {
+            return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
         }
     }
 

@@ -17,7 +17,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
-public class constants {
+public class Constants {
     public class Drivetrain {
 
         public static final int FL_Drive = 1;
@@ -258,7 +258,7 @@ public class constants {
             public static final Angle minAngle = Degrees.of(25);
             public static final Angle maxAngle = Degrees.of(42);
             public static final Angle minAngleNoOffset = Degrees.of(0);
-            public static final Angle maxAngleNoOffset = Degrees.of(20);
+            public static final Angle maxAngleNoOffset = Degrees.of(15);
             public static final Angle offsetAngle = Degrees.of(25);
 
         }

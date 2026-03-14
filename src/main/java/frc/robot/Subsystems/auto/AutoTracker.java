@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.constants;
+import frc.robot.Constants;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
@@ -146,15 +146,15 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void shootWhilstGoingTo(Pose2d pose) {
         SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(constants.Swerve.MaxSpeed * constants.Controls.Deadzone)
-            .withRotationalDeadband(constants.Swerve.MaxAngularRate * constants.Controls.Deadzone)
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        driveFacingAngle.HeadingController.setPID(constants.Drivetrain.HeadingController.kP,
-                constants.Drivetrain.HeadingController.kI, constants.Drivetrain.HeadingController.kD);
+        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
+                Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
         Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
         ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
-        addCommands(parrallel.andThen(subsystems.Shooter(3)));
+        addCommands(parrallel.andThen(subsystems.shoot(3)));
         Command alignFunction = subsystems.drivetrain().commands.applyRequest(
                 () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
         
@@ -179,7 +179,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public void goToAndThenShoot(Pose2d pose) {
         Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
-        Command shootCmd = subsystems.Shooter(3);
+        Command shootCmd = subsystems.shoot(3);
         addCommands(driveCmd.andThen(shootCmd));
     }
 

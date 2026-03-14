@@ -3,8 +3,8 @@ package frc.robot.Subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants;
-import frc.robot.constants.ClimberConstants;
+import frc.robot.Constants;
+import frc.robot.Constants.ClimberConstants;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -23,7 +23,7 @@ public class ClimberSubsystem extends SubsystemBase {
     final MotionMagicVoltage m_request;
 
     public ClimberSubsystem() {
-        climberMotor = new TalonFX(constants.CAN.climber);
+        climberMotor = new TalonFX(Constants.CAN.climber);
 
         // PID Slot 0 Configuration
         var slot0Configs = new Slot0Configs();
@@ -91,20 +91,20 @@ public class ClimberSubsystem extends SubsystemBase {
         }
 
         public Command manualRetract() {
-            return runOnce(() -> setSpeed(constants.ClimberConstants.climberSpeed));
+            return runOnce(() -> setSpeed(Constants.ClimberConstants.climberSpeed));
         }
 
         public Command manualExtend() {
-            return runOnce(() -> setSpeed(-constants.ClimberConstants.climberSpeed));
+            return runOnce(() -> setSpeed(-Constants.ClimberConstants.climberSpeed));
         }
 
         public Command autoExtend() {
-           return runOnce(() -> runDistance(constants.ClimberConstants.barHeight));
+           return runOnce(() -> runDistance(Constants.ClimberConstants.barHeight));
         // return runOnce(() -> System.out.println("Testing 1"));
         }
         
         public Command autoRetract() {
-            return runOnce(() -> runDistance(constants.ClimberConstants.baseHeight));
+            return runOnce(() -> runDistance(Constants.ClimberConstants.baseHeight));
         }
         public Command resetEncoder() {
             return run(() -> climberMotor.setPosition(0));

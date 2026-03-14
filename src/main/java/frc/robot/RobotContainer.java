@@ -40,8 +40,8 @@ public class RobotContainer {
                                                                      // motors
 
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(constants.Swerve.MaxSpeed * constants.Controls.Deadzone)
-            .withRotationalDeadband(constants.Swerve.MaxAngularRate * constants.Controls.Deadzone) // Add a
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
                                                                                                    // 10%
                                                                                                    // deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
@@ -76,7 +76,7 @@ public class RobotContainer {
     // private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-
+        RobotController.setBrownoutVoltage(Volts.of(5.5));
         configureBindings();
     }
 
@@ -109,8 +109,8 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
-        driver.Shoot().onTrue(subsystems.Shooter(99));
-        driver.Shoot().onFalse(subsystems.ShooterFalse());
+        driver.Shoot().onTrue(subsystems.shoot(99));
+        driver.Shoot().onFalse(subsystems.shootFalse());
 
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
