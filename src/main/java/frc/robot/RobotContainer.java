@@ -28,6 +28,7 @@ import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -117,10 +118,27 @@ public class RobotContainer {
 
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driveFacingAngle.HeadingController.setPID(
+            Constants.ShooterConstants.HeadingController.kP
+            ,Constants.ShooterConstants.HeadingController.kI
+            , Constants.ShooterConstants.HeadingController.kD
+        );
+
+        driver.primeShooter().toggleOnTrue(drivetrain.applyRequest(
+        () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(
+            getDrivePoseX()
+        , getDrivePoseY()
+        , drivetrain.getState().Speeds.vxMetersPerSecond
+        ,drivetrain.getState().Speeds.vyMetersPerSecond).drivetrainAngle())
+        .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
 
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
 
         driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+
+    
+        
 
         // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 

@@ -225,6 +225,11 @@ public class Constants {
     }
 
     public class ShooterConstants {
+        public class HeadingController {
+            public static final double kP = 10;
+            public static final double kI = 0.002;
+            public static final double kD = 0.1;
+        }
         public class ShooterMotorConfigs {
             public static final Distance flyWheelDiameter = Inches.of(4);
             public static final double StatorLimit = 200.0;
