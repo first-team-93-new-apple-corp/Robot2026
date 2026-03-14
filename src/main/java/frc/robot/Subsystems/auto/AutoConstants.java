@@ -59,9 +59,9 @@ public class AutoConstants {
         public static final Pose2d Center = new Pose2d(7.2, 4, towardAlliance);
     }
 
-    public static final PathConstraints constraints = new PathConstraints(3, 4, Math.PI * 8, Math.PI * 10);
+    public static final PathConstraints constraints = new PathConstraints(3, 4, Math.PI , Math.PI * 2);
 
     public static final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                                  // motors
+                                                                                  // m
 }

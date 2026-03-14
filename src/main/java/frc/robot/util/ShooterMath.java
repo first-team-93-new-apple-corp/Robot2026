@@ -59,7 +59,7 @@ public class ShooterMath {
 
         double xfinal = Math.abs(distance);
         double yfinal = Math.abs(hubHeight);
-        System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta)))));
+        // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta)))));
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
 
@@ -225,8 +225,11 @@ public class ShooterMath {
         AngularVelocity rpmMoving = speedToMotorRotations(velocityMoving);
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
         
-
-        return new ShootingData(new Rotation2d(driveTrainAngle), (Radians.of(shooter_angle)), rpm);
+        // Stationary shooting
+        // return new ShootingData(new Rotation2d(driveTrainAngle), (Radians.of(shooter_angle)), rpm);
+        // On the fly
+        return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
+        
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rps
         return RotationsPerSecond.of((velocity*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));

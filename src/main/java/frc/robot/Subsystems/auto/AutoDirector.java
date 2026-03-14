@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.auto;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import java.util.ArrayList;
 import java.util.List;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -163,7 +165,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        tracker.shootWhilstGoingTo(new Pose2d(startPose.getX(), startPose.getY()-1, startPose.getRotation()));
+        tracker.shootWhilstGoingTo(new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX(), autoSubsystems.drivetrain().getState().Pose.getY()-1, autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(180)))));
         return new Auto("Score Preload Only", tracker, startPose);
     }
 

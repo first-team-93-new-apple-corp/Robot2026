@@ -182,7 +182,7 @@ public class RobotContainer {
     }
 
     public void telePeriodic(){
-        double[] test = {subsystems.getShootingData().drivetrainAngle().getDegrees(), subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond), Degrees.of(90).minus(subsystems.getShootingData().shooterAngle()).in(Degrees)};
+        double[] test = {subsystems.getShootingData().drivetrainAngle().getDegrees(), subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond), (subsystems.getShootingData().shooterAngle()).in(Degrees)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
     }
 
