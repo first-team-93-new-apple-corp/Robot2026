@@ -9,7 +9,7 @@ import frc.robot.util.RollingAverageDouble;
 public class PowerDistributionSubsystem extends SubsystemBase{
 
     public final PowerDistribution PDH = new PowerDistribution(1, ModuleType.kRev);
-    public final RollingAverageDouble currentAverage = new RollingAverageDouble(10);
+    public final RollingAverageDouble currentAverage = new RollingAverageDouble(25);
 
     public double totalCurrent;
     public double voltage;

@@ -145,36 +145,38 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void shootWhilstGoingTo(Pose2d pose) {
-        SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
-                Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
+        // SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+        //     .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+        //     .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
+        //     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        // driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
+        //         Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
 
-        Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
-        ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
-        addCommands(parrallel.andThen(subsystems.shoot(3)));
-        Command alignFunction = subsystems.drivetrain().commands.applyRequest(
-                () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
+        // Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
+        // ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
+        // addCommands(parrallel.andThen(subsystems.shoot(3)));
+        // Command alignFunction = subsystems.drivetrain().commands.applyRequest(
+        //         () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
+        
         
         ParallelCommandGroup followShootingPathThingy = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints)
-                .alongWith(alignFunction);
-        addCommands(followShootingPathThingy);
+                .alongWith(subsystems.shoot(999));
+        addCommands(subsystems.Prime().andThen(followShootingPathThingy));
     }
 
     public void shootWhilstFollowing(PathPlannerPath path) {
-        Command alignCmd = subsystems.drivetrain().commands.applyRequest(
-                () -> AutoConstants.driveFacingAngle
-                        .withTargetDirection(getShootingData().drivetrainAngle()));
+        // Command alignCmd = subsystems.drivetrain().commands.applyRequest(
+        //         () -> AutoConstants.driveFacingAngle
+        //                 .withTargetDirection(getShootingData().drivetrainAngle()));
         Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        Command hoodCmd = subsystems.shooter().commands
-                .autoAngle(getShootingData().shooterAngle());
-        Command velocityCmd = subsystems.shooter().commands
-                .autoShoot(getShootingData().shooterVelocity());
-        Command masterShootCmd = alignCmd.alongWith(velocityCmd).alongWith(hoodCmd);
-        ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(masterShootCmd.repeatedly());
-        addCommands(raceCmd);
+        // Command hoodCmd = subsystems.shooter().commands
+        //         .autoAngle(getShootingData().shooterAngle());
+        // Command velocityCmd = subsystems.shooter().commands
+        //         .autoShoot(getShootingData().shooterVelocity());
+        Command masterShootCmd = subsystems.Prime();
+        Command shoot = subsystems.shoot(99);
+        ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(shoot);
+        addCommands(masterShootCmd.alongWith(Commands.waitSeconds(2)).andThen(raceCmd));
     }
 
     public void goToAndThenShoot(Pose2d pose) {

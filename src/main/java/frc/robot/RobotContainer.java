@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -76,12 +77,14 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation);
-    // private AutoDirector auto = new AutoDirector(subsystems);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
+    private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(7));
+        
         configureBindings();
+        
     }
 
     private void configureBindings() {
@@ -118,30 +121,11 @@ public class RobotContainer {
 
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
-        driveFacingAngle.HeadingController.setPID(
-            Constants.ShooterConstants.HeadingController.kP
-            ,Constants.ShooterConstants.HeadingController.kI
-            , Constants.ShooterConstants.HeadingController.kD
-        );
+        
 
-        driver.primeShooter().whileTrue(drivetrain.applyRequest(
-        () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(
-            getDrivePoseX()
-        , getDrivePoseY()
-        , getDriveSpeedX()
-        , getDriveSpeedY())
-        .drivetrainAngle())
-        .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
-        .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
-
-        // // Auto Shoot
-        // driver.primeShooter()
-        // .onTrue(subsystems.shooter().commands.autoAngle(getShootingData().shooterAngle())
-        // .alongWith(subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity())));
+        
 
         // driver.primeShooter().onFalse(subsystems.PrimeFalse());
-
-        driver.primeShooter().whileTrue(getAutonomousCommand());
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
 
         driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
@@ -153,6 +137,13 @@ public class RobotContainer {
 
         driver.Intake().onTrue(subsystems.Intake());
         driver.Intake().onFalse(subsystems.IntakeFalse());
+
+        driver.Outtake().onTrue(subsystems.Outake());
+        driver.Outtake().onFalse(subsystems.OutakeFalse());
+
+        driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
+        driver.autoRetractClimber().onTrue(subsystems.climber().commands.autoRetract());
+        // driver.
 
         // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
         // driver.manExtendClimber().onFalse(climber.commands.Stop());
@@ -171,22 +162,28 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                        .withVelocityY(0)
-                        .withRotationalRate(0))
-                        .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
+        // final var idle = new SwerveRequest.Idle();
+        // return Commands.sequence(
+        //         // Reset our field centric heading to match the robot
+        //         // facing away from our alliance station wall (0 deg).
+        //         drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        //         // Then slowly drive forward (away from us) for 5 seconds.
+        //         drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+        //                 .withVelocityY(0)
+        //                 .withRotationalRate(0))
+        //                 .withTimeout(5.0),
+        //         // Finally idle for the rest of auton
+        //         drivetrain.applyRequest(() -> idle));
+        return auto.Preload().command();
     }
 
     public void visionPeriodic() {
         visionSubsystem.visionPeriodic();
+    }
+
+    public void telePeriodic(){
+        double[] test = {subsystems.getShootingData().drivetrainAngle().getDegrees(), subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond), Degrees.of(90).minus(subsystems.getShootingData().shooterAngle()).in(Degrees)};
+        SmartDashboard.putNumberArray("Target Shooting Math", test);
     }
 
     public Command seed() {

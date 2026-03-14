@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
@@ -67,6 +68,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private final HolonomicDriveController snapController = new HolonomicDriveController(xController, yController,
             thetaController);
+    public final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
+                                                                                                   // 10%
+                                                                                                   // deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage) // Use open-loop control for drive
+                                                                     // motors
+            .withHeadingPID(Constants.ShooterConstants.HeadingController.kP
+            ,Constants.ShooterConstants.HeadingController.kI
+            , Constants.ShooterConstants.HeadingController.kD);
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {

@@ -202,12 +202,12 @@ public class Constants {
         public class intake {
             public static final double bottomRollerSpeed = 0.2;
             public static final double sideRollerSpeed = -0.1;
-            public static final double kickerSpeed = 0.1;
+            public static final double kickerSpeed = 0.0;
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 0.75;
-            public static final double sideRollerSpeed = -0.4;
+            public static final double bottomRollerSpeed = 0.9;
+            public static final double sideRollerSpeed = -0.7;
             public static final double kickerSpeed = 0.9;
         }
 

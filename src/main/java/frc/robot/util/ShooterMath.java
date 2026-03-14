@@ -162,7 +162,7 @@ public class ShooterMath {
         double hubY = AutoConstants.Hub.getHub().getY();
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
         
-        double hubHeight = 2;
+        double hubHeight = AutoConstants.Hub.getHub().getZ();
         double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
         double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
 
@@ -187,10 +187,10 @@ public class ShooterMath {
         // }
         
 
-        return new ShootingData(new Rotation2d(driveTrainAngle), Radians.of(shooter_angle), rpm);
+        return new ShootingData(new Rotation2d(driveTrainAngle), (Radians.of(shooter_angle)), rpm);
     }
-    public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+    public static AngularVelocity speedToMotorRotations(double velocity) { // In rps
+        return RotationsPerSecond.of((velocity*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

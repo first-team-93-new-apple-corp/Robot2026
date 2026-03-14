@@ -109,6 +109,7 @@ public class AutoDirector {
     public void addAutos() {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
         // Autos.add(Demo());
+        Autos.add(Preload());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
         }
@@ -161,7 +162,7 @@ public class AutoDirector {
     public Auto Preload() {
         Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         tracker.shootWhilstGoingTo(new Pose2d(startPose.getX(), startPose.getY()-1, startPose.getRotation()));
         return new Auto("Score Preload Only", tracker, startPose);
     }
@@ -182,42 +183,42 @@ public class AutoDirector {
         return new Auto("Score Preload Climb", tracker, startPose);
     }
 
-    public Auto PreloadDepot(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        return null;
-    }
+    // public Auto PreloadDepot(){
+    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+    //     return null;
+    // }
 
-    public Auto PreloadOutPost(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        return null;
-    }
+    // public Auto PreloadOutPost(){
+    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+    //     return null;
+    // }
 
-    public Auto PreloadDepotClimb(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        return null;
-    }
+    // public Auto PreloadDepotClimb(){
+    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+    //     return null;
+    // }
 
-    public Auto PreloadOutpostCLimb(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        return null;
-    }
+    // public Auto PreloadOutpostCLimb(){
+    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+    //     return null;
+    // }
 
 
-    public Auto doNothing(){
-        return null;
-    }
+    // public Auto doNothing(){
+    //     return null;
+    // }
 
-    public Auto moveForward(){
-        return null;
-    }
+    // public Auto moveForward(){
+    //     return null;
+    // }
     /* TODO 
      *  Score preload before intake?
      * Intake then score intake and preload?

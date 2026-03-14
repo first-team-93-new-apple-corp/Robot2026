@@ -19,7 +19,7 @@ import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
-
+import frc.robot.util.subsystems;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -122,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         hoodConfig.Feedback.RotorToSensorRatio = 2;
         hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
-        hoodConfig.Feedback.FeedbackRotorOffset = -0.117;
+        // hoodConfig.Feedback.FeedbackRotorOffset = -0.117;
 
         hoodConfig.MotionMagic.MotionMagicAcceleration = 250;
         hoodConfig.MotionMagic.MotionMagicJerk = 500;
@@ -182,6 +182,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
         SmartDashboard.putNumber("Velocity Feet/s (avg)", getAvgVelocityFeet());
+        
         onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
         onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
         // if (uniLogger != null) uniLogger.flushAll();
