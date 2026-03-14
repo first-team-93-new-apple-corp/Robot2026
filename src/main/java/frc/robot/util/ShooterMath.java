@@ -158,8 +158,8 @@ public class ShooterMath {
         return matrix;
     }
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
-        double hubX = AutoConstants.Hub.Blue.getX();
-        double hubY = AutoConstants.Hub.Blue.getY();
+        double hubX = AutoConstants.Hub.getHub().getX();
+        double hubY = AutoConstants.Hub.getHub().getY();
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
         
         double hubHeight = 2;

@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class AutoConstants {
     public static Rotation2d awayFromAlliance = Rotation2d.kZero;
@@ -26,6 +27,16 @@ public class AutoConstants {
         public static final Pose2d Red = FlippingUtil.flipFieldPose(Blue);
         public static final Pose3d Blue3d = new Pose3d(4.625, 4.04, 2.5, new Rotation3d());
         public static final Pose3d Red3d = new Pose3d(Red.getX(), Red.getY(), 2.5, new Rotation3d());
+        public static Pose3d getHub() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return Red3d;
+                } 
+                return Blue3d; // Default to blue
+            }
+            return null;
+        }
     }
 
     public static Pose2d getLastPoseInPath(PathPlannerPath path) {

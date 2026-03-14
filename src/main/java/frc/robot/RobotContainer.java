@@ -124,15 +124,24 @@ public class RobotContainer {
             , Constants.ShooterConstants.HeadingController.kD
         );
 
-        driver.primeShooter().toggleOnTrue(drivetrain.applyRequest(
+        driver.primeShooter().whileTrue(drivetrain.applyRequest(
         () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(
             getDrivePoseX()
         , getDrivePoseY()
-        , drivetrain.getState().Speeds.vxMetersPerSecond
-        ,drivetrain.getState().Speeds.vyMetersPerSecond).drivetrainAngle())
+        , getDriveSpeedX()
+        , getDriveSpeedY())
+        .drivetrainAngle())
         .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
         .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
 
+        // // Auto Shoot
+        // driver.primeShooter()
+        // .onTrue(subsystems.shooter().commands.autoAngle(getShootingData().shooterAngle())
+        // .alongWith(subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity())));
+
+        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
+
+        driver.primeShooter().whileTrue(getAutonomousCommand());
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
 
         driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
