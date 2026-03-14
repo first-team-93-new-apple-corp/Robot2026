@@ -200,15 +200,15 @@ public class Constants {
         public static final int kickerMotorID = 18; // Top Rollers
 
         public class intake {
-            public static final double bottomRollerSpeed = 0.1;
+            public static final double bottomRollerSpeed = 0.2;
             public static final double sideRollerSpeed = -0.1;
-            public static final double kickerSpeed = 0.0;
+            public static final double kickerSpeed = 0.1;
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 0.3;
+            public static final double bottomRollerSpeed = 0.75;
             public static final double sideRollerSpeed = -0.4;
-            public static final double kickerSpeed = 0.75;
+            public static final double kickerSpeed = 0.9;
         }
 
         public class idle {
@@ -225,6 +225,11 @@ public class Constants {
     }
 
     public class ShooterConstants {
+        public class HeadingController {
+            public static final double kP = 10;
+            public static final double kI = 0.002;
+            public static final double kD = 0.1;
+        }
         public class ShooterMotorConfigs {
             public static final Distance flyWheelDiameter = Inches.of(4);
             public static final double StatorLimit = 200.0;

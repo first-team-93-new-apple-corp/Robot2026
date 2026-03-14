@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.XboxDrive;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -24,8 +25,10 @@ import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -52,7 +55,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    // private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -72,11 +76,11 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation);
     // private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-        RobotController.setBrownoutVoltage(Volts.of(5.5));
+        RobotController.setBrownoutVoltage(Volts.of(7));
         configureBindings();
     }
 
@@ -114,10 +118,36 @@ public class RobotContainer {
 
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driveFacingAngle.HeadingController.setPID(
+            Constants.ShooterConstants.HeadingController.kP
+            ,Constants.ShooterConstants.HeadingController.kI
+            , Constants.ShooterConstants.HeadingController.kD
+        );
 
+        driver.primeShooter().whileTrue(drivetrain.applyRequest(
+        () -> driveFacingAngle.withTargetDirection(ShooterMath.generateRotation2d(
+            getDrivePoseX()
+        , getDrivePoseY()
+        , getDriveSpeedX()
+        , getDriveSpeedY())
+        .drivetrainAngle())
+        .withVelocityX(driver.DriveLeft() * Constants.Swerve.MaxSpeed)
+        .withVelocityY(driver.DriveUp() * Constants.Swerve.MaxSpeed)));
+
+        // // Auto Shoot
+        // driver.primeShooter()
+        // .onTrue(subsystems.shooter().commands.autoAngle(getShootingData().shooterAngle())
+        // .alongWith(subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity())));
+
+        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
+
+        driver.primeShooter().whileTrue(getAutonomousCommand());
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
 
         driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+
+    
+        
 
         // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 

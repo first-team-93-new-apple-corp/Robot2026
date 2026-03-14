@@ -81,5 +81,23 @@ public record subsystems(
         cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
      }
+
+     public Command Outake(){
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        // var cmd1 = intake.commands.autoPivotDown();
+        cmds.addCommands((intake.commands.outtake()));
+        cmds.addCommands(manipulation.commands.outtakeCommand());
+        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
+        return cmds;
+     }
+
+     public Command OutakeFalse(){
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        // var cmd1 = intake.commands.autoPivotDown();
+        cmds.addCommands((intake.commands.idle()));
+        cmds.addCommands(manipulation.commands.idleCommand());
+        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+        return cmds;
+     }
      
 }

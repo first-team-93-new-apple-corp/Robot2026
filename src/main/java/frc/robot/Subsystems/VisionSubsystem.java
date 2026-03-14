@@ -13,6 +13,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,7 +69,7 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public void setPose(Pose3d newRobotPose) {
         Pose3d questPose = newRobotPose.transformBy(Constants.Quest.RobotToQuest3D);
-        Pose3d piPose = newRobotPose.transformBy(Constants.Photon.kRobotToCam);
+        // Pose3d piPose = newRobotPose.transformBy(Constants.Photon.kRobotToCam);
         quest.setPose(questPose);
 
         // Reset our estimators with the new pose
@@ -88,6 +89,8 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
         SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
+        SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
+        SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
         
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
@@ -100,6 +103,7 @@ public class VisionSubsystem extends SubsystemBase {
 
             visionEst.ifPresent(
                     est -> {
+                        // var hehe = new Transform3d(0, 0, 0, new Rotation3d(0,0,Math.PI));
                         piPose3d = est.estimatedPose;
                         hasPiPoseData = true;
                     });
@@ -136,9 +140,11 @@ public class VisionSubsystem extends SubsystemBase {
 
         // Update NetworkTables
         networkTables.quest.updateQuestPose(questPose3d);
-        networkTables.quest.updateRobotPose(robotPose3d);
+        networkTables.quest.updateRobotPose(drivetrain.getState().Pose);
+        networkTables.quest.updatePiPose(piPose3d);
 
-        networkTables.quest.updateAvgRobotPose(getAverageRobotPose3D());
+
+        // networkTables.quest.updateAvgRobotPose(getAverageRobotPose3D());
 
         // Pose Averaging
         questPoseAverager.addPose(questPose3d);
