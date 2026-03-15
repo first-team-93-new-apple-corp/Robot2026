@@ -3,6 +3,7 @@ package frc.robot.util;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import edu.wpi.first.units.measure.Time;
 import frc.robot.Constants;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,13 +55,8 @@ public record subsystems(
         return cmds;
     }
 
-    public Command shoot(double secondsBeforeWiggle) {
-        ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(manipulation.commands.shootCommand());
-        // return
-        // cmds.alongWith(Commands.waitSeconds(secondsBeforeWiggle)).andThen(intake.commands.wigglePivot(new
-        // Trigger(()->Commands.waitSeconds(5).isFinished())));
-        return cmds;
+    public Command shoot() {
+        return manipulation.commands.shootCommand();
     }
 
     public Command shootFalse() {
@@ -74,9 +70,10 @@ public record subsystems(
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(
-                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()).withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
-        cmds.addCommands(shooter().commands.autoAngle(getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(getShootingData().shooterVelocity())));
+                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
+                        .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
+                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
         return cmds.withTimeout(2);
     }
 
@@ -84,8 +81,8 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
-        cmds.addCommands(shooter().commands.autoAngle(getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(getShootingData().shooterVelocity())));
+        cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
+                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
         return cmds.withTimeout(2);
     }
 

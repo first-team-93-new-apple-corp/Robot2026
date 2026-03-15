@@ -17,6 +17,7 @@ public class PowerDistributionSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         currentAverage.addValue(PDH.getTotalCurrent());
+        // PDH.
         voltage = PDH.getVoltage();
         SmartDashboard.putNumber("Total Current", currentAverage.getAverage());
         SmartDashboard.putNumber("Voltage", voltage);

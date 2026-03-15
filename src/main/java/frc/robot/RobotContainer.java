@@ -116,7 +116,7 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
-        driver.Shoot().onTrue(subsystems.shoot(99));
+        driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
         driver.primeShooter().onTrue(subsystems.Prime());

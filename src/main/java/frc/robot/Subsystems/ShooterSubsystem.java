@@ -2,6 +2,8 @@ package frc.robot.Subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -282,6 +284,18 @@ public class ShooterSubsystem extends SubsystemBase {
             });
         }
 
+        public Command autoShoot(Supplier<AngularVelocity> calculatedVelocity) {
+            return Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity.get())));
+        }
+
+        public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity, Supplier<AngularVelocity> calculatedRightVelocity) {
+            return Commands.runOnce(() -> {
+                setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get());
+            });
+        }
+
         public Command autoAngleNoOffset(Angle calculatedAngle) {
             return Commands.sequence(
                     Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this),
@@ -292,6 +306,18 @@ public class ShooterSubsystem extends SubsystemBase {
             return Commands.sequence(
                     Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this),
                     Commands.waitUntil(() -> hoodAtSetpoint(calculatedAngle.plus(HoodMotorConfigs.offsetAngle))));
+        }
+
+        public Command autoAngleNoOffset(Supplier<Angle> calculatedAngle) {
+            return Commands.sequence(
+                    Commands.runOnce(() -> setHoodPosition(calculatedAngle.get()), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> hoodAtSetpoint(calculatedAngle.get())));
+        }
+
+        public Command autoAngle(Supplier<Angle> calculatedAngle) {
+            return Commands.sequence(
+                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle.get()), ShooterSubsystem.this),
+                    Commands.waitUntil(() -> hoodAtSetpoint(calculatedAngle.get().plus(HoodMotorConfigs.offsetAngle))));
         }
 
         public Command stopShooter() {

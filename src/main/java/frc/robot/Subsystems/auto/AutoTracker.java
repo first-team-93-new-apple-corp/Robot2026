@@ -95,7 +95,9 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     /**
-     * Loads a path and adds commands to intake as the robot drives to the first point in the path.
+     * Loads a path and adds commands to intake as the robot drives to the first
+     * point in the path.
+     * 
      * @param pathName
      * @param endSpeed
      */
@@ -107,32 +109,41 @@ public class AutoTracker extends SequentialCommandGroup {
             e.printStackTrace();
         }
     }
+
     /**
      * 
      * @param path
-     * The arm deploys and intakes as the robot drives to the first point in the path.
+     *                 The arm deploys and intakes as the robot drives to the first
+     *                 point in the path.
      * @param endSpeed
-     * The goal speed at the end of the path.
+     *                 The goal speed at the end of the path.
      */
     public void Intake(PathPlannerPath path, LinearVelocity endSpeed) {
         addCommands(subsystems.Intake());
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
+                endSpeed));
     }
 
     /**
-     * Intakes while following the path, then stops intaking and pivots up at the end of the path.
+     * Intakes while following the path, then stops intaking and pivots up at the
+     * end of the path.
+     * 
      * @param path
      * @param startSpeed
      * @param endSpeed
      */
-    public void groundIntake(PathPlannerPath path,  LinearVelocity startSpeed, LinearVelocity endSpeed) {
-        // Find the first point in the path and drive to it while intaking, then lower the arm and continue intaking as we follow the path, then stop intaking and pivot up at the end of the path.
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, startSpeed));
+    public void groundIntake(PathPlannerPath path, LinearVelocity startSpeed, LinearVelocity endSpeed) {
+        // Find the first point in the path and drive to it while intaking, then lower
+        // the arm and continue intaking as we follow the path, then stop intaking and
+        // pivot up at the end of the path.
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
+                startSpeed));
         addCommands(subsystems.Intake());
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
         ParallelCommandGroup parrallel = followPath.alongWith(subsystems.Intake());
         addCommands(parrallel);
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints, endSpeed));
+        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
+                endSpeed));
     }
 
     public void addShootPath(String pathName) {
@@ -145,44 +156,63 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void shootWhilstGoingTo(Pose2d pose) {
-        // SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
-        //     .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-        //     .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
-        //     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-        // driveFacingAngle.HeadingController.setPID(Constants.Drivetrain.HeadingController.kP,
-        //         Constants.Drivetrain.HeadingController.kI, Constants.Drivetrain.HeadingController.kD);
+        Command followPath = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        .alongWith(delayedShoot));
+    }
 
-        // Command revShooter = subsystems.shooter().commands.autoShoot(getShootingData().shooterVelocity()); // TODO Implement shooting
-        // ParallelCommandGroup parrallel = revShooter.alongWith(Commands.waitSeconds(0.5));
-        // addCommands(parrallel.andThen(subsystems.shoot(3)));
-        // Command alignFunction = subsystems.drivetrain().commands.applyRequest(
-        //         () -> driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle()));
-        
-        
-        ParallelCommandGroup followShootingPathThingy = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints)
-                .alongWith(subsystems.shoot(999));
-        addCommands(subsystems.Prime().andThen(followShootingPathThingy));
+    public void shootWhilstGoingToAndSnap(Pose2d pose) {
+        Command followPath = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
+
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        .alongWith(delayedShoot)
+                        .andThen(subsystems.shootFalse())
+                        .andThen(
+                                Commands.run(() -> subsystems.drivetrain().snapToPose(pose))
+                                        .until(() -> subsystems.drivetrain().nearPose(pose, 0.01, 1.0))));
     }
 
     public void shootWhilstFollowing(PathPlannerPath path) {
-        // Command alignCmd = subsystems.drivetrain().commands.applyRequest(
-        //         () -> AutoConstants.driveFacingAngle
-        //                 .withTargetDirection(getShootingData().drivetrainAngle()));
-        Command pathFollowCmd = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        // Command hoodCmd = subsystems.shooter().commands
-        //         .autoAngle(getShootingData().shooterAngle());
-        // Command velocityCmd = subsystems.shooter().commands
-        //         .autoShoot(getShootingData().shooterVelocity());
-        Command masterShootCmd = subsystems.Prime();
-        Command shoot = subsystems.shoot(99);
-        ParallelRaceGroup raceCmd = pathFollowCmd.raceWith(shoot);
-        addCommands(masterShootCmd.alongWith(Commands.waitSeconds(2)).andThen(raceCmd));
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        .alongWith(delayedShoot));
+    }
+
+    public void shootWhilstFollowingAndSnap(PathPlannerPath path) {
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        .alongWith(delayedShoot)
+                        .andThen(subsystems.shootFalse())
+                        .andThen(
+                                Commands.run(() -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .until(() -> subsystems.drivetrain().nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 1.0))));
     }
 
     public void goToAndThenShoot(Pose2d pose) {
         Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
-        Command shootCmd = subsystems.shoot(3);
-        addCommands(driveCmd.andThen(shootCmd));
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+
+        addCommands(driveCmd.andThen(subsystems.Prime().andThen(delayedShoot)));
     }
 
     public ShootingData getShootingData() {
