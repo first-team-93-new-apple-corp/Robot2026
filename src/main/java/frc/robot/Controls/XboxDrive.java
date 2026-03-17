@@ -106,11 +106,11 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     public Trigger manShooterVel(){
-        return Xbox.leftTrigger();
+        return Xbox.leftTrigger(0.01);
     }
 
     public Trigger manShooterAngle(){
-        return Xbox.rightTrigger();
+        return Xbox.rightTrigger(0.01);
     }
 
     @Override

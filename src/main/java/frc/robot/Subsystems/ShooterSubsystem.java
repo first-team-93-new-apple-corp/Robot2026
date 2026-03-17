@@ -286,8 +286,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedVelocity) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this),
-                    Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity.get())));
+                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this));
+                    // Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity.get())));
         }
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity, Supplier<AngularVelocity> calculatedRightVelocity) {

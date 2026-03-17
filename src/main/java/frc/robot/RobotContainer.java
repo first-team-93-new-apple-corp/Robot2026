@@ -121,9 +121,9 @@ public class RobotContainer {
 
         // driver.primeShooter().onTrue(subsystems.Prime());
         // driver.primeShooter().onFalse(subsystems.PrimeFalse());
-        driver.manShooterVel().whileTrue(subsystems.shooter().commands.autoShoot(()->RotationsPerSecond.of(driver.Xbox.getLeftTriggerAxis()*80)));
+        driver.manShooterVel().whileTrue(subsystems.shooter().commands.autoShoot(()->RotationsPerSecond.of((driver.Xbox.getLeftTriggerAxis())).times(100)).repeatedly());
         driver.manShooterVel().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
-        driver.manShooterAngle().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()->Degrees.of(driver.Xbox.getRightTriggerAxis()*18)));
+        driver.manShooterAngle().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()->Degrees.of((driver.Xbox.getRightTriggerAxis())).times(18)).repeatedly());
         driver.manShooterAngle().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
         
 
@@ -144,6 +144,7 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber().onTrue(subsystems.climber().commands.autoRetract());
