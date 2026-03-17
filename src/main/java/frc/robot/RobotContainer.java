@@ -56,7 +56,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final TwoStickDriveXboxOp driver = new TwoStickDriveXboxOp(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -119,8 +119,12 @@ public class RobotContainer {
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.primeShooter().onTrue(subsystems.Prime());
-        driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        // driver.primeShooter().onTrue(subsystems.Prime());
+        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driver.manShooterVel().whileTrue(subsystems.shooter().commands.autoShoot(()->RotationsPerSecond.of(driver.Xbox.getLeftTriggerAxis()*80)));
+        driver.manShooterVel().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manShooterAngle().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()->Degrees.of(driver.Xbox.getRightTriggerAxis()*18)));
+        driver.manShooterAngle().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
         
 
         
