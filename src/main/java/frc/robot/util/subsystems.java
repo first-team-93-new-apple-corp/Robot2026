@@ -69,11 +69,12 @@ public record subsystems(
 
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(drivetrain.applyRequest(
-                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
-                        .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
-        cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
+        // cmds.addCommands(drivetrain.applyRequest(
+        //         () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
+        //                 .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        // cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
+        //         .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
+        cmds.addCommands(shooter().commands.testingHood().andThen(shooter().commands.testingShooter()));
         return cmds.withTimeout(2);
     }
 
