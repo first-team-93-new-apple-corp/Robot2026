@@ -59,11 +59,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig = new TalonFXConfiguration();
         pivotEncoderConfig = new CANcoderConfiguration();
 
-        // Encoder 
-        // Encoder is handled entirly through Phoenix tuner and if you wish to zero it you can do so in Phoenix tuner.
+        // Encoder
+        // Encoder is handled entirly through Phoenix tuner and if you wish to zero it
+        // you can do so in Phoenix tuner.
         // pivotEncoderConfig.FutureProofConfigs = true;
         // pivotEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
-        // pivotEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        // pivotEncoderConfig.MagnetSensor.SensorDirection =
+        // SensorDirectionValue.Clockwise_Positive;
         // pivotEncoderConfig.MagnetSensor.MagnetOffset = -0.211669921875;
         // pivotEncoder.getConfigurator().apply(pivotEncoderConfig);
 
@@ -193,19 +195,21 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.5; // seconds
-            Command wait = Commands.waitSeconds(delay);
-            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
+            double delay = 0.5;
 
-            return sequence.repeatedly().until(()->!trigger.getAsBoolean());
+            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
+                    .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));
+
+            return sequence.repeatedly().until(() -> !trigger.getAsBoolean());
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.5; // seconds
-            Command wait = Commands.waitSeconds(delay);
-            Command sequence = autoPivotDown().alongWith(wait).andThen(autoPivotUp().alongWith(wait.withName("Wait at Up Position")));
+            double delay = 0.5;
 
-            return sequence.repeatedly().until(()->Commands.waitTime(time).isFinished());
+            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
+                    .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));
+
+            return sequence.repeatedly().withTimeout(time.in(Seconds));
         }
 
         public Command brakePivotMotor(boolean brake) {

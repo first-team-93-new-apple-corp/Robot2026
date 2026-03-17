@@ -4,6 +4,19 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.pathplanner.lib.path.PathConstraints;
+
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+
 public class Constants {
     public class Drivetrain {
 
@@ -174,44 +187,49 @@ public class Constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(135);
+        public static final Angle pivotDownPosition = Degrees.of(120);
         public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
-        public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
+        // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1
     }
 
-    public static class ManipulationConstants {
+    public class ManipulationConstants {
         public static final int bottomRollerMotorID = 19; // Bottom Rollers
         public static final int sideRollerMotorID = 20; // Side Rollers
         public static final int kickerMotorID = 18; // Top Rollers
 
-        public static class intake {
-            public static final double bottomRollerSpeed = 1.0;
-            public static final double sideRollerSpeed = 0.0;
-            public static final double kickerSpeed = 0.0;
-        }
-
-        public static class shoot {
-            public static final double bottomRollerSpeed = 1.0;
-            public static final double sideRollerSpeed = -1.0;
-            public static final double kickerSpeed = 1.0;
-        }
-
-        public static class idle {
+        public class intake {
             public static final double bottomRollerSpeed = 0.2;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
 
-        public static class outtake {
-            public static final double bottomRollerSpeed = -1;
-            public static final double sideRollerSpeed = 1;
-            public static final double kickerSpeed = -1;
+        public class shoot {
+            public static final double bottomRollerSpeed = 1;
+            public static final double sideRollerSpeed = -0.7;
+            public static final double kickerSpeed = 0.9;
+        }
+
+        public class idle {
+            public static final double bottomRollerSpeed = 0.01;
+            public static final double sideRollerSpeed = -0.1;
+            public static final double kickerSpeed = 0.0;
+        }
+
+        public class outtake {
+            public static final double bottomRollerSpeed = -0.1;
+            public static final double sideRollerSpeed = 0.3;
+            public static final double kickerSpeed = -0.5;
         }
     }
 
     public class ShooterConstants {
+        public class HeadingController {
+            public static final double kP = 10;
+            public static final double kI = 0.002;
+            public static final double kD = 0.1;
+        }
         public class ShooterMotorConfigs {
             public static final Distance flyWheelDiameter = Inches.of(4);
             public static final double StatorLimit = 200.0;
@@ -245,7 +263,7 @@ public class Constants {
             public static final Angle minAngle = Degrees.of(25);
             public static final Angle maxAngle = Degrees.of(42);
             public static final Angle minAngleNoOffset = Degrees.of(0);
-            public static final Angle maxAngleNoOffset = Degrees.of(20);
+            public static final Angle maxAngleNoOffset = Degrees.of(15);
             public static final Angle offsetAngle = Degrees.of(25);
 
         }
@@ -273,25 +291,28 @@ public class Constants {
     }
 
     public class Quest {
-        public static final Distance QuestX = Inches.of(15.5);
-        public static final Distance QuestY = Inches.of(-1.75);
-        public static final Distance QuestZ = Inches.of(20.5);
+        public static final Distance QuestX = Inches.of(-11);
+        public static final Distance QuestY = Inches.of(-9.75);
+        public static final Distance QuestZ = Inches.of(17);
 
-        public static final Angle QuestYawOffset = Degrees.of(2.0);
-        public static final Angle QuestPitchOffset = Degrees.of(-1.5);
-        public static final Angle QuestRollOffset = Degrees.of(3.0);
+        public static final Angle QuestYawOffset = Degrees.of(180);
+        public static final Angle QuestPitchOffset = Degrees.of(0);
+        public static final Angle QuestRollOffset = Degrees.of(90);
 
-        public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
-                QuestZ.in(Meters), new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
-        public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
-                new Rotation2d(QuestYawOffset.in(Degrees)));
+        public static Transform3d RobotToQuest3D = 
+                new Transform3d(QuestX.in(Meters), QuestY.in(Meters), QuestZ.in(Meters), 
+                new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
+
+                
+        // public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
+        //         new Rotation2d(QuestYawOffset.in(Degrees)));
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
     }
 
     public class Photon {
         public static final Transform3d kRobotToCam = new Transform3d(
-                new Translation3d(Inches.of(13), Inches.of(13.25), Inches.of(12)),
-                new Rotation3d(Degrees.of(0), Degrees.of(22.5), Degrees.of(0)));
+                new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
+                new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(180)));
 
         public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
 

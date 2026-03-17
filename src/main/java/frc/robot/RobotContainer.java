@@ -12,15 +12,26 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.XboxDrive;
 import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
+import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
+import frc.robot.Subsystems.PowerDistributionSubsystem;
+import frc.robot.Subsystems.ShooterSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShooterMath;
+import frc.robot.util.ShootingData;
+import frc.robot.util.subsystems;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -45,16 +56,17 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final TwoStickDriveXboxOp driver = new TwoStickDriveXboxOp(0, 1, 2);
+    // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    // private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
 
     // Vision
     // * Quest
-    // private QuestNavSubsystem questNav = new QuestNavSubsystem(drivetrain, networkTables);
+    private VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain, networkTables);
 
     // Subsystems
     // * Shooter
@@ -62,15 +74,17 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
-     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
+    public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, shooter, climber, intake, manipulation);
-//     private AutoDirector auto = new AutoDirector(subsystems);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
+    private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-
+        RobotController.setBrownoutVoltage(Volts.of(7));
+        
         configureBindings();
+        
     }
 
     private void configureBindings() {
@@ -79,12 +93,12 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.DriveLeft() * MaxSpeed) // Drive forward with
-                                                                                                  // negative Y
-                                                                                                  // (forward)
-                        .withVelocityY(-driver.DriveUp() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.DriveTheta() * MaxAngularRate) // Drive counterclockwise with
-                                                                                   // negative X (left)
+                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()) // Drive forward with
+                                                                                      // negative Y
+                                                                                      // (forward)
+                        .withVelocityY(driver.DriveUp()) // Drive left with negative X (left)
+                        .withRotationalRate(driver.DriveTheta()) // Drive counterclockwise with
+                                                                 // negative X (left)
                 ));
 
         final var idle = new SwerveRequest.Idle();
@@ -95,48 +109,91 @@ public class RobotContainer {
         driver.brake().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-        driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
-        driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
-        driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
+        // driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
+        // driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
+        // driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
+        driver.Shoot().onTrue(subsystems.shoot());
+        driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
+        // driver.primeShooter().onTrue(subsystems.Prime());
+        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driver.manShooterVel().whileTrue(subsystems.shooter().commands.autoShoot(()->RotationsPerSecond.of((driver.Xbox.getLeftTriggerAxis())).times(100)).repeatedly());
+        driver.manShooterVel().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manShooterAngle().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()->Degrees.of((driver.Xbox.getRightTriggerAxis())).times(18)).repeatedly());
+        driver.manShooterAngle().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
+        
 
-        driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
+        
+
+        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
+
+        driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+
+    
+        
+
+        // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+
+        driver.Intake().onTrue(subsystems.Intake());
+        driver.Intake().onFalse(subsystems.IntakeFalse());
+
+        driver.Outtake().onTrue(subsystems.Outake());
+        driver.Outtake().onFalse(subsystems.OutakeFalse());
+
+
+        driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
+        driver.autoRetractClimber().onTrue(subsystems.climber().commands.autoRetract());
+        // driver.
+
+        // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
+        // driver.manExtendClimber().onFalse(climber.commands.Stop());
+        // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
+        // driver.manRetractClimber().onFalse(climber.commands.Stop());
+
+        // driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
+
+        // driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
+        // driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
+        // driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        // driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
+        // driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
+        // driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
     }
 
     public Command getAutonomousCommand() {
         // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                        .withVelocityY(0)
-                        .withRotationalRate(0))
-                        .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
+        // final var idle = new SwerveRequest.Idle();
+        // return Commands.sequence(
+        //         // Reset our field centric heading to match the robot
+        //         // facing away from our alliance station wall (0 deg).
+        //         drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        //         // Then slowly drive forward (away from us) for 5 seconds.
+        //         drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+        //                 .withVelocityY(0)
+        //                 .withRotationalRate(0))
+        //                 .withTimeout(5.0),
+        //         // Finally idle for the rest of auton
+        //         drivetrain.applyRequest(() -> idle));
+        return auto.Preload().command();
     }
 
     public void visionPeriodic() {
-        // questNav.visionPeriodic();
+        visionSubsystem.visionPeriodic();
+    }
+
+    public void telePeriodic(){
+        double[] test = {subsystems.getShootingData().drivetrainAngle().getDegrees(), subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond), (subsystems.getShootingData().shooterAngle()).in(Degrees)};
+        SmartDashboard.putNumberArray("Target Shooting Math", test);
     }
 
     public Command seed() {
         return Commands.runOnce(() -> {
             drivetrain.seedFieldCentric();
-            // questNav.resetPose2D(questNav.getQuestPose2D().rotateBy(questNav.getQuestPose2D().getRotation().unaryMinus()));
         });
     }
 
