@@ -5,17 +5,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
-public class XboxDrive implements ControllerSchemeIO {
+public class XboxDriveConnor implements ControllerSchemeIO {
 
     public CommandXboxController Xbox;
     public CommandJoystick LeftStick;
     public CommandJoystick RightStick;
 
-    public XboxDrive(int port) {
+    public XboxDriveConnor(int port) {
         Xbox = new CommandXboxController(port);
     }
 
-    public XboxDrive(int port, int port2, int opPort) {
+    public XboxDriveConnor(int port, int port2, int opPort) {
         Xbox = new CommandXboxController(opPort);
         LeftStick = new CommandJoystick(port);
         RightStick = new CommandJoystick(port2);
@@ -87,22 +87,22 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger LowerIntake() {
-        return Xbox.povDown();
+        return Xbox.a();
     }
 
     @Override
     public Trigger RaiseIntake() {
-        return Xbox.povUp();
+        return Xbox.y();
     }
 
     @Override
     public Trigger baseIntake() {
-        return Xbox.povDown();
+        return Xbox.a();
     }
 
     @Override
     public Trigger maxIntake() {
-        return Xbox.povUp();
+        return Xbox.y();
     }
 
     @Override
