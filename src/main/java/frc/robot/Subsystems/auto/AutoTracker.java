@@ -161,8 +161,8 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
-                        .alongWith(delayedShoot));
+                        .andThen(subsystems.Prime())
+                        .andThen(delayedShoot));
     }
 
     public void shootWhilstGoingToAndSnap(Pose2d pose) {

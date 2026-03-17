@@ -206,7 +206,7 @@ public class Constants {
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 0.9;
+            public static final double bottomRollerSpeed = 1;
             public static final double sideRollerSpeed = -0.7;
             public static final double kickerSpeed = 0.9;
         }

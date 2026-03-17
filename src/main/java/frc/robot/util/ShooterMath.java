@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
 public class ShooterMath {
@@ -232,6 +233,7 @@ public class ShooterMath {
         
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rps
+        SmartDashboard.putNumber("velocity test", velocity);
         return RotationsPerSecond.of((velocity*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
