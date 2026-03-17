@@ -232,9 +232,8 @@ public class ShooterMath {
         return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
         
     }
-    public static AngularVelocity speedToMotorRotations(double velocity) { // In rps
-        SmartDashboard.putNumber("velocity test", velocity);
-        return RotationsPerSecond.of((velocity*2)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+    public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
+        return RotationsPerSecond.of(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyConstant* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
