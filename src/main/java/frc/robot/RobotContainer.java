@@ -134,6 +134,8 @@ public class RobotContainer {
 
         driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
 
+        driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle())
+
     
         
 

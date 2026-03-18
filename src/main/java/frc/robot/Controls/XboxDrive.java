@@ -115,8 +115,8 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger middleIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'middleIntake'");
+        return Xbox.povRight();
+        //throw new UnsupportedOperationException("Unimplemented method 'middleIntake'");
     }
 
     @Override
