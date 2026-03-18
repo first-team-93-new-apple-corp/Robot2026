@@ -27,41 +27,68 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public double InputLeft() {
-        return deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? halfLeft() : deadzone(-LeftStick.getY());
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-LeftStick.getX());
+        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getX());
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-RightStick.getX());
+        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-RightStick.getY());
+    }
+
+    @Override
+    public double halfLeft() {
+        return InputLeft() * 0.5;
+    }
+    
+    @Override
+    public double halfUp() {
+        return InputUp() * 0.5;
+    }
+
+    @Override
+    public double halfRotate() {
+        return InputTheta() * 0.5;
     }
 
     @Override
     public Trigger brake() {
-        return RightStick.button(Constants.Thrustmaster.Trigger);
+        return LeftStick.button(Constants.Thrustmaster.Center_Button);
     }
 
     @Override
     public Trigger robotRel() {
-        return RightStick.button(Constants.Thrustmaster.Center_Button);
+        return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
     public Trigger primeShooter(){
-        return RightStick.button(Constants.Thrustmaster.Trigger);
+        System.out.println("Warning: Function unbound: primeShooter");
+        return new Trigger(() -> false); // Unbound
     }
 
     @Override
     public Trigger Shoot(){
-        return LeftStick.button(Constants.Thrustmaster.Trigger);
+        return RightStick.button(Constants.Thrustmaster.Trigger);
+    }
+
+    @Override
+    public Trigger faceHub() {
+        System.out.println("Warning: No current function for faceHub");
+        return RightStick.button(Constants.Thrustmaster.Center_Button); //Binding for when we have implementation
     }
 
     @Override
     public Trigger seed(){
         return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
+    }
+
+    @Override 
+    public Trigger halfSpeeds(){
+        return LeftStick.button(Constants.Thrustmaster.Right_Button).or(RightStick.button(Constants.Thrustmaster.Left_Button));
     }
 }

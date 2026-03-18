@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
 public interface ControllerSchemeIO {
     public static double MaxSpeed = TunerConstants.kSpeedAt12Volts.baseUnitMagnitude();
     public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -30,41 +32,57 @@ public interface ControllerSchemeIO {
 
     public double InputTheta();
 
-    public Trigger Intake();
+    public default double halfLeft() {
+        System.out.println("Warning: Function unbound: halfLeft");
+        return 0.0;//Keeps unbound
+    }
 
-    public Trigger Outtake();
+    public default double halfUp() {
+        System.out.println("Warning: Function unbound: halfUp");
+        return 0.0;//Keeps unbound
+    }
 
-    public Trigger Shoot();
+    public double halfRotate(); // Halfs all rotations of robot
 
-    public Trigger manRetractClimber();
+    public Trigger halfSpeeds(); // Halfs all speed
 
-    public Trigger manExtendClimber();
+    public Trigger Intake(); // Intaks
 
-    public Trigger autoRetractClimber();
+    public Trigger Outtake(); // Outtakes
 
-    public Trigger autoExtendClimber();
+    public Trigger Shoot(); // Shoots
+    
+    public Trigger faceHub(); // makes robot face hub
 
-    public Trigger WiggleIntake();
+    public Trigger manRetractClimber(); // slowly retract climber
 
-    public Trigger LowerIntake();
+    public Trigger manExtendClimber(); // slowly extend climber
 
-    public Trigger RaiseIntake();
+    public Trigger autoRetractClimber(); // Retracts climber to max
 
-    public Trigger baseIntake();
+    public Trigger autoExtendClimber(); // Extends climber to max
 
-    public Trigger maxIntake();
+    public Trigger WiggleIntake(); // Move intake up and down
 
-    public Trigger middleIntake();
+    public Trigger LowerIntake(); //Move Intake Down
 
-    public Trigger primeShooter();
+    public Trigger RaiseIntake(); //Move Intake Up
 
-    public Trigger seed();
+    public Trigger baseIntake(); // Set intake to bottem
 
-    public Trigger brake();
+    public Trigger maxIntake(); // Set intake to top
 
-    public Trigger robotRel();
+    public Trigger middleIntake(); // Set intake to middle
 
-    public Trigger resetClimberEncoder();
+    public Trigger primeShooter(); // Primes shooter
+
+    public Trigger seed(); // Field Rel
+
+    public Trigger brake(); // Stops Movments
+    
+    public Trigger robotRel(); // Robot Rel (duh)
+
+    public Trigger resetClimberEncoder(); // Resets Climber encoder
 
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
