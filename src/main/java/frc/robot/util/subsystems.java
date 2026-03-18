@@ -15,6 +15,7 @@ import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.ShooterSubsystem;
 
 public record subsystems(
@@ -74,6 +75,20 @@ public record subsystems(
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
         cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
                 .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
+        return cmds.withTimeout(2);
+    }
+
+    public Command PrimeHubClose() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getClose().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity())));
+        return cmds.withTimeout(2);
+    }
+
+    public Command PrimeHubFar() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity())));
         return cmds.withTimeout(2);
     }
 

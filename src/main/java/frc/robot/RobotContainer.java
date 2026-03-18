@@ -122,7 +122,6 @@ public class RobotContainer {
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
         
-
         
 
         // driver.primeShooter().onFalse(subsystems.PrimeFalse());

@@ -53,7 +53,27 @@ public class AutoConstants {
         public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.15), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
 
-        
+        public static PresetShootingPoint getClose() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return RedClose;
+                } 
+                return BlueClose; // Default to blue
+            }
+            return null;
+        }
+
+        public static PresetShootingPoint getFar() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return RedClose;
+                } 
+                return BlueClose; // Default to blue
+            }
+            return null;
+        }
         // right up agasibnst hub
         // left corner
         // right croner
