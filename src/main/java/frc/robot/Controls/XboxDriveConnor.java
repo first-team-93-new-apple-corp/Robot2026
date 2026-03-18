@@ -136,4 +136,22 @@ public class XboxDriveConnor implements ControllerSchemeIO {
     public Trigger resetClimberEncoder() {
         return Xbox.back();
     }
+
+    @Override
+    public double halfRotate() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'halfRotate'");
+    }
+
+    @Override
+    public Trigger halfSpeeds() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'halfSpeeds'");
+    }
+
+    @Override
+    public Trigger faceHub() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'faceHub'");
+    }
 }

@@ -105,13 +105,7 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.povUp();
     }
 
-    public Trigger manShooterVel(){
-        return Xbox.leftTrigger(0.01);
-    }
 
-    public Trigger manShooterAngle(){
-        return Xbox.rightTrigger(0.01);
-    }
 
     @Override
     public Trigger middleIntake() {
@@ -143,5 +137,23 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public Trigger resetClimberEncoder() {
         return Xbox.back();
+    }
+
+    @Override
+    public double halfRotate() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'halfRotate'");
+    }
+
+    @Override
+    public Trigger halfSpeeds() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'halfSpeeds'");
+    }
+
+    @Override
+    public Trigger faceHub() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'faceHub'");
     }
 }
