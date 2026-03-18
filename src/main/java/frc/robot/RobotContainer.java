@@ -147,7 +147,9 @@ public class RobotContainer {
 
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
-        driver.autoRetractClimber().onTrue(subsystems.climber().commands.autoRetract());
+        driver.autoRetractClimber().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
+
+        RobotModeTriggers.test().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
         // driver.
 
         // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
