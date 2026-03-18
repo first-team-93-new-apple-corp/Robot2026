@@ -48,9 +48,9 @@ public class AutoConstants {
     }
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
     public class PresetShootingPoints {
-        public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(6.4), Degrees.of(90).minus(Radians.of(1.395)));
+        public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
-        public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.15), Degrees.of(90).minus(Radians.of(1.15)));
+        public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
 
         public static PresetShootingPoint getClose() {

@@ -135,7 +135,7 @@ public class RobotContainer {
     
         
 
-        // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+        driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 
         driver.Intake().onTrue(subsystems.Intake());
         driver.Intake().onFalse(subsystems.IntakeFalse());
