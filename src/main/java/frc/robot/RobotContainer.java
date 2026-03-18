@@ -56,7 +56,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final XboxDrive driver = new XboxDrive(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -122,7 +122,10 @@ public class RobotContainer {
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
         
-        
+        driver.presetClose().onTrue(subsystems.PrimeHubClose());
+        driver.presetClimb().onTrue(subsystems.PrimeHubFar());
+        driver.presetClose().onFalse(subsystems.PrimeFalse());
+        driver.presetClimb().onFalse(subsystems.PrimeFalse());
 
         // driver.primeShooter().onFalse(subsystems.PrimeFalse());
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());

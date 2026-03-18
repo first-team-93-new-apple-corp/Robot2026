@@ -66,6 +66,10 @@ public interface ControllerSchemeIO {
 
     public Trigger resetClimberEncoder();
 
+    // public Trigger presetClose();
+
+    // public Trigger presetClimb();
+
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

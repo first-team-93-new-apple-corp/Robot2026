@@ -136,4 +136,15 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger resetClimberEncoder() {
         return Xbox.back();
     }
+
+   
+    public Trigger presetClimb() {
+        // TODO Auto-generated method stub
+        return Xbox.y();
+    }
+
+    public Trigger presetClose() {
+        // TODO Auto-generated method stub
+        return Xbox.a();
+    }
 }
