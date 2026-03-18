@@ -1,5 +1,9 @@
 package frc.robot.Subsystems.auto;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathConstraints;
@@ -11,7 +15,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.util.ShooterMath;
 
 public class AutoConstants {
     public static Rotation2d awayFromAlliance = Rotation2d.kZero;
@@ -37,6 +45,18 @@ public class AutoConstants {
             }
             return null;
         }
+    }
+    public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
+    public class PresetShootingPoints {
+        public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(6.4), Degrees.of(90).minus(Radians.of(1.395)));
+        public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
+        public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.15), Degrees.of(90).minus(Radians.of(1.15)));
+        public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
+
+        
+        // right up agasibnst hub
+        // left corner
+        // right croner
     }
 
     public static Pose2d getLastPoseInPath(PathPlannerPath path) {
