@@ -92,6 +92,19 @@ public record subsystems(
         return cmds.withTimeout(2);
     }
 
+    public Command PrimeHubLeft() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getLeft().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+        return cmds.withTimeout(2);
+    }
+    public Command PrimeHubRight() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getRight().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+        return cmds.withTimeout(2);
+    }
+
     public Command AutoPrime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(

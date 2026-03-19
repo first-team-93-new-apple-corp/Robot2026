@@ -239,6 +239,7 @@ public class ShooterMath {
         return RotationsPerSecond.of(1.5* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
     
+    
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
     //   double hubY = 4;

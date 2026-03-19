@@ -34,7 +34,7 @@ import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
 public class RobotContainer {
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxSpeed = 0.2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -126,6 +126,8 @@ public class RobotContainer {
         driver.presetClimb().whileTrue(subsystems.PrimeHubFar());
         driver.presetClose().onFalse(subsystems.PrimeFalse());
         driver.presetClimb().onFalse(subsystems.PrimeFalse());
+        driver.presetLeft().whileTrue(subsystems.PrimeHubLeft());
+        driver.presetRight().whileTrue(subsystems.PrimeHubRight());
 
         // driver.primeShooter().onFalse(subsystems.PrimeFalse());
         driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());

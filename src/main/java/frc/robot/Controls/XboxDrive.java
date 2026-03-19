@@ -147,4 +147,12 @@ public class XboxDrive implements ControllerSchemeIO {
         // TODO Auto-generated method stub
         return Xbox.a();
     }
+    public Trigger presetLeft() {
+        // TODO Auto-generated method stub
+        return Xbox.povLeft();
+    }
+    public Trigger presetRight() {
+        // TODO Auto-generated method stub
+        return Xbox.povRight();
+    }
 }
