@@ -140,12 +140,12 @@ public class XboxDrive implements ControllerSchemeIO {
    
     public Trigger presetClimb() {
         // TODO Auto-generated method stub
-        return Xbox.y();
+        return Xbox.a();
     }
 
     public Trigger presetClose() {
         // TODO Auto-generated method stub
-        return Xbox.a();
+        return Xbox.y();
     }
     public Trigger presetLeft() {
         // TODO Auto-generated method stub
