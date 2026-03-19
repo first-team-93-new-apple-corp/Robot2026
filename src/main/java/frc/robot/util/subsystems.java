@@ -74,7 +74,7 @@ public record subsystems(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
         cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity())));
+                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
         return cmds.withTimeout(2);
     }
 
