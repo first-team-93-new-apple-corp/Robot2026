@@ -176,7 +176,7 @@ public class RobotContainer {
         //                 .withTimeout(5.0),
         //         // Finally idle for the rest of auton
         //         drivetrain.applyRequest(() -> idle));
-        return auto.Preload().command();
+        return auto.autoChooser.getSelected().command();
     }
 
     public void visionPeriodic() {

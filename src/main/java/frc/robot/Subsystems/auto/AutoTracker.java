@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.auto;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -122,6 +124,7 @@ public class AutoTracker extends SequentialCommandGroup {
         addCommands(subsystems.Intake());
         addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
                 endSpeed));
+        addCommands(AutoBuilder.followPath(path));
     }
 
     /**
@@ -155,8 +158,8 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
-    public void shootWhilstGoingTo(Pose2d pose) {
-        Command followPath = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
+    public void shootWhilstGoingTo(Supplier<Pose2d> pose) {
+        Command followPath = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
         Command delayedShoot = Commands.waitSeconds(0.75)
                 .andThen(subsystems.shoot());
         addCommands(
@@ -207,8 +210,16 @@ public class AutoTracker extends SequentialCommandGroup {
                                         .until(() -> subsystems.drivetrain().nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 1.0))));
     }
 
-    public void goToAndThenShoot(Pose2d pose) {
-        Command driveCmd = AutoBuilder.pathfindToPose(pose, AutoConstants.constraints);
+    public void goToAndThenShootClose(Supplier<Pose2d> pose) {
+        Command driveCmd = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+    }
+
+    public void goToAndThenShootAuto(Supplier<Pose2d> pose) {
+        Command driveCmd = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
         Command delayedShoot = Commands.waitSeconds(0.75)
                 .andThen(subsystems.shoot());
 
@@ -218,5 +229,13 @@ public class AutoTracker extends SequentialCommandGroup {
     public ShootingData getShootingData() {
         return subsystems.shooter().getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
                 getDriveSpeedY());
+    }
+
+    public void endAuto(){
+            addCommands(subsystems.IntakeFalse());
+            addCommands(subsystems.PrimeFalse());
+            addCommands(subsystems.shootFalse());
+            addCommands(subsystems.OutakeFalse());
+            addCommands(subsystems.manipulation().commands.offCommand());
     }
 }
