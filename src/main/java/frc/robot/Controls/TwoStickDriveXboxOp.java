@@ -27,32 +27,17 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public double InputLeft() {
-        return halfSpeeds().getAsBoolean() ? halfLeft() : deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? deadzone(-LeftStick.getY()) * 0.5 : deadzone(-LeftStick.getY());
     }
 
     @Override
     public double InputUp() {
-        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getX());
+        return halfSpeeds().getAsBoolean() ? deadzone(-LeftStick.getX()) * 0.5 : deadzone(-LeftStick.getX());
     }
 
     @Override
     public double InputTheta() {
-        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-RightStick.getY());
-    }
-
-    @Override
-    public double halfLeft() {
-        return InputLeft() * 0.5;
-    }
-    
-    @Override
-    public double halfUp() {
-        return InputUp() * 0.5;
-    }
-
-    @Override
-    public double halfRotate() {
-        return InputTheta() * 0.5;
+        return halfSpeeds().getAsBoolean() ? deadzone(-RightStick.getX()) * 0.5 : deadzone(-RightStick.getX());
     }
 
     @Override
