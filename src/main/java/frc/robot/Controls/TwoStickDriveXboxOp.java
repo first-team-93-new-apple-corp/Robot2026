@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.xbox;
 
 public class TwoStickDriveXboxOp extends XboxDrive {
 
@@ -27,36 +28,46 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public double InputLeft() {
-        return deadzone(-LeftStick.getY());
+        return halfSpeeds().getAsBoolean() ? deadzone(-LeftStick.getY()) * 0.5 : deadzone(-LeftStick.getY());
     }
 
     @Override
     public double InputUp() {
-        return deadzone(-LeftStick.getX());
+        return halfSpeeds().getAsBoolean() ? deadzone(-LeftStick.getX()) * 0.5 : deadzone(-LeftStick.getX());
     }
 
     @Override
     public double InputTheta() {
-        return deadzone(-RightStick.getX());
+        return halfSpeeds().getAsBoolean() ? deadzone(-RightStick.getX()) * 0.5 : deadzone(-RightStick.getX());
     }
 
     @Override
     public Trigger brake() {
-        return RightStick.button(Constants.Thrustmaster.Trigger);
+        return LeftStick.button(Constants.Thrustmaster.Center_Button);
     }
 
     @Override
     public Trigger robotRel() {
-        return RightStick.button(Constants.Thrustmaster.Center_Button);
+        return LeftStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
-    public Trigger primeShooter(){
-        return LeftStick.button(Constants.Thrustmaster.Trigger);
+    public Trigger Prime(){
+        return Xbox.leftBumper().or(RightStick.button(Constants.Thrustmaster.Center_Button));
+    }
+
+    @Override
+    public Trigger Shoot(){
+        return RightStick.button(Constants.Thrustmaster.Trigger);
     }
 
     @Override
     public Trigger seed(){
         return LeftStick.button(Constants.Thrustmaster.Left_Buttons.Top_Middle);
+    }
+
+    @Override 
+    public Trigger halfSpeeds(){
+        return LeftStick.button(Constants.Thrustmaster.Right_Button).or(RightStick.button(Constants.Thrustmaster.Left_Button));
     }
 }

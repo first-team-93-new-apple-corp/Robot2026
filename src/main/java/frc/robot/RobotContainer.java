@@ -56,7 +56,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final XboxDrive driver = new XboxDrive(0, 1, 2);
+    private final TwoStickDriveXboxOp driver = new TwoStickDriveXboxOp(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -88,17 +88,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()) // Drive forward with
-                                                                                      // negative Y
-                                                                                      // (forward)
-                        .withVelocityY(driver.DriveUp()) // Drive left with negative X (left)
-                        .withRotationalRate(driver.DriveTheta()) // Drive counterclockwise with
-                                                                 // negative X (left)
+                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
+                        .withVelocityY(driver.DriveUp())
+                        .withRotationalRate(driver.DriveTheta())
                 ));
 
         final var idle = new SwerveRequest.Idle();
@@ -109,13 +102,10 @@ public class RobotContainer {
         driver.brake().whileTrue(drivetrain
                 .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-        // driver.Intake().onTrue(m_ManipulationSubsystem.commands.intakeCommand());
-        // driver.Outtake().onTrue(m_ManipulationSubsystem.commands.outtakeCommand());
-        // driver.Intake().and(driver.Outtake()).onFalse(m_ManipulationSubsystem.commands.idleCommand());
-
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
+        
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
@@ -129,13 +119,8 @@ public class RobotContainer {
         driver.presetLeft().whileTrue(subsystems.PrimeHubLeft());
         driver.presetRight().whileTrue(subsystems.PrimeHubRight());
 
-        // driver.primeShooter().onFalse(subsystems.PrimeFalse());
-        driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
-
-        driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
-
-    
-        
+        driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
+        driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 
@@ -146,38 +131,12 @@ public class RobotContainer {
         driver.Outtake().onFalse(subsystems.OutakeFalse());
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
-        driver.autoRetractClimber().onTrue(subsystems.climber().commands.autoRetract());
-        // driver.
+        driver.autoRetractClimber().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
 
-        // driver.manExtendClimber().onTrue(climber.commands.manualExtend());
-        // driver.manExtendClimber().onFalse(climber.commands.Stop());
-        // driver.manRetractClimber().onTrue(climber.commands.manualRetract());
-        // driver.manRetractClimber().onFalse(climber.commands.Stop());
-
-        // driver.autoRetractClimber().onTrue(m_ClimberSubsystem.commands.autoRetract());
-
-        // driver.autoExtendClimber().onTrue(m_ClimberSubsystem.commands.autoExtend());
-        // driver.manExtendClimber().onTrue(m_ClimberSubsystem.commands.manualExtend());
-        // driver.manExtendClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        // driver.manRetractClimber().onTrue(m_ClimberSubsystem.commands.manualRetract());
-        // driver.manRetractClimber().onFalse(m_ClimberSubsystem.commands.Stop());
-        // driver.resetClimberEncoder().onTrue(m_ClimberSubsystem.commands.resetEncoder());
+        RobotModeTriggers.test().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
     }
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        // final var idle = new SwerveRequest.Idle();
-        // return Commands.sequence(
-        //         // Reset our field centric heading to match the robot
-        //         // facing away from our alliance station wall (0 deg).
-        //         drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        //         // Then slowly drive forward (away from us) for 5 seconds.
-        //         drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-        //                 .withVelocityY(0)
-        //                 .withRotationalRate(0))
-        //                 .withTimeout(5.0),
-        //         // Finally idle for the rest of auton
-        //         drivetrain.applyRequest(() -> idle));
         return auto.Preload().command();
     }
 
