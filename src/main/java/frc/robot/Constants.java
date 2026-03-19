@@ -314,7 +314,11 @@ public class Constants {
                 new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
                 new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(180)));
 
-        public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
+        public static final Matrix<N3, N1> singleTagDevs = VecBuilder.fill(0.2, 0.2, 0.2);
+        public static final Matrix<N3, N1> multiTagDevs = VecBuilder.fill(0.02, 0.02, 0.05); // probably not used
+        public static final Matrix<N3, N1> standardDevs = VecBuilder.fill(0.15, 0.15, 0.05); // probably not used
+
+
 
     }
 
