@@ -81,27 +81,27 @@ public record subsystems(
     public Command PrimeHubClose() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getClose().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose))));
         return cmds.withTimeout(2);
     }
 
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar))));
         return cmds.withTimeout(2);
     }
 
     public Command PrimeHubLeft() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getLeft().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar))));
         return cmds.withTimeout(2);
     }
     public Command PrimeHubRight() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getRight().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar))));
         return cmds.withTimeout(2);
     }
 

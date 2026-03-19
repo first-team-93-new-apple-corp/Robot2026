@@ -245,8 +245,8 @@ public class Constants {
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
             public static final double ShootToFlyGearRatio = 24/18;
-            public static final double EfficiencyMultiplier =  1.35; // Good for close to hub
-            public static final double EfficiencyConstant = 0;
+            public static final double EfficiencyMultiplierFar =  1.4;
+            public static final double EfficiencyMultiplierClose =  1.05;
         }
 
         public class HoodMotorConfigs {

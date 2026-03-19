@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -229,16 +230,21 @@ public class ShooterMath {
         // Stationary shooting
         // return new ShootingData(new Rotation2d(driveTrainAngle), (Radians.of(shooter_angle)), rpm);
         // On the fly
-        return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
+        return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)),rpmMoving);
         
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())))+Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyConstant);
+        return RotationsPerSecond.of(((velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
     public static AngularVelocity speedToMotorRotationsforClose(double velocity) { // In rpm
         return RotationsPerSecond.of(1.5* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
-    
+    public static double getEfficiency(Angle angle) {
+        if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
+            return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
+        }
+        return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
+    }
     
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;
