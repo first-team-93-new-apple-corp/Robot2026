@@ -49,7 +49,7 @@ public class VisionSubsystem extends SubsystemBase {
     // PhotonVision
     private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
-    private boolean hasPiPoseData = false;
+    private boolean hasPiPoseData = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
 
@@ -104,7 +104,7 @@ public class VisionSubsystem extends SubsystemBase {
             visionEst.ifPresent(
                     est -> {
                         // var hehe = new Transform3d(0, 0, 0, new Rotation3d(0,0,Math.PI));
-                        piPose3d = est.estimatedPose;
+                        // piPose3d = est.estimatedPose;
                         hasPiPoseData = true;
                     });
         }

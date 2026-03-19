@@ -85,9 +85,9 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 1;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 1;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 2;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 12;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 15;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
@@ -195,7 +195,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.5;
+            double delay = 0.2;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));

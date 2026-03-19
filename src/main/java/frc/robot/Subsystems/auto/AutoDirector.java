@@ -178,9 +178,10 @@ public class AutoDirector {
     }
 
     public Auto PreloadCenter() {
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        // Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        Pose2d startPose = new Pose2d(AutoConstants.Hub.getHub().toPose2d().getX(), AutoConstants.Hub.getHub().toPose2d().getY()-1, AutoConstants.Hub.getHub().toPose2d().getRotation());
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         if (getAlliance() == Alliance.Red) {    
             tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         } else {

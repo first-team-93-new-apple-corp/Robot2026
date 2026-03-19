@@ -66,6 +66,13 @@ public interface ControllerSchemeIO {
 
     public Trigger resetClimberEncoder();
 
+    
+    public Trigger presetClimb();
+
+    public Trigger presetClose();
+    public Trigger presetLeft();
+    public Trigger presetRight();
+
     // public Trigger presetClose();
 
     // public Trigger presetClimb();
