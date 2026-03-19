@@ -87,12 +87,12 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger LowerIntake() {
-        return Xbox.povDown();
+        return Xbox.a();
     }
 
     @Override
     public Trigger RaiseIntake() {
-        return Xbox.povUp();
+        return Xbox.y();
     }
 
     @Override
