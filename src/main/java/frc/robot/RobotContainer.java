@@ -95,10 +95,16 @@ public class RobotContainer {
                         .withVelocityY(driver.DriveUp())
                         .withRotationalRate(driver.DriveTheta())));
 
-        driver.robotRel().whileTrue(
-                drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                        .withVelocityY(driver.DriveUp())
-                        .withRotationalRate(driver.DriveTheta())));
+        driver.robotRel().onTrue(
+                Commands.runOnce(() -> drivetrain.setDefaultCommand(
+                        drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+                                .withVelocityY(driver.DriveUp())
+                                .withRotationalRate(driver.DriveTheta())))));
+        driver.robotRel().onFalse(
+                Commands.runOnce(() -> drivetrain.setDefaultCommand(
+                        drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
+                                .withVelocityY(driver.DriveUp())
+                                .withRotationalRate(driver.DriveTheta())))));
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
@@ -117,6 +123,8 @@ public class RobotContainer {
 
         driver.Prime().onTrue(subsystems.Prime());
         driver.Prime().onFalse(subsystems.PrimeFalse());
+
+        driver.DriverPrime().onTrue(subsystems.DriverPrime());
 
         driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
         driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());

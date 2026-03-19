@@ -161,6 +161,12 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.povDown();
     }
 
+    @Override
+    public Trigger DriverPrime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'DriverPrime'");
+    }
+
     
 
 
