@@ -73,8 +73,8 @@ public record subsystems(
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
-        cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
+        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> getShootingData().shooterAngle())
+                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar))));
         return cmds.withTimeout(2);
     }
 
