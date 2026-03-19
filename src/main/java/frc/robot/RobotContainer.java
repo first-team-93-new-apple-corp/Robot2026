@@ -122,8 +122,8 @@ public class RobotContainer {
         driver.primeShooter().onTrue(subsystems.Prime());
         driver.primeShooter().onFalse(subsystems.PrimeFalse());
         
-        driver.presetClose().onTrue(subsystems.PrimeHubClose());
-        driver.presetClimb().onTrue(subsystems.PrimeHubFar());
+        driver.presetClose().whileTrue(subsystems.PrimeHubClose());
+        driver.presetClimb().whileTrue(subsystems.PrimeHubFar());
         driver.presetClose().onFalse(subsystems.PrimeFalse());
         driver.presetClimb().onFalse(subsystems.PrimeFalse());
 

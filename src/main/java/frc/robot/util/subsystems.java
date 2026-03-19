@@ -81,14 +81,14 @@ public record subsystems(
     public Command PrimeHubClose() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getClose().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity())));
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
         return cmds.withTimeout(2);
     }
 
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity())));
+        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier))));
         return cmds.withTimeout(2);
     }
 

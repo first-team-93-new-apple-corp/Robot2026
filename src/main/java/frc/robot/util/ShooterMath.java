@@ -35,7 +35,7 @@ public class ShooterMath {
             double yfinal, double robotX, double robotZ, double poseX, double poseY, double hubX, double hubY,
             double hubHeight, double gravity, double angleToHub, double adjustment) {
         double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2)); // Add this to code
-        double originalTheta = calculateAngle(0, 0, distance - 0.5, hubHeight + 0.5, distance, hubHeight); // replace
+        double originalTheta = calculateAngle(0, 0, distance - 0.5, hubHeight + 1, distance, hubHeight); // replace
                                                                                                            // this
                                                                                                            // calculate
                                                                                                            // angle in
@@ -233,7 +233,7 @@ public class ShooterMath {
         
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyConstant* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplier* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())))+Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyConstant);
     }
     public static AngularVelocity speedToMotorRotationsforClose(double velocity) { // In rpm
         return RotationsPerSecond.of(1.5* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
