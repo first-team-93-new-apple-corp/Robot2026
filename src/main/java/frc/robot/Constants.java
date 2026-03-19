@@ -276,7 +276,7 @@ public class Constants {
         public static final int[] driveMotors = { 5, 6, 7, 8 };
         public static final int[] canCoders = { 10, 11, 12, 13 };
 
-        public static final double MaxSpeed = 0.4 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public class Auto {
