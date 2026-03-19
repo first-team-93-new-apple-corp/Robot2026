@@ -51,8 +51,6 @@ public interface ControllerSchemeIO {
     public Trigger Outtake(); // Outtakes
 
     public Trigger Shoot(); // Shoots
-    
-    public Trigger faceHub(); // makes robot face hub
 
     public Trigger manRetractClimber(); // slowly retract climber
 
@@ -68,13 +66,9 @@ public interface ControllerSchemeIO {
 
     public Trigger RaiseIntake(); //Move Intake Up
 
-    public Trigger baseIntake(); // Set intake to bottem
-
-    public Trigger maxIntake(); // Set intake to top
-
     public Trigger middleIntake(); // Set intake to middle
 
-    public Trigger primeShooter(); // Primes shooter
+    public Trigger Prime(); // Primes shooter
 
     public Trigger seed(); // Field Rel
 
@@ -83,6 +77,15 @@ public interface ControllerSchemeIO {
     public Trigger robotRel(); // Robot Rel (duh)
 
     public Trigger resetClimberEncoder(); // Resets Climber encoder
+
+    public Trigger PrimeLeft();
+
+    public Trigger PrimeRight();
+
+    public Trigger PrimeClose();
+
+    public Trigger PrimeFar();
+
 
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
