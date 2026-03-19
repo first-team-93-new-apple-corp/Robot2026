@@ -52,7 +52,10 @@ public class AutoConstants {
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
         public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
-
+        public static final PresetShootingPoint BlueLeftWing = new PresetShootingPoint(new Pose2d(3.208, 7.304, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
+        public static final PresetShootingPoint BlueRightWing = new PresetShootingPoint(new Pose2d(3.208, 0.766, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
+        public static final PresetShootingPoint RedRightWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueLeftWing.pose), BlueLeftWing.velocity, BlueLeftWing.hoodAngle);
+        public static final PresetShootingPoint RedLeftWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueRightWing.pose), BlueRightWing.velocity, BlueRightWing.hoodAngle);
         public static PresetShootingPoint getClose() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -71,6 +74,27 @@ public class AutoConstants {
                     return RedClose;
                 } 
                 return BlueClose; // Default to blue
+            }
+            return null;
+        }
+
+        public static PresetShootingPoint getLeft() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return RedLeftWing;
+                } 
+                return BlueLeftWing; // Default to blue
+            }
+            return null;
+        }
+         public static PresetShootingPoint getRight() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return RedRightWing;
+                } 
+                return BlueRightWing; // Default to blue
             }
             return null;
         }
