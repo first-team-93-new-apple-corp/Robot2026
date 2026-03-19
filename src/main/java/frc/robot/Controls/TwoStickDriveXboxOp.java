@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.xbox;
 
 public class TwoStickDriveXboxOp extends XboxDrive {
 
@@ -51,20 +52,13 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     }
 
     @Override
-    public Trigger primeShooter(){
-        System.out.println("Warning: Function unbound: primeShooter");
-        return new Trigger(() -> false); // Unbound
+    public Trigger Prime(){
+        return Xbox.leftBumper().or(RightStick.button(Constants.Thrustmaster.Center_Button));
     }
 
     @Override
     public Trigger Shoot(){
         return RightStick.button(Constants.Thrustmaster.Trigger);
-    }
-
-    @Override
-    public Trigger faceHub() {
-        System.out.println("Warning: No current function for faceHub");
-        return RightStick.button(Constants.Thrustmaster.Center_Button); //Binding for when we have implementation
     }
 
     @Override

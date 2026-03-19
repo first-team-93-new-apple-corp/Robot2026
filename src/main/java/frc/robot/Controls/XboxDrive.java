@@ -96,26 +96,14 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger baseIntake() {
-        return Xbox.povDown();
-    }
-
-    @Override
-    public Trigger maxIntake() {
-        return Xbox.povUp();
-    }
-
-
-
-    @Override
     public Trigger middleIntake() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'middleIntake'");
     }
 
     @Override
-    public Trigger primeShooter() {
-        return Xbox.leftTrigger();
+    public Trigger Prime() {
+        return Xbox.leftBumper();
     }
 
     @Override
@@ -152,8 +140,26 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger faceHub() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'faceHub'");
+    public Trigger PrimeLeft() {
+       return Xbox.povLeft();
     }
+
+    @Override
+    public Trigger PrimeRight() {
+       return Xbox.povRight();
+    }
+
+    @Override
+    public Trigger PrimeClose() {
+        return Xbox.povUp();
+    }
+
+    @Override
+    public Trigger PrimeFar() {
+        return Xbox.povDown();
+    }
+
+    
+
+
 }
