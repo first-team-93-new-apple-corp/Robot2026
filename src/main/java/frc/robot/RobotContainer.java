@@ -115,10 +115,10 @@ public class RobotContainer {
         // driver.manShooterAngle().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
 
-        driver.baseIntake().onTrue(subsystems.intake().commands.autoPivotDown());
-        driver.maxIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+        driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
+        driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
 
-        // driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+        driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 
         driver.Intake().onTrue(subsystems.Intake());
         driver.Intake().onFalse(subsystems.IntakeFalse());
