@@ -109,15 +109,19 @@ public class RobotContainer {
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.primeShooter().onTrue(subsystems.Prime());
-        driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        driver.Prime().onTrue(subsystems.Prime());
+        driver.Prime().onFalse(subsystems.PrimeFalse());
         
-        driver.presetClose().whileTrue(subsystems.PrimeHubClose());
-        driver.presetClimb().whileTrue(subsystems.PrimeHubFar());
-        driver.presetClose().onFalse(subsystems.PrimeFalse());
-        driver.presetClimb().onFalse(subsystems.PrimeFalse());
-        driver.presetLeft().whileTrue(subsystems.PrimeHubLeft());
-        driver.presetRight().whileTrue(subsystems.PrimeHubRight());
+        driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
+        driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
+        driver.PrimeLeft().whileTrue(subsystems.PrimeHubLeft());
+        driver.PrimeRight().whileTrue(subsystems.PrimeHubRight());
+
+        driver.PrimeClose().onFalse(subsystems.PrimeFalse());
+        driver.PrimeFar().onFalse(subsystems.PrimeFalse());
+        driver.PrimeLeft().onFalse(subsystems.PrimeFalse());
+        driver.PrimeRight().onFalse(subsystems.PrimeFalse());
+
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
