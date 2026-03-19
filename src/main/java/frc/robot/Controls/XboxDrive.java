@@ -127,6 +127,24 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.back();
     }
 
+   
+    public Trigger presetClimb() {
+        // TODO Auto-generated method stub
+        return Xbox.a();
+    }
+
+    public Trigger presetClose() {
+        // TODO Auto-generated method stub
+        return Xbox.y();
+    }
+    public Trigger presetLeft() {
+        // TODO Auto-generated method stub
+        return Xbox.povLeft();
+    }
+    public Trigger presetRight() {
+        // TODO Auto-generated method stub
+        return Xbox.povRight();
+    }
     @Override
     public double halfRotate() {
         // TODO Auto-generated method stub

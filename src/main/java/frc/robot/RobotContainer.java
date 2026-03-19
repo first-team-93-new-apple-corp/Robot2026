@@ -109,11 +109,15 @@ public class RobotContainer {
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        // driver.manShooterVel().whileTrue(subsystems.shooter().commands.autoShoot(()->RotationsPerSecond.of((driver.Xbox.getLeftTriggerAxis())).times(100)).repeatedly());
-        // driver.manShooterVel().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
-        // driver.manShooterAngle().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()->Degrees.of((driver.Xbox.getRightTriggerAxis())).times(18)).repeatedly());
-        // driver.manShooterAngle().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
-
+        driver.primeShooter().onTrue(subsystems.Prime());
+        driver.primeShooter().onFalse(subsystems.PrimeFalse());
+        
+        driver.presetClose().whileTrue(subsystems.PrimeHubClose());
+        driver.presetClimb().whileTrue(subsystems.PrimeHubFar());
+        driver.presetClose().onFalse(subsystems.PrimeFalse());
+        driver.presetClimb().onFalse(subsystems.PrimeFalse());
+        driver.presetLeft().whileTrue(subsystems.PrimeHubLeft());
+        driver.presetRight().whileTrue(subsystems.PrimeHubRight());
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
