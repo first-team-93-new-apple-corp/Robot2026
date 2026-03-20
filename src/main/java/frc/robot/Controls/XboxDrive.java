@@ -87,12 +87,12 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger LowerIntake() {
-        return Xbox.povDown();
+        return Xbox.a();
     }
 
     @Override
     public Trigger RaiseIntake() {
-        return Xbox.povUp();
+        return Xbox.y();
     }
 
     @Override
@@ -128,23 +128,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
    
-    public Trigger presetClimb() {
-        // TODO Auto-generated method stub
-        return Xbox.a();
-    }
-
-    public Trigger presetClose() {
-        // TODO Auto-generated method stub
-        return Xbox.y();
-    }
-    public Trigger presetLeft() {
-        // TODO Auto-generated method stub
-        return Xbox.povLeft();
-    }
-    public Trigger presetRight() {
-        // TODO Auto-generated method stub
-        return Xbox.povRight();
-    }
+    
     @Override
     public double halfRotate() {
         // TODO Auto-generated method stub
@@ -175,6 +159,12 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public Trigger PrimeFar() {
         return Xbox.povDown();
+    }
+
+    @Override
+    public Trigger DriverPrime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'DriverPrime'");
     }
 
     

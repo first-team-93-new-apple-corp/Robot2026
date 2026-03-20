@@ -70,6 +70,8 @@ public interface ControllerSchemeIO {
 
     public Trigger Prime(); // Primes shooter
 
+    public Trigger DriverPrime(); // Primes shooter with driver button
+
     public Trigger seed(); // Field Rel
 
     public Trigger brake(); // Stops Movments
