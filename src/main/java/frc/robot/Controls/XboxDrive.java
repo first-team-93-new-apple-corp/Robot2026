@@ -152,7 +152,8 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger PrimeClose() {
+    public Trigger 
+    PrimeClose() {
         return Xbox.povUp();
     }
 

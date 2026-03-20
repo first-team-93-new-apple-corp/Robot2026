@@ -234,17 +234,17 @@ public class ShooterMath {
         
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
+        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
     public static AngularVelocity speedToMotorRotationsforClose(double velocity) { // In rpm
         return RotationsPerSecond.of(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
-    public static double getEfficiency(Angle angle) {
-        if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
-            return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
-        }
-        return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
-    }
+    // public static double getEfficiency(Angle angle) {
+    //     if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
+    //         return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
+    //     }
+    //     return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
+    // }
     
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

@@ -56,6 +56,9 @@ public class AutoConstants {
         public static final PresetShootingPoint BlueRightWing = new PresetShootingPoint(new Pose2d(3.208, 0.766, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
         public static final PresetShootingPoint RedRightWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueLeftWing.pose), BlueLeftWing.velocity, BlueLeftWing.hoodAngle);
         public static final PresetShootingPoint RedLeftWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueRightWing.pose), BlueRightWing.velocity, BlueRightWing.hoodAngle);
+        public static final PresetShootingPoint BlueDepotLeft = new PresetShootingPoint(new Pose2d(0.498, 6.996, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(8.299), Degrees.of(90).minus(Radians.of(1.04)));
+        public static final PresetShootingPoint BlueDepotRight = new PresetShootingPoint(new Pose2d(0.547, 4.854, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.789), Degrees.of(90).minus(Radians.of(1.08)));
+
         public static PresetShootingPoint getClose() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -95,6 +98,26 @@ public class AutoConstants {
                     return RedRightWing;
                 } 
                 return BlueRightWing; // Default to blue
+            }
+            return null;
+        }
+         public static PresetShootingPoint getDepotLeft() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return BlueDepotLeft;
+                } 
+                return BlueDepotLeft; // Default to blue
+            }
+            return null;
+        }
+         public static PresetShootingPoint getDepotRight() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return BlueDepotRight;
+                } 
+                return BlueDepotRight; // Default to blue
             }
             return null;
         }
