@@ -135,7 +135,15 @@ public class AutoConstants {
 
     public static Pose2d getFirstPoseInPath(PathPlannerPath path) {
         PathPoint point = path.getAllPathPoints().get(0);
-        return new Pose2d(point.position, point.rotationTarget.rotation() != null ? point.rotationTarget.rotation() : new Rotation2d(0));
+        // Return the initial pose for a PathPlanner path. If the rotation target
+        // or its rotation is null we default to zero rotation so pathfindToPose
+        // calls have a sensible heading to approach. Protect against null
+        // rotationTarget to avoid NPEs when paths omit rotation targets.
+        Rotation2d rot = new Rotation2d(0);
+        if (point.rotationTarget != null && point.rotationTarget.rotation() != null) {
+            rot = point.rotationTarget.rotation();
+        }
+        return new Pose2d(point.position, rot);
     }
 
     public class startingPoses {
@@ -148,6 +156,9 @@ public class AutoConstants {
         public static final Pose2d Center = new Pose2d(7.2, 4, towardAlliance);
     }
 
+    // Default path constraints used by AutoBuilder (maxSpeed, maxAcceleration, etc.)
+    // Tune these values in AutoConstants if your robot is not following paths as
+    // expected (too aggressive controllers can fail to converge).
     public static final PathConstraints constraints = new PathConstraints(3, 4, Math.PI , Math.PI * 2);
 
     public static final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
