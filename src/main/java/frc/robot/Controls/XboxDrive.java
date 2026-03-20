@@ -158,5 +158,4 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger DriverPrime() {
         return Prime();
     }
-
 }

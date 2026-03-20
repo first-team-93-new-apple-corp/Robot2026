@@ -195,7 +195,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.5;
+            double delay = 0.2;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));

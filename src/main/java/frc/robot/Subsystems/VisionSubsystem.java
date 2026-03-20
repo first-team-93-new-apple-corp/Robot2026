@@ -55,7 +55,7 @@ public class VisionSubsystem extends SubsystemBase {
     // PhotonVision
     private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
-    private boolean hasPiPoseData = false;
+    private boolean hasPiPoseData = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
 
