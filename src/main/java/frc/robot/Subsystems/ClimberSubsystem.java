@@ -78,9 +78,12 @@ public class ClimberSubsystem extends SubsystemBase {
     public void stop() {
         climberMotor.setControl(neutral);
     }
+    public boolean isAtBottom() {
+        return !climberLimitSwitch.get();
+    }
     public void resetEncoderIfAtBottom(){
         if (!climberLimitSwitch.get() && !HasReset){
-            climberMotor.setPosition(0);
+            climberMotor.setPosition(3);
             HasReset = true;
         }
     }

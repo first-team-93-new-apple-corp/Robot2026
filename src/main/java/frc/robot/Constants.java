@@ -164,7 +164,7 @@ public class Constants {
 
     public class ClimberConstants {
         public static final double climberSpeed = .3;
-        public static final double barHeight = -40;
+        public static final double barHeight = -60;
         public static final double baseHeight = 0;
         public static final double kP = 0.84;
         public static final double kI = 0.15;
@@ -276,7 +276,7 @@ public class Constants {
         public static final int[] driveMotors = { 5, 6, 7, 8 };
         public static final int[] canCoders = { 10, 11, 12, 13 };
 
-        public static final double MaxSpeed = 0.4 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public class Auto {
@@ -315,7 +315,11 @@ public class Constants {
                 new Translation3d(Inches.of(-11), Inches.of(-10.5), Inches.of(11.25)),
                 new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(180)));
 
-        public static final Matrix<N3, N1> Photon_STD_Devs = VecBuilder.fill(0, 0, 0); // probably not used
+        public static final Matrix<N3, N1> singleTagDevs = VecBuilder.fill(0.2, 0.2, 0.2);
+        public static final Matrix<N3, N1> multiTagDevs = VecBuilder.fill(0.02, 0.02, 0.05); // probably not used
+        public static final Matrix<N3, N1> standardDevs = VecBuilder.fill(0.15, 0.15, 0.05); // probably not used
+
+
 
     }
 
