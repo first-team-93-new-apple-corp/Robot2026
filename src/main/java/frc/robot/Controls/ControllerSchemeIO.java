@@ -2,6 +2,9 @@ package frc.robot.Controls;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import static edu.wpi.first.units.Units.*;
@@ -9,6 +12,10 @@ import static edu.wpi.first.units.Units.*;
 import java.util.function.BooleanSupplier;
 
 public interface ControllerSchemeIO {
+    // public CommandJoystick LeftStick = new CommandJoystick(0);
+    // public CommandJoystick RightStick = new CommandJoystick(1);
+    // public CommandXboxController operatorController = new CommandXboxController(2);
+
     public static double MaxSpeed = TunerConstants.kSpeedAt12Volts.baseUnitMagnitude();
     public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     public static double POVDistance = .45;
@@ -87,6 +94,8 @@ public interface ControllerSchemeIO {
     public Trigger PrimeClose();
 
     public Trigger PrimeFar();
+
+    public Trigger testingButton();
 
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;

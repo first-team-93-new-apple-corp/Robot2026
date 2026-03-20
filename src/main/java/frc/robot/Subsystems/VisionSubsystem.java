@@ -54,7 +54,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     // PhotonVision
     private PhotonCamera camera = new PhotonCamera("MainCam");
-    private boolean hasPoseInit = false;
+    private boolean hasPoseInit = true;
     private boolean hasPiPoseData = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
@@ -247,7 +247,7 @@ public class VisionSubsystem extends SubsystemBase {
     public class QuestCommands {
         public Command setRobotPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
-                setRobotPose(newRobotPose);
+                setPose(newRobotPose);
             }).andThen(Commands.print("Set Robot Pose!"));
         }
     }

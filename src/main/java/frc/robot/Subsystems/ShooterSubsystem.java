@@ -19,6 +19,7 @@ import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
+import frc.robot.Subsystems.auto.AutoConstants.PresetShootingPoint;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
@@ -334,6 +335,40 @@ public class ShooterSubsystem extends SubsystemBase {
 
         public Command testingShooter() {
             return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
+        }
+
+        public Command velocityAndHoodNoOffset(Supplier<Angle> angle, Supplier<AngularVelocity> velocity){
+            var anglecmd = Commands.sequence(
+                    Commands.runOnce(() -> setHoodPosition(angle.get())),
+                    Commands.waitUntil(() -> hoodAtSetpoint(angle.get())));
+            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
+            return anglecmd.alongWith(shoot);
+        }
+
+        public Command velocityAndHood(Supplier<Angle> angle, Supplier<AngularVelocity> velocity){
+            var anglecmd = Commands.sequence(
+                    Commands.runOnce(() -> setHoodPositionWithOffset(angle.get())),
+                    Commands.waitUntil(() -> hoodAtSetpoint(angle.get().plus(HoodMotorConfigs.offsetAngle))));
+            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
+            return anglecmd.alongWith(shoot);
+        }
+
+        public Command velocityAndHoodNoOffset(Supplier<PresetShootingPoint> point){
+            var angle = Commands.sequence(
+                    Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())),
+                    Commands.waitUntil(() -> hoodAtSetpoint(point.get().hoodAngle())));
+            var shoot = Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
+            return angle.alongWith(shoot);
+        }
+
+        public Command velocityAndHood(Supplier<PresetShootingPoint> point){
+            var angle = Commands.sequence(
+                    Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())),
+                    Commands.waitUntil(() -> hoodAtSetpoint(point.get().hoodAngle().plus(HoodMotorConfigs.offsetAngle))));
+            var shoot = Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
+            return angle.alongWith(shoot);
         }
     }
 
