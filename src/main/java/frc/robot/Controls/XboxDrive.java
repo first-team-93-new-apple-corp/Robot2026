@@ -60,14 +60,12 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger manRetractClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'manRetractClimber'");
+        return new Trigger(() -> false);
     }
 
     @Override
     public Trigger manExtendClimber() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'manExtendClimber'");
+        return new Trigger(() -> false);
     }
 
     @Override
@@ -97,8 +95,7 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger middleIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'middleIntake'");
+        return new Trigger(() -> false);
     }
 
     @Override
@@ -118,8 +115,7 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger robotRel() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'robotRel'");
+        return new Trigger(() -> false);
     }
 
     @Override
@@ -127,28 +123,24 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.back();
     }
 
-   
-    
     @Override
     public double halfRotate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'halfRotate'");
+        return InputTheta() * 0.5;
     }
 
     @Override
     public Trigger halfSpeeds() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'halfSpeeds'");
+        return new Trigger(() -> false);
     }
 
     @Override
     public Trigger PrimeLeft() {
-       return Xbox.povLeft();
+        return Xbox.povLeft();
     }
 
     @Override
     public Trigger PrimeRight() {
-       return Xbox.povRight();
+        return Xbox.povRight();
     }
 
     @Override
@@ -163,11 +155,7 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger DriverPrime() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DriverPrime'");
+        return Prime();
     }
-
-    
-
 
 }
