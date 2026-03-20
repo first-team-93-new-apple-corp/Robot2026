@@ -96,10 +96,9 @@ public class RobotContainer {
                         .withRotationalRate(driver.DriveTheta())));
 
         driver.robotRel()
-                .whileTrue(drivetrain
-                        .runOnce(() -> drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                 .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta()))));
+                                .withRotationalRate(driver.DriveTheta())));
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
