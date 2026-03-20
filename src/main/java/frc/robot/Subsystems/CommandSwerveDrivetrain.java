@@ -256,7 +256,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     // TODO implement pose get with photon camera
-    public Pose2d getStartingPose() {
+    public Pose2d getPose() {
         return getState().Pose;
     }
 

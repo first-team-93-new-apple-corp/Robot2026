@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +27,7 @@ import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
@@ -95,10 +97,10 @@ public class RobotContainer {
                         .withVelocityY(driver.DriveUp())
                         .withRotationalRate(driver.DriveTheta())));
 
-        driver.robotRel()
-                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                                .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta())));
+        // driver.robotRel()
+        //         .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+        //                         .withVelocityY(driver.DriveUp())
+        //                         .withRotationalRate(driver.DriveTheta())));
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
@@ -140,6 +142,7 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+        driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().andThen(Commands.print("Reset Pose due to Button Press")));
 

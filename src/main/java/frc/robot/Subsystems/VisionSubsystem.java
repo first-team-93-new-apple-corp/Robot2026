@@ -70,6 +70,7 @@ public class VisionSubsystem extends SubsystemBase {
         // Quest Initialization
         quest = new QuestNav();
         quest.setVersionCheckEnabled(false);
+        SmartDashboard.putData("Reset Vision", commands.resetPose().ignoringDisable(true));
     }
 
     /**
@@ -208,6 +209,7 @@ public class VisionSubsystem extends SubsystemBase {
         public Command setRobotPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
                 setPose(newRobotPose);
+                setPose(newRobotPose);
             }).andThen(Commands.print("Set Robot Pose!"));
         }
 
@@ -218,5 +220,6 @@ public class VisionSubsystem extends SubsystemBase {
                 resetting = true;
             });
         }
+        
     }
 }

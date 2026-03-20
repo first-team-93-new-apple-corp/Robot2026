@@ -211,19 +211,21 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void goToAndThenShootClose(Supplier<Pose2d> pose) {
-        Command driveCmd = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
-        Command delayedShoot = Commands.waitSeconds(0.75)
+        Command driveCmd = AutoBuilder.pathfindToPose(new Pose2d(pose.get().getX(), pose.get().getY()+1, pose.get().getRotation()), AutoConstants.constraints);
+        Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
-
-        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+        addCommands(Commands.print("*****************go to and then shoot close to hub******************"));
+        // addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+        addCommands(driveCmd);
+        addCommands(Commands.print("*********************Ending go to and then shoot close ***************"));
     }
 
     public void goToAndThenShootAuto(Supplier<Pose2d> pose) {
         Command driveCmd = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
-        Command delayedShoot = Commands.waitSeconds(0.75)
+        Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
 
-        addCommands(driveCmd.andThen(subsystems.Prime().andThen(delayedShoot)));
+        addCommands(driveCmd.andThen(subsystems.AutoPrime().andThen(delayedShoot)));
     }
 
     public ShootingData getShootingData() {

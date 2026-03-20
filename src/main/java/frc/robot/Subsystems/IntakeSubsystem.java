@@ -195,19 +195,19 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.2;
+            double delay = 0.3;
 
-            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
-                    .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));
+            Command sequence = autoPivotMiddle().alongWith(Commands.waitSeconds(delay))
+                    .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
 
             return sequence.repeatedly().until(() -> !trigger.getAsBoolean());
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.5;
+            double delay = 0.3;
 
-            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
-                    .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));
+            Command sequence = autoPivotMiddle().alongWith(Commands.waitSeconds(delay))
+                    .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
 
             return sequence.repeatedly().withTimeout(time.in(Seconds));
         }
