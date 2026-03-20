@@ -91,6 +91,12 @@ public record subsystems(
         return cmds.withTimeout(1);
     }
 
+    public Command PrimeHubCloseSide() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getCloseSide()));
+        return cmds.withTimeout(1);
+    }
+
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getFar()));

@@ -182,7 +182,7 @@ public class AutoTracker extends SequentialCommandGroup {
                         .andThen(subsystems.shootFalse())
                         .andThen(
                                 Commands.run(() -> subsystems.drivetrain().snapToPose(pose))
-                                        .until(() -> subsystems.drivetrain().nearPose(pose, 0.01, 1.0))));
+                                        .withDeadline(delayedShoot)));
     }
 
     public void shootWhilstFollowing(PathPlannerPath path) {
@@ -213,14 +213,13 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.AutoPrime())
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .until(() -> subsystems.drivetrain()
-                                                .nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 0.5))));
+                                        .withTimeout(2)));
     }
 
     public void followSnapShoot(PathPlannerPath path) {
@@ -231,14 +230,13 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         // .alongWith(delayedShoot)
                         // .andThen(subsystems.shootFalse())
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .until(() -> subsystems.drivetrain()
-                                                .nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 0.5)))
+                                        .withTimeout(1))
                         .andThen(delayedShoot));
     }
 

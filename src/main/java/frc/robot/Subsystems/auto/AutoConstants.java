@@ -51,7 +51,10 @@ public class AutoConstants {
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
     public class PresetShootingPoints {
         public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
+
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
+        public static final PresetShootingPoint BlueCloseSide = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.6).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
+        public static final PresetShootingPoint RedCloseSide = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueCloseSide.pose), BlueCloseSide.velocity, BlueCloseSide.hoodAngle);
         public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
         public static final PresetShootingPoint BlueLeftWing = new PresetShootingPoint(new Pose2d(3.208, 7.304, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
@@ -68,6 +71,17 @@ public class AutoConstants {
                     return RedClose;
                 } 
                 return BlueClose; // Default to blue
+            }
+            return null;
+        }
+
+        public static PresetShootingPoint getCloseSide() {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                if (alliance.get() == DriverStation.Alliance.Red) {
+                    return RedCloseSide;
+                } 
+                return BlueCloseSide; // Default to blue
             }
             return null;
         }
