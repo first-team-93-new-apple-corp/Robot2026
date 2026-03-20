@@ -19,6 +19,7 @@ import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 import frc.robot.util.ShooterMath;
 
 public class AutoConstants {
@@ -48,14 +49,14 @@ public class AutoConstants {
     }
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
     public class PresetShootingPoints {
-        public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4), Degrees.of(90).minus(Radians.of(1.395)));
+        public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
-        public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13), Degrees.of(90).minus(Radians.of(1.15)));
+        public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
-        public static final PresetShootingPoint BlueLeftWing = new PresetShootingPoint(new Pose2d(3.208, 7.304, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
-        public static final PresetShootingPoint BlueRightWing = new PresetShootingPoint(new Pose2d(3.208, 0.766, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45), Degrees.of(90).minus(Radians.of(1.11)));
-        public static final PresetShootingPoint RedRightWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueLeftWing.pose), BlueLeftWing.velocity, BlueLeftWing.hoodAngle);
-        public static final PresetShootingPoint RedLeftWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueRightWing.pose), BlueRightWing.velocity, BlueRightWing.hoodAngle);
+        public static final PresetShootingPoint BlueLeftWing = new PresetShootingPoint(new Pose2d(3.208, 7.304, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar), Degrees.of(90).minus(Radians.of(1.11)));
+        public static final PresetShootingPoint BlueRightWing = new PresetShootingPoint(new Pose2d(3.208, 0.766, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(7.45).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar), Degrees.of(90).minus(Radians.of(1.11)));
+        public static final PresetShootingPoint RedRightWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueLeftWing.pose), BlueLeftWing.velocity.times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar), BlueLeftWing.hoodAngle);
+        public static final PresetShootingPoint RedLeftWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueRightWing.pose), BlueRightWing.velocity.times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar), BlueRightWing.hoodAngle);
         public static PresetShootingPoint getClose() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -110,7 +111,7 @@ public class AutoConstants {
 
     public static Pose2d getFirstPoseInPath(PathPlannerPath path) {
         PathPoint point = path.getAllPathPoints().get(0);
-        return new Pose2d(point.position, point.rotationTarget.rotation());
+        return new Pose2d(point.position, point.rotationTarget.rotation() != null ? point.rotationTarget.rotation() : new Rotation2d(0));
     }
 
     public class startingPoses {

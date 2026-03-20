@@ -12,16 +12,16 @@ public class ThrottleableDrive extends TwoStickDriveXboxOp{
     }
     @Override
     public double InputLeft() {
-        return halfSpeeds().getAsBoolean() ? halfLeft() : deadzone(-LeftStick.getY() )* Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfLeft() : DriveLeft() * Speedthrottle();
     }
 
     @Override
     public double InputUp() {
-        return halfSpeeds().getAsBoolean() ? halfUp() : deadzone(-LeftStick.getX() )* Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfUp() : DriveUp() * Speedthrottle();
     }
 
     @Override
     public double InputTheta() {
-        return halfSpeeds().getAsBoolean() ? halfRotate() : deadzone(-RightStick.getY() )* Speedthrottle();
+        return halfSpeeds().getAsBoolean() ? halfRotate() : DriveTheta() * Speedthrottle();
     }
 }

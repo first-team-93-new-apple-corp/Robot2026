@@ -86,8 +86,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // Motion Magic Configs
         intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 10;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 12;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 15;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 20;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 20;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
@@ -206,8 +206,8 @@ public class IntakeSubsystem extends SubsystemBase {
         public Command wigglePivot(Time time) {
             double delay = 0.3;
 
-            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
-                    .andThen(autoPivotMiddle().alongWith(Commands.waitSeconds(delay)));
+            Command sequence = autoPivotMiddle().alongWith(Commands.waitSeconds(delay))
+                    .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
 
             return sequence.repeatedly().withTimeout(time.in(Seconds));
         }

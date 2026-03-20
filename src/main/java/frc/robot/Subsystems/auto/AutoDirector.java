@@ -78,6 +78,7 @@ public class AutoDirector {
                 autoSubsystems.drivetrain() // Reference to this subsystem to set requirements
         );
         addAutos();
+
     }
 
     public static RobotConfig getRobotConfig() {
@@ -115,9 +116,9 @@ public class AutoDirector {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
         // Autos.add(Demo());
         Autos.add(PreloadCenter());
-        // Autos.add(PreloadLeftOrRight());
-            Autos.add(PreloadClimbLeft());
-            Autos.add(PreloadClimbRight());
+        Autos.add(PreloadLeftOrRight());
+        // Autos.add(PreloadClimbLeft());
+        // Autos.add(PreloadClimbRight());
         Autos.add(DepotScore());
         Autos.add(PreloadOutpost());
         for (Auto auto : Autos) {
@@ -178,103 +179,127 @@ public class AutoDirector {
     }
 
     public Auto PreloadCenter() {
-        // Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-        Pose2d startPose = new Pose2d(AutoConstants.Hub.getHub().toPose2d().getX(), AutoConstants.Hub.getHub().toPose2d().getY()-1, AutoConstants.Hub.getHub().toPose2d().getRotation());
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
+        // Pose2d startPose = new Pose2d(AutoConstants.Hub.getHub().toPose2d().getX()-1,
+        //         AutoConstants.Hub.getHub().toPose2d().getY(), AutoConstants.Hub.getHub().toPose2d().getRotation());
+
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)).withTimeout(0.1));
-        tracker.addCommands(Commands.print("**********************************Starting Auto***************************"));
-        // if (getAlliance() == Alliance.Red) {    
-        //     tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
-        // } else {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()-1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
-        // }
-        // tracker.endAuto();
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        tracker.addCommands(Commands.print("*********************Starting Automos**************"));
+        tracker.addCommands(Commands.print(startPose.toString()));
+
+        if (getAlliance() == Alliance.Red) {
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() + 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+        } else {
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() - 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+        }
+        tracker.endAuto();
         return new Auto("Score Preload Only", tracker, startPose);
     }
 
     public Auto PreloadLeftOrRight() {
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         if (getAlliance() == Alliance.Red) {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() + 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         } else {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()-1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() - 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         }
         return new Auto("Score Preload Only", tracker, startPose);
     }
 
-    public Auto PreloadClimbLeft(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    public Auto PreloadClimbLeft() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
         tracker.addShootPath("null");
         return new Auto("Score Preload Climb", tracker, startPose);
     }
 
-    public Auto PreloadClimbRight(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    public Auto PreloadClimbRight() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
+        // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new
+        // Pose3d(startPose)));
         // tracker.addShootPath("shootingPath");
         return new Auto("Score Preload Climb", tracker, startPose);
     }
 
-    public Auto DepotScore(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    public Auto DepotScore() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-         if (getAlliance() == Alliance.Red) {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()-1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+        if (getAlliance() == Alliance.Red) {
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() - 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         } else {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() + 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY(),
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         }
         return new Auto("IntakeDepotScore", tracker, startPose);
     }
 
-    public Auto PreloadOutpost(){
-        Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    public Auto PreloadOutpost() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-         if (getAlliance() == Alliance.Red) {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()-1, autoSubsystems.drivetrain().getState().Pose.getY()-1, autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+        if (getAlliance() == Alliance.Red) {
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() - 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY() - 1,
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         } else {
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY()+1, autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() + 1,
+                    autoSubsystems.drivetrain().getState().Pose.getY() + 1,
+                    autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
         }
-     return new Auto("IntakeOutpostScore", tracker, startPose);
-    
+
+        return new Auto("IntakeOutpostScore", tracker, startPose);
+
     }
 
     // public Auto PreloadDepotClimb(){
-    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-    //     return null;
+    // Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    // AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new
+    // Pose3d(startPose)));
+    // return null;
     // }
 
     // public Auto PreloadOutpostCLimb(){
-    //     Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
-    //     AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-    //     tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-    //     return null;
+    // Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
+    // AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+    // tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new
+    // Pose3d(startPose)));
+    // return null;
     // }
 
-
     // public Auto doNothing(){
-    //     return null;
+    // return null;
     // }
 
     // public Auto moveForward(){
-    //     return null;
+    // return null;
     // }
-    /* TODO 
-     *  Score preload before intake?
+    /*
+     * TODO
+     * Score preload before intake?
      * Intake then score intake and preload?
      * What to do before climb
      * shooting positions? / path to shoot on.
-     *   farther away to get out of the way of other robots
-     *     Follow up question: timing to score
-     *        figure out how to implement custom delays in paths to avoid robots
+     * farther away to get out of the way of other robots
+     * Follow up question: timing to score
+     * figure out how to implement custom delays in paths to avoid robots
      * 
-     * */ 
-    
+     */
+
 }

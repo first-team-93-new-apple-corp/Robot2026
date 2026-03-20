@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +27,7 @@ import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
@@ -140,6 +142,7 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+        driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
