@@ -118,7 +118,7 @@ public class RobotContainer {
         driver.Prime().onTrue(subsystems.Prime());
         driver.Prime().onFalse(subsystems.PrimeFalse());
 
-        driver.DriverPrime().whileTrue(subsystems.DriverPrime());
+        driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
         driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
         driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
