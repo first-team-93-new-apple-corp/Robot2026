@@ -247,7 +247,7 @@ public class VisionSubsystem extends SubsystemBase {
     public class QuestCommands {
         public Command setRobotPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
-                setRobotPose(newRobotPose);
+                setPose(newRobotPose);
             }).andThen(Commands.print("Set Robot Pose!"));
         }
     }

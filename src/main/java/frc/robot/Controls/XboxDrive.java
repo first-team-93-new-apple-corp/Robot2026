@@ -163,7 +163,6 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger DriverPrime() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'DriverPrime'");
+        return Prime();
     }
 }

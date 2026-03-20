@@ -214,8 +214,8 @@ public class AutoTracker extends SequentialCommandGroup {
         Command driveCmd = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
         Command delayedShoot = Commands.waitSeconds(0.75)
                 .andThen(subsystems.shoot());
-
-        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+        addCommands(Commands.print("********************************Shooting and going to: "+pose.toString()));
+        addCommands(driveCmd.alongWith(subsystems.PrimeHubClose().andThen(delayedShoot)));
     }
 
     public void goToAndThenShootAuto(Supplier<Pose2d> pose) {

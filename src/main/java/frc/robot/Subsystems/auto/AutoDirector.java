@@ -115,9 +115,9 @@ public class AutoDirector {
         autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
         // Autos.add(Demo());
         Autos.add(PreloadCenter());
-        Autos.add(PreloadLeftOrRight());
-            // Autos.add(PreloadClimbLeft());
-            // Autos.add(PreloadClimbRight());
+        // Autos.add(PreloadLeftOrRight());
+            Autos.add(PreloadClimbLeft());
+            Autos.add(PreloadClimbRight());
         Autos.add(DepotScore());
         Autos.add(PreloadOutpost());
         for (Auto auto : Autos) {
@@ -181,12 +181,14 @@ public class AutoDirector {
         // Pose2d startPose = autoSubsystems.drivetrain().getStartingPose();
         Pose2d startPose = new Pose2d(AutoConstants.Hub.getHub().toPose2d().getX(), AutoConstants.Hub.getHub().toPose2d().getY()-1, AutoConstants.Hub.getHub().toPose2d().getRotation());
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)));
-        if (getAlliance() == Alliance.Red) {    
-            tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
-        } else {
+        tracker.addCommands(autoSubsystems.questNav().commands.setRobotPose(new Pose3d(startPose)).withTimeout(0.1));
+        tracker.addCommands(Commands.print("**********************************Starting Auto***************************"));
+        // if (getAlliance() == Alliance.Red) {    
+        //     tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()+1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
+        // } else {
             tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX()-1, autoSubsystems.drivetrain().getState().Pose.getY(), autoSubsystems.drivetrain().getState().Pose.getRotation().rotateBy(new Rotation2d(Degrees.of(0)))));
-        }
+        // }
+        // tracker.endAuto();
         return new Auto("Score Preload Only", tracker, startPose);
     }
 
