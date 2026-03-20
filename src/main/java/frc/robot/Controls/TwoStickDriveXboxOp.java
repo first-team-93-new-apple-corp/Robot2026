@@ -74,4 +74,8 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     public Trigger halfSpeeds(){
         return LeftStick.button(Constants.Thrustmaster.Right_Button).or(RightStick.button(Constants.Thrustmaster.Left_Button));
     }
+    @Override 
+    public Trigger resetPose() {
+        return LeftStick.button(3);
+    }
 }

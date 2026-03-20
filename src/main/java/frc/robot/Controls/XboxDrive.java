@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.xbox;
 
 public class XboxDrive implements ControllerSchemeIO {
 
@@ -144,7 +145,8 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger PrimeClose() {
+    public Trigger 
+    PrimeClose() {
         return Xbox.povUp();
     }
 
@@ -158,4 +160,13 @@ public class XboxDrive implements ControllerSchemeIO {
         return Prime();
     }
 
+    @Override
+    public Trigger testingButton(){
+        return Xbox.start();
+    }
+
+    @Override
+    public Trigger resetPose() {
+        return Xbox.back();
+    }
 }

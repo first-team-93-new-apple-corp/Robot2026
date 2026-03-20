@@ -88,6 +88,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+    /**
+     * Override setControl so we can log the exact SwerveRequest being applied to
+     * the drivetrain. This helps confirm what the AutoBuilder consumer and other
+     * callers are sending to the hardware layer (and is especially useful when
+     * the robot appears not to move).
+     */
+    @Override
+    public void setControl(SwerveRequest request) {
+        try {
+            // Log the concrete request type and the request.toString() so we can
+            // see what the drivetrain received in the logs. Flushing ensures the
+            // text appears promptly in the roboRIO console.
+            String cls = request == null ? "null" : request.getClass().getSimpleName();
+            System.out.printf("[Drivetrain.setControl] %s %s\\n", cls, request == null ? "null" : request.toString());
+            System.out.flush();
+        } catch (Exception e) {
+            System.out.println("[Drivetrain.setControl] (toString failed)");
+            System.out.flush();
+        }
+        super.setControl(request);
+    }
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
@@ -115,6 +137,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return Command to run
      */
     public Command applyRequest(Supplier<SwerveRequest> request) {
+        // This helper creates a Command that repeatedly calls setControl(...) with
+        // the provided SwerveRequest supplier. It's used throughout RobotContainer
+        // and AutoBuilder to turn SwerveRequest objects into scheduled behavior.
+        // Important notes:
+        // - The supplier will be invoked on each scheduler run while the command
+        //   is active. Keep the supplier lightweight.
+        // - The returned command will require this drivetrain (caller should
+        //   consider command requirements to avoid conflicts).
         return run(() -> this.setControl(request.get()));
     }
 
@@ -128,10 +158,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 0.0,
                 targetPose.getRotation());
 
-        applyRequest(() -> new SwerveRequest.FieldCentric()
-                .withVelocityX(speeds.vxMetersPerSecond)
-                .withVelocityY(speeds.vyMetersPerSecond)
-                .withRotationalRate(speeds.omegaRadiansPerSecond));
+    // snapToPose computes chassis speeds with a HolonomicDriveController and
+    // immediately applies the request using applyRequest. This is intended for
+    // short, precise alignment maneuvers (e.g. final snap for AutoBuilder
+    // .andThen(...).until(...)). It does not return a command — it directly
+    // issues the SwerveRequest to the drivetrain.
+    applyRequest(() -> new SwerveRequest.FieldCentric()
+        .withVelocityX(speeds.vxMetersPerSecond)
+        .withVelocityY(speeds.vyMetersPerSecond)
+        .withRotationalRate(speeds.omegaRadiansPerSecond));
     }
 
     public boolean nearPose(Pose2d pose, double translationTolerance, double rotationToleranceDeg) {
@@ -144,6 +179,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double rotationError = Math.abs(currentPose.getRotation()
                 .minus(pose.getRotation()).getDegrees());
 
+        // Returns true when the robot pose is within the provided translation
+        // and rotation tolerances. Used by auto commands to determine if a
+        // snap/align step is complete.
         return distance <= translationTolerance && rotationError <= rotationToleranceDeg;
     }
 
@@ -256,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     // TODO implement pose get with photon camera
-    public Pose2d getStartingPose() {
+    public Pose2d getPose() {
         return getState().Pose;
     }
 

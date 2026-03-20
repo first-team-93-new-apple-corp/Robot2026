@@ -201,7 +201,7 @@ public class ShooterMath {
                 .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2));
         double thetaPrime = Math.atan2(shooter_velocity * Math.sin(originalPitch), vcosThetaPrime);
         double vPrime = vcosThetaPrime / Math.cos(thetaPrime);
-        double adjustment = angleToHub + Math.asin(
+        double adjustment = angleToHub - Math.asin(
                 robotZ / Math.sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch)-robotX, 2) + Math.pow(robotZ, 2)));
         return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
     }
@@ -228,23 +228,23 @@ public class ShooterMath {
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
         
         // Stationary shooting
-        return new ShootingData(new Rotation2d(driveTrainAngle), (Radians.of(shooter_angle)), rpm);
+        return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm);
         // On the fly
-        // return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)),rpmMoving);
+        // return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
         
     }
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
+        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
     public static AngularVelocity speedToMotorRotationsforClose(double velocity) { // In rpm
         return RotationsPerSecond.of(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
-    public static double getEfficiency(Angle angle) {
-        if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
-            return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
-        }
-        return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
-    }
+    // public static double getEfficiency(Angle angle) {
+    //     if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
+    //         return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
+    //     }
+    //     return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
+    // }
     
     // public static void main(String[] args) throws Exception {
     //   double hubX = 4;

@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 
 public class ManipulationSubsystem {
-    private TalonFX bottomRollerMotor = new TalonFX(Constants.ManipulationConstants.bottomRollerMotorID); // Bottom Rollers
+    private TalonFX bottomRollerMotor = new TalonFX(Constants.ManipulationConstants.bottomRollerMotorID); // Bottom
+                                                                                                          // Rollers
     private TalonFX sideRollerMotor = new TalonFX(Constants.ManipulationConstants.sideRollerMotorID); // Side Rollers
     private TalonFX kickerMotor = new TalonFX(Constants.ManipulationConstants.kickerMotorID); // Top Rollers
 
@@ -38,34 +39,49 @@ public class ManipulationSubsystem {
         sideRollerMotor.set(Constants.ManipulationConstants.intake.sideRollerSpeed);
     }
 
-     public void outtake() {
+    public void outtake() {
         kickerMotor.set(Constants.ManipulationConstants.outtake.kickerSpeed);
         bottomRollerMotor.set(Constants.ManipulationConstants.outtake.bottomRollerSpeed);
         sideRollerMotor.set(Constants.ManipulationConstants.outtake.sideRollerSpeed);
     }
 
-     public void idle() {
+    public void idle() {
         kickerMotor.set(Constants.ManipulationConstants.idle.kickerSpeed);
         bottomRollerMotor.set(Constants.ManipulationConstants.idle.bottomRollerSpeed);
         sideRollerMotor.set(Constants.ManipulationConstants.idle.sideRollerSpeed);
     }
-    public void shoot(){
+
+    public void shoot() {
         kickerMotor.set(Constants.ManipulationConstants.shoot.kickerSpeed);
         bottomRollerMotor.set(Constants.ManipulationConstants.shoot.bottomRollerSpeed);
         sideRollerMotor.set(Constants.ManipulationConstants.shoot.sideRollerSpeed);
     }
+
+    public void off() {
+        kickerMotor.set(0);
+        bottomRollerMotor.set(0);
+        sideRollerMotor.set(0);
+    }
+
     public class manipulationCommands {
         public Command intakeCommand() {
             return Commands.runOnce(() -> intake());
         }
+
         public Command outtakeCommand() {
             return Commands.runOnce(() -> outtake());
         }
+
         public Command idleCommand() {
             return Commands.runOnce(() -> idle());
         }
-        public Command shootCommand(){
-            return Commands.runOnce(()->shoot());
+
+        public Command shootCommand() {
+            return Commands.runOnce(() -> shoot());
+        }
+
+        public Command offCommand() {
+            return Commands.runOnce(() -> off());
         }
     }
 }

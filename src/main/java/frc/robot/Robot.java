@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import com.ctre.phoenix6.HootAutoReplay;
+import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
             addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
+        CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
     }
 
     @Override

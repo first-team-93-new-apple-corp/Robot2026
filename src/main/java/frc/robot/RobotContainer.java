@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +27,7 @@ import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
@@ -57,7 +59,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final TwoStickDriveXboxOp driver = new TwoStickDriveXboxOp(0, 1, 2);
+    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -95,14 +97,14 @@ public class RobotContainer {
                         .withVelocityY(driver.DriveUp())
                         .withRotationalRate(driver.DriveTheta())));
 
-        driver.robotRel()
-                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                                .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta())));
+        // driver.robotRel()
+        //         .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+        //                         .withVelocityY(driver.DriveUp())
+        //                         .withRotationalRate(driver.DriveTheta())));
 
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+        // final var idle = new SwerveRequest.Idle();
+        // RobotModeTriggers.disabled().whileTrue(
+        //         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
         driver.brake().whileTrue(drivetrain
@@ -115,7 +117,7 @@ public class RobotContainer {
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.Prime().onTrue(subsystems.Prime());
+        driver.Prime().whileTrue(subsystems.Prime().repeatedly());
         driver.Prime().onFalse(subsystems.PrimeFalse());
 
         driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
@@ -140,6 +142,9 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+        driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
+
+        driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().andThen(Commands.print("Reset Pose due to Button Press")));
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
@@ -154,7 +159,20 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return auto.Preload().command();
+        // Simple drive forward auton
+        // final var idle = new SwerveRequest.Idle();
+        // return Commands.sequence(
+        //         // Reset our field centric heading to match the robot
+        //         // facing away from our alliance station wall (0 deg).
+        //         drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        //         // Then slowly drive forward (away from us) for 5 seconds.
+        //         drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+        //                 .withVelocityY(0)
+        //                 .withRotationalRate(0))
+        //                 .withTimeout(5.0),
+        //         // Finally idle for the rest of auton
+        //         drivetrain.applyRequest(() -> idle));
+        return auto.autoChooser.getSelected().command();
     }
 
     public void visionPeriodic() {
