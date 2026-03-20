@@ -33,16 +33,16 @@ public interface ControllerSchemeIO {
     public double InputTheta();
 
     public default double halfLeft() {
-        System.out.println("Warning: Function unbound: halfLeft");
-        return 0.0;//Keeps unbound
+        return DriveLeft() * 0.5;
     }
 
     public default double halfUp() {
-        System.out.println("Warning: Function unbound: halfUp");
-        return 0.0;//Keeps unbound
+        return DriveUp() * 0.5;
     }
 
-    public double halfRotate(); // Halfs all rotations of robot
+    public default double halfRotate() {
+        return DriveTheta() * 0.5;
+    }
 
     public Trigger halfSpeeds(); // Halfs all speed
 
