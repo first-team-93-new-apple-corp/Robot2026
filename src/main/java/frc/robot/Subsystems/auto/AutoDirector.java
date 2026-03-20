@@ -124,8 +124,8 @@ public class AutoDirector {
                     // ----------------------------------------------------------------
         },
         new PPHolonomicDriveController(
-            new PIDConstants(5, 0.0, 0.1),
-            new PIDConstants(5, 0.0, 0.0)),
+            new PIDConstants(2, 0.0, 0.1),
+            new PIDConstants(2, 0.0, 0.0)),
         config,
         () -> {
             // Boolean supplier that controls when the path will be mirrored for the red

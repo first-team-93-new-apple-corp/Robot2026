@@ -225,7 +225,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void followSnapShoot(PathPlannerPath path) {
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
-        Command delayedShoot = Commands.waitSeconds(0.1)
+        Command delayedShoot = Commands.waitSeconds(0.5)
                 .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
 
         addCommands(
