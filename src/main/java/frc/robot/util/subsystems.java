@@ -70,56 +70,88 @@ public record subsystems(
 
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> getShootingData().shooterAngle())
-                .andThen(shooter().commands.autoShoot(() -> getShootingData().shooterVelocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose))));
-        return cmds.withTimeout(2);
+        cmds.addCommands(shooter().commands.autoAngle(() -> getShootingData().shooterAngle())
+                // .andThen(shooter().commands.autoShoot(() ->
+                // getShootingData().shooterVelocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose))));
+                .andThen(shooter().commands
+                        .autoShoot(() -> getShootingData().shooterVelocity().times(efficiencyCalculate()))));
+
+        return cmds.withTimeout(1);
     }
+
     public Command DriverPrime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
-        return cmds.withTimeout(2);
+        return cmds.withTimeout(1);
     }
 
     public Command PrimeHubClose() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoAngle(() -> AutoConstants.PresetShootingPoints.getClose().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose))));
-        return cmds.withTimeout(2);
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getClose().velocity()
+                        .times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose))));
+        return cmds.withTimeout(1);
     }
 
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb))));
-        return cmds.withTimeout(2);
+        cmds.addCommands(shooter().commands
+                .autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getFar().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getFar().velocity()
+                        .times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb))));
+
+        return cmds.withTimeout(1);
     }
 
     public Command PrimeHubLeft() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getLeft().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierTrench))));
-        return cmds.withTimeout(2);
-    }   
+        cmds.addCommands(shooter().commands
+                .autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getLeft().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getLeft().velocity()
+                        .times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierTrench))));
+
+        return cmds.withTimeout(1);
+    }
+
     public Command PrimeHubRight() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getRight().hoodAngle())
-                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierTrench))));
-        return cmds.withTimeout(2);
+        cmds.addCommands(shooter().commands
+                .autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getRight().hoodAngle())
+                .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getRight().velocity()
+                        .times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierTrench))));
+
+        return cmds.withTimeout(1);
     }
+
     // public Command PrimeHubDepotLeft() {
-    //     ParallelCommandGroup cmds = new ParallelCommandGroup();
-    //     cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getDepotLeft().hoodAngle())
-    //             .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getDepotLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierDepotLeft))));
-    //     return cmds.withTimeout(2);
+    // ParallelCommandGroup cmds = new ParallelCommandGroup();
+    // cmds.addCommands(shooter().commands.autoAngleNoOffset(() ->
+    // AutoConstants.PresetShootingPoints.getDepotLeft().hoodAngle())
+    // .andThen(shooter().commands.autoShoot(() ->
+    // AutoConstants.PresetShootingPoints.getDepotLeft().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierDepotLeft))));
+    // return cmds.withTimeout(2);
     // }
     // public Command PrimeHubDepotRight() {
-    //     ParallelCommandGroup cmds = new ParallelCommandGroup();
-    //     cmds.addCommands(shooter().commands.autoAngleNoOffset(() -> AutoConstants.PresetShootingPoints.getDepotRight().hoodAngle())
-    //             .andThen(shooter().commands.autoShoot(() -> AutoConstants.PresetShootingPoints.getDepotRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierDepotRight))));
-    //     return cmds.withTimeout(2);
+    // ParallelCommandGroup cmds = new ParallelCommandGroup();
+    // cmds.addCommands(shooter().commands.autoAngleNoOffset(() ->
+    // AutoConstants.PresetShootingPoints.getDepotRight().hoodAngle())
+    // .andThen(shooter().commands.autoShoot(() ->
+    // AutoConstants.PresetShootingPoints.getDepotRight().velocity().times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierDepotRight))));
+    // return cmds.withTimeout(2);
     // }
+    public double efficiencyCalculate() {
+        double hubX = AutoConstants.Hub.getHub().getX();
+        double hubY = AutoConstants.Hub.getHub().getY();
+        double distance = Math.sqrt(Math.pow(hubX - drivetrain.getState().Pose.getX(), 2)
+                + Math.pow(hubY - drivetrain.getState().Pose.getY(), 2));
+        double a = 0.0444713;
+        double b = -0.474115;
+        double c = 1.90894;
+        double d = -0.803343;
+        return a * (Math.pow(distance, 3)) + b * (Math.pow(distance, 2)) + c * distance + d;
+    }
 
     public Command AutoPrime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();

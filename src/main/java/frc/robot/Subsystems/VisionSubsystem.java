@@ -55,7 +55,8 @@ public class VisionSubsystem extends SubsystemBase {
     // PhotonVision
     private PhotonCamera camera = new PhotonCamera("MainCam");
     private boolean hasPoseInit = false;
-    private boolean hasPiPoseData = true;
+    private boolean hasPiPoseData = false;
+    private boolean resetting = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
 
@@ -82,6 +83,9 @@ public class VisionSubsystem extends SubsystemBase {
         // Pose3d piPose = newRobotPose.transformBy(Constants.Photon.kRobotToCam);
         quest.setPose(questPose);
 
+        hasPoseInit = true;
+        hasPiPoseData = false;
+
         // Reset our estimators with the new pose
         questPoseAverager.reset();
         robotPoseAverager.reset();
@@ -104,23 +108,27 @@ public class VisionSubsystem extends SubsystemBase {
 
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var result : camera.getAllUnreadResults()) {
-            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-            if (visionEst.isEmpty()) {
-                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
-                hasPiPoseData = false;
+        // if (!resetting) {
+            for (var result : camera.getAllUnreadResults()) {
+                visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+                if (visionEst.isEmpty()) {
+                    visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                    hasPiPoseData = false;
+                }
+                visionEst.ifPresent(
+                        est -> {
+                            // Change our trust in the measurement based on the tags we can see
+                            // var estStdDevs = getEstimationStdDevs();
+                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
+                            // est.timestampSeconds, estStdDevs);
+                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
+                            // est.timestampSeconds, Constants.Photon.standardDevs);
+                            piPose3d = est.estimatedPose;
+                            hasPiPoseData = true;
+                        });
             }
-            visionEst.ifPresent(
-                    est -> {
-                        // Change our trust in the measurement based on the tags we can see
-                        // var estStdDevs = getEstimationStdDevs();
-                        // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                        drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(), est.timestampSeconds, Constants.Photon.standardDevs);
-                        piPose3d = est.estimatedPose;
-                        hasPiPoseData = true;
-                    });
-        }
-        if (hasPoseInit) { // Skip quest if it hasn't started up yet
+        // }
+        if (hasPoseInit && !resetting) { // Skip quest if it hasn't started up yet
             if (quest.isTracking()) {
                 // Get the latest pose data frames from the Quest
                 PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
@@ -144,9 +152,10 @@ public class VisionSubsystem extends SubsystemBase {
                 // the Quest starts up
                 quest.getAllUnreadPoseFrames();
             }
-            if (piPose3d != null && hasPiPoseData) {
+            if (piPose3d != null && hasPiPoseData && resetting) {
                 quest.setPose(piPose3d.transformBy(Constants.Quest.RobotToQuest3D));
                 hasPoseInit = true;
+                resetting = false;
             }
         }
 
@@ -174,55 +183,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     }
 
-    private void updateEstimationStdDevs(
-            Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
-        if (estimatedPose.isEmpty()) {
-            // No pose input. Default to single-tag std devs
-            curStdDevs = Constants.Photon.singleTagDevs;
-
-        } else {
-            // Pose present. Start running Heuristic
-            var estStdDevs = Constants.Photon.singleTagDevs;
-            int numTags = 0;
-            double avgDist = 0;
-
-            // Precalculation - see how many tags we found, and calculate an
-            // average-distance metric
-            for (var tgt : targets) {
-                var tagPose = photonEstimator.getFieldTags().getTagPose(tgt.getFiducialId());
-                if (tagPose.isEmpty())
-                    continue;
-                numTags++;
-                avgDist += tagPose
-                        .get()
-                        .toPose2d()
-                        .getTranslation()
-                        .getDistance(estimatedPose.get().estimatedPose.toPose2d().getTranslation());
-            }
-
-            if (numTags == 0) {
-                // No tags visible. Default to single-tag std devs
-                curStdDevs = Constants.Photon.singleTagDevs;
-            } else {
-                // One or more tags visible, run the full heuristic.
-                avgDist /= numTags;
-                // Decrease std devs if multiple targets are visible
-                if (numTags > 1)
-                    estStdDevs = Constants.Photon.multiTagDevs;
-                // Increase std devs based on (average) distance
-                if (numTags == 1 && avgDist > 4)
-                    estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-                else
-                    estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
-                curStdDevs = estStdDevs;
-            }
-        }
-    }
-
-    public Matrix<N3, N1> getEstimationStdDevs() {
-        return curStdDevs;
-    }
-
     public Pose3d getAverageRobotPose3D() {
         return robotPoseAverager.getAveragePose();
     }
@@ -247,8 +207,16 @@ public class VisionSubsystem extends SubsystemBase {
     public class QuestCommands {
         public Command setRobotPose(Pose3d newRobotPose) {
             return Commands.runOnce(() -> {
-                setRobotPose(newRobotPose);
+                setPose(newRobotPose);
             }).andThen(Commands.print("Set Robot Pose!"));
+        }
+
+        public Command resetPose() {
+            return Commands.runOnce(() -> {
+                hasPiPoseData = false;
+                hasPoseInit = false;
+                resetting = true;
+            });
         }
     }
 }

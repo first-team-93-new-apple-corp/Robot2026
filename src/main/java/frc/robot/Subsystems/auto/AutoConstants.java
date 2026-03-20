@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.auto;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
@@ -33,7 +34,7 @@ public class AutoConstants {
     public class Hub {
         public static final Pose2d Blue = new Pose2d(4.625, 3.95, Rotation2d.fromDegrees(0));
         public static final Pose2d Red = FlippingUtil.flipFieldPose(Blue);
-        public static final Pose3d Blue3d = new Pose3d(4.625, 3.95, 1.47, new Rotation3d());
+        public static final Pose3d Blue3d = new Pose3d(Inches.of(182.1), Inches.of(158.84), Inches.of(56.5), new Rotation3d());
         public static final Pose3d Red3d = new Pose3d(Red.getX(), Red.getY(), 1.47, new Rotation3d());
         public static Pose3d getHub() {
             var alliance = DriverStation.getAlliance();

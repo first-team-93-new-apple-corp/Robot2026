@@ -57,7 +57,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final ControllerSchemeIO driver = new XboxDrive(0, 1, 2);
+    private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -115,7 +115,7 @@ public class RobotContainer {
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.Prime().onTrue(subsystems.DriverPrime());
+        driver.Prime().whileTrue(subsystems.Prime().repeatedly());
         driver.Prime().onFalse(subsystems.PrimeFalse());
 
         driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
@@ -140,6 +140,8 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+
+        driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().andThen(Commands.print("Reset Pose due to Button Press")));
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()

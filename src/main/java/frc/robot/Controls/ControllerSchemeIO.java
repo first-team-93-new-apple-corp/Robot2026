@@ -126,4 +126,6 @@ public interface ControllerSchemeIO {
                 return POVs[0];
         }
     }
+
+    Trigger resetPose();
 }
