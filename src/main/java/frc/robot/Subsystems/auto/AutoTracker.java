@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.auto;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -122,9 +124,8 @@ public class AutoTracker extends SequentialCommandGroup {
      */
     public void Intake(PathPlannerPath path, LinearVelocity endSpeed) {
         addCommands(subsystems.Intake());
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
-                endSpeed));
-        addCommands(AutoBuilder.followPath(path));
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
+        // addCommands(AutoBuilder.followPath(path));
     }
 
     /**
@@ -152,7 +153,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addShootPath(String pathName) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-            shootWhilstFollowing(path);
+            followSnapShoot(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -194,6 +195,16 @@ public class AutoTracker extends SequentialCommandGroup {
                         .alongWith(delayedShoot));
     }
 
+    public void pathAndThenShoot(PathPlannerPath path) {
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+        Command delayedShoot = Commands.waitSeconds(0.75)
+                .andThen(subsystems.shoot());
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        .andThen(delayedShoot));
+    }
+
     public void shootWhilstFollowingAndSnap(PathPlannerPath path) {
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
@@ -206,17 +217,46 @@ public class AutoTracker extends SequentialCommandGroup {
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
-                                Commands.run(() -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .until(() -> subsystems.drivetrain().nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 1.0))));
+                                Commands.run(
+                                        () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .until(() -> subsystems.drivetrain()
+                                                .nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 0.5))));
+    }
+
+    public void followSnapShoot(PathPlannerPath path) {
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+
+        Command delayedShoot = Commands.waitSeconds(0.1)
+                .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
+
+        addCommands(
+                followPath
+                        .alongWith(subsystems.Prime())
+                        // .alongWith(delayedShoot)
+                        // .andThen(subsystems.shootFalse())
+                        .andThen(
+                                Commands.run(
+                                        () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .until(() -> subsystems.drivetrain()
+                                                .nearPose(AutoConstants.getLastPoseInPath(path), 0.01, 0.5)))
+                        .andThen(delayedShoot));
     }
 
     public void goToAndThenShootClose(Supplier<Pose2d> pose) {
-        Command driveCmd = AutoBuilder.pathfindToPose(new Pose2d(pose.get().getX(), pose.get().getY()+1, pose.get().getRotation()), AutoConstants.constraints);
+        Pose2d target = new Pose2d(pose.get().getX(), pose.get().getY() + 1, pose.get().getRotation());
+        // Add a timeout so the drive command can't block the sequence indefinitely
+        // during debugging. If the path controller never reports 'finished' due to
+        // odometry or controller issues, the timeout ensures the auto sequence
+        // continues and allows priming/shooting to run. Adjust timeout as needed.
+        Command driveCmd = AutoBuilder.pathfindToPose(target, AutoConstants.constraints).withTimeout(4.0);
+
         Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
+
         addCommands(Commands.print("*****************go to and then shoot close to hub******************"));
-        // addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
-        addCommands(driveCmd);
+        // Drive, then prime for close-hub shooting, then shoot. Timeout ensures we
+        // don't block forever.
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
         addCommands(Commands.print("*********************Ending go to and then shoot close ***************"));
     }
 
@@ -233,11 +273,11 @@ public class AutoTracker extends SequentialCommandGroup {
                 getDriveSpeedY());
     }
 
-    public void endAuto(){
-            addCommands(subsystems.IntakeFalse());
-            addCommands(subsystems.PrimeFalse());
-            addCommands(subsystems.shootFalse());
-            addCommands(subsystems.OutakeFalse());
-            addCommands(subsystems.manipulation().commands.offCommand());
+    public void endAuto() {
+        addCommands(subsystems.IntakeFalse());
+        addCommands(subsystems.PrimeFalse());
+        addCommands(subsystems.shootFalse());
+        addCommands(subsystems.OutakeFalse());
+        addCommands(subsystems.manipulation().commands.offCommand());
     }
 }
