@@ -45,11 +45,12 @@ public class RobotContainer {
 
     private final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(Constants.Swerve.MaxSpeed * Constants.Controls.Deadzone)
-            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone) // Add a
-                                                                                                   // 10%
-                                                                                                   // deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                     // motors
+            .withRotationalDeadband(Constants.Swerve.MaxAngularRate * Constants.Controls.Deadzone)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -77,22 +78,27 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation,
+            driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(7));
-        
+
         configureBindings();
-        
+
     }
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
                         .withVelocityY(driver.DriveUp())
-                        .withRotationalRate(driver.DriveTheta())
-                ));
+                        .withRotationalRate(driver.DriveTheta())));
+
+        driver.robotRel()
+                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+                                .withVelocityY(driver.DriveUp())
+                                .withRotationalRate(driver.DriveTheta())));
 
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
@@ -105,19 +111,24 @@ public class RobotContainer {
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
-        
+
         driver.Shoot().onTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.primeShooter().onTrue(subsystems.Prime());
-        driver.primeShooter().onFalse(subsystems.PrimeFalse());
-        
-        driver.presetClose().whileTrue(subsystems.PrimeHubClose());
-        driver.presetClimb().whileTrue(subsystems.PrimeHubFar());
-        driver.presetClose().onFalse(subsystems.PrimeFalse());
-        driver.presetClimb().onFalse(subsystems.PrimeFalse());
-        driver.presetLeft().whileTrue(subsystems.PrimeHubLeft());
-        driver.presetRight().whileTrue(subsystems.PrimeHubRight());
+        driver.Prime().onTrue(subsystems.Prime());
+        driver.Prime().onFalse(subsystems.PrimeFalse());
+
+        driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
+
+        driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
+        driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
+        driver.PrimeLeft().whileTrue(subsystems.PrimeHubLeft());
+        driver.PrimeRight().whileTrue(subsystems.PrimeHubRight());
+
+        driver.PrimeClose().onFalse(subsystems.PrimeFalse());
+        driver.PrimeFar().onFalse(subsystems.PrimeFalse());
+        driver.PrimeLeft().onFalse(subsystems.PrimeFalse());
+        driver.PrimeRight().onFalse(subsystems.PrimeFalse());
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
@@ -131,9 +142,15 @@ public class RobotContainer {
         driver.Outtake().onFalse(subsystems.OutakeFalse());
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
-        driver.autoRetractClimber().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
+        driver.autoRetractClimber()
+                .onTrue(subsystems.climber().commands.manualRetract()
+                        .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
+                        .andThen(subsystems.climber().commands.Stop()));
 
-        RobotModeTriggers.test().onTrue(subsystems.climber().commands.manualRetract().andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom())).andThen(subsystems.climber().commands.Stop()));
+        RobotModeTriggers.test()
+                .onTrue(subsystems.climber().commands.manualRetract()
+                        .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
+                        .andThen(subsystems.climber().commands.Stop()));
     }
 
     public Command getAutonomousCommand() {
@@ -144,8 +161,10 @@ public class RobotContainer {
         visionSubsystem.visionPeriodic();
     }
 
-    public void telePeriodic(){
-        double[] test = {subsystems.getShootingData().drivetrainAngle().getDegrees(), subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond), (subsystems.getShootingData().shooterAngle()).in(Degrees)};
+    public void telePeriodic() {
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),
+                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
+                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         SmartDashboard.putNumberArray("Target Shooting Math", test);
     }
 

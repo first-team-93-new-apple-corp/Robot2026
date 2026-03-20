@@ -53,7 +53,11 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public Trigger Prime(){
-        return Xbox.leftBumper().or(RightStick.button(Constants.Thrustmaster.Center_Button));
+        return Xbox.leftBumper();
+    }
+    @Override
+    public Trigger DriverPrime() {
+        return RightStick.button(Constants.Thrustmaster.Center_Button);
     }
 
     @Override
