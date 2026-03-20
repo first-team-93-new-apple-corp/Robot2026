@@ -166,8 +166,4 @@ public class XboxDrive implements ControllerSchemeIO {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'DriverPrime'");
     }
-
-    
-
-
 }

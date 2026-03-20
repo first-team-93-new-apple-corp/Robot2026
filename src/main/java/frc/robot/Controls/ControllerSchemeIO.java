@@ -88,18 +88,6 @@ public interface ControllerSchemeIO {
 
     public Trigger PrimeFar();
 
-
-    
-    public Trigger presetClimb();
-
-    public Trigger presetClose();
-    public Trigger presetLeft();
-    public Trigger presetRight();
-
-    // public Trigger presetClose();
-
-    // public Trigger presetClimb();
-
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }
