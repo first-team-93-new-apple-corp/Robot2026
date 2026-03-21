@@ -175,12 +175,13 @@ public class AutoDirector {
     }
 
     public void addAutos() {
-        autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
+        autoChooser.setDefaultOption("Do something", ScoreCenter());
         // Autos.add(Demo());
         // Autos.add(PreloadCenter());
         // Autos.add(PreloadLeftOrRight());
         // Autos.add(PreloadClimbLeft());
         // Autos.add(PreloadClimbRight());
+        Autos.add(ScoreCenter());
         Autos.add(DepotScoreCenter());
         Autos.add(DepotScoreCenterLeft());
         Autos.add(DepotScoreCenterRight());
@@ -303,7 +304,7 @@ public class AutoDirector {
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
         tracker.addShootPath("Shoot Center");
         tracker.endAuto();
-        return new Auto("IntakeDepotScore", tracker, startPose);
+        return new Auto("Depot Shoot Center", tracker, startPose);
     }
     public Auto DepotScoreCenterLeft() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
@@ -311,7 +312,7 @@ public class AutoDirector {
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
         tracker.addShootPath("Shoot Center");
         tracker.endAuto();
-        return new Auto("IntakeDepotScore", tracker, startPose);
+        return new Auto("Depot Shoot Center left", tracker, startPose);
     }
     public Auto DepotScoreCenterRight() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
@@ -319,7 +320,15 @@ public class AutoDirector {
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
         tracker.addShootPath("Shoot Center Right");
         tracker.endAuto();
-        return new Auto("IntakeDepotScore", tracker, startPose);
+        return new Auto("Depot shoot cetner right", tracker, startPose);
+    }
+    public Auto ScoreCenter() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        // tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addShootPath("Shoot Center");
+        tracker.endAuto();
+        return new Auto("Score Center Prelod", tracker, startPose);
     }
 
     public Auto PreloadOutpost() {

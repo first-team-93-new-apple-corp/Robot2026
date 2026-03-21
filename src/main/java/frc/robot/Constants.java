@@ -175,7 +175,7 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-        public static final double idleSpeed = 0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 45;
         public static final double pivotkI = 0.5;
@@ -212,7 +212,7 @@ public class Constants {
         }
 
         public class idle {
-            public static final double bottomRollerSpeed = 0.01;
+            public static final double bottomRollerSpeed = 0.1;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
