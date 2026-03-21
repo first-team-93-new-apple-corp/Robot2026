@@ -57,10 +57,9 @@ public class ShooterMath {
     // Static shooting velocity calculation
     public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY,
             double hubHeight, double gravity) {
-        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2))
-                + Constants.ShooterConstants.AutoShoot.hubXOffset;
+        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
 
-        double xfinal = Math.abs(distance);
+        double xfinal = Math.abs(distance+ Constants.ShooterConstants.AutoShoot.hubXOffset);
         double yfinal = Math.abs(hubHeight - Constants.ShooterConstants.AutoShoot.hubHeightOffset);
         // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal *
         // Math.tan(theta)))));
