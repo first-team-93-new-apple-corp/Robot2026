@@ -310,7 +310,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-        tracker.addShootPath("Shoot Center");
+        tracker.addShootPathCenterSide("Shoot Center Left");
         tracker.endAuto();
         return new Auto("Depot Shoot Center left", tracker, startPose);
     }
@@ -318,7 +318,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-        tracker.addShootPath("Shoot Center Right");
+        tracker.addShootPathCenterSide("Shoot Center Right");
         tracker.endAuto();
         return new Auto("Depot shoot cetner right", tracker, startPose);
     }
