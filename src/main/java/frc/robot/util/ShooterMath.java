@@ -60,7 +60,7 @@ public class ShooterMath {
         double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
 
         double xfinal = Math.abs(distance+ Constants.ShooterConstants.AutoShoot.hubXOffset);
-        double yfinal = Math.abs(hubHeight - Constants.ShooterConstants.AutoShoot.hubHeightOffset);
+        double yfinal = Math.abs(hubHeight - Constants.ShooterConstants.AutoShoot.ShooterHeight);
         // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal *
         // Math.tan(theta)))));
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
@@ -225,7 +225,7 @@ public class ShooterMath {
         AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
         Angle driveTrainAngle = Radians.of(alignAngle);
         if ( Degrees.of(90).minus(Radians.of(shooter_angle)).lt(Degrees.of(25))) {
-            shooter_velocity = ShooterMath.calculateV(0.436, poseX, poseY, hubX, hubY, hubHeight, -9.8);
+            shooter_velocity = ShooterMath.calculateV(1.309, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         }
         double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
                 alignAngle);
