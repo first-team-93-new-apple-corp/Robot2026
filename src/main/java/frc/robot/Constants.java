@@ -175,7 +175,7 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-        public static final double idleSpeed = 0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 45;
         public static final double pivotkI = 0.5;
@@ -187,8 +187,8 @@ public class Constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(120);
-        public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
+        public static final Angle pivotDownPosition = Degrees.of(100);
+        public static final Angle pivotMiddlePosition = Degrees.of(30);
         // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1

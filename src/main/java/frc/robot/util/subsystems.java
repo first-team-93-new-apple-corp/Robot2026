@@ -64,6 +64,7 @@ public record subsystems(
     }
     public Command pass() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
         return cmds.withTimeout(0.5);
     }
@@ -77,6 +78,7 @@ public record subsystems(
 
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(efficiencyCalculate())));
 
         return cmds.withTimeout(1);
@@ -92,30 +94,35 @@ public record subsystems(
 
     public Command PrimeHubClose() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getClose()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubCloseSide() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getCloseSide()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getFar()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubLeft() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getLeft()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubRight() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getRight()));
         return cmds.withTimeout(1);
     }
@@ -134,6 +141,7 @@ public record subsystems(
 
     public Command AutoPrime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(),
@@ -143,6 +151,7 @@ public record subsystems(
 
     public Command PrimeFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter.commands.stopShooter());
         cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
@@ -162,7 +171,7 @@ public record subsystems(
         // var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(manipulation.commands.idleCommand());
-        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+        cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
     }
 

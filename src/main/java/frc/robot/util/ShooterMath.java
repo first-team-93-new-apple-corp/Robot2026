@@ -269,5 +269,4 @@ public class ShooterMath {
     //   System.out.println("Theoretical hood angle to shoot from while moving " + nshooter_angle);
     // }
 
-    
 }
