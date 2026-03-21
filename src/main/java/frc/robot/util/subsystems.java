@@ -7,6 +7,7 @@ import com.ctre.phoenix.platform.can.AutocacheState;
 
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Constants;
+import frc.robot.Constants.ManipulationConstants.shoot;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -61,7 +62,11 @@ public record subsystems(
     public Command shoot() {
         return manipulation.commands.shootCommand();
     }
-
+    public Command pass() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
+        return cmds.withTimeout(0.5);
+    }
     public Command shootFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());

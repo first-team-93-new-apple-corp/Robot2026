@@ -162,12 +162,12 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger testingButton(){
-        return Xbox.start();
+        return Xbox.start().and(Xbox.back().negate());
     }
 
     @Override
     public Trigger resetPose() {
-        return Xbox.back();
+        return Xbox.back().and(testingButton());
     }
 
     @Override
@@ -187,6 +187,11 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public double leftTrigger(){
         return Xbox.getLeftTriggerAxis();
+    }
+
+    @Override
+    public Trigger Pass() {
+        return Xbox.back();
     }
 
 
