@@ -72,7 +72,7 @@ public record subsystems(
 
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(Constants.ShooterConstants.AutoShoot.PrimeEfficiency)));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(ShooterMath.getEfficiencyByDistance(getShootingData().distance()))));
 
         return cmds.withTimeout(1);
     }

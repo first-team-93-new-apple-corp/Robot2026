@@ -2,17 +2,17 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.*;
 
-
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
+
 public class ShooterMath {
     public static double calculateAngle(double xinit, double yinit, double xmid, double ymid, double xfinal,
             double yfinal) {
@@ -57,11 +57,13 @@ public class ShooterMath {
     // Static shooting velocity calculation
     public static double calculateV(double theta, double poseX, double poseY, double hubX, double hubY,
             double hubHeight, double gravity) {
-        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
+        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2))
+                + Constants.ShooterConstants.AutoShoot.hubXOffset;
 
         double xfinal = Math.abs(distance);
-        double yfinal = Math.abs(hubHeight);
-        // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta)))));
+        double yfinal = Math.abs(hubHeight - Constants.ShooterConstants.AutoShoot.hubHeightOffset);
+        // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal *
+        // Math.tan(theta)))));
         return (xfinal / (Math.cos(theta) * Math.sqrt((2 / gravity) * (yfinal - (xfinal * Math.tan(theta))))));
     }
 
@@ -202,72 +204,104 @@ public class ShooterMath {
         double thetaPrime = Math.atan2(shooter_velocity * Math.sin(originalPitch), vcosThetaPrime);
         double vPrime = vcosThetaPrime / Math.cos(thetaPrime);
         double adjustment = angleToHub - Math.asin(
-                robotZ / Math.sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch)-robotX, 2) + Math.pow(robotZ, 2)));
+                robotZ / Math
+                        .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
         return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
     }
+
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
         double hubX = AutoConstants.Hub.getHub().getX();
         double hubY = AutoConstants.Hub.getHub().getY();
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
-        
+
         double hubHeight = AutoConstants.Hub.getHub().getZ();
-        double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
-        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-Constants.ShooterConstants.AutoShoot.hubXOffset, hubHeight+Constants.ShooterConstants.AutoShoot.hubHeightOffset  , distance, hubHeight);
+        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
+        double shooter_angle = ShooterMath.calculateAngle(0, 0, distance,
+                hubHeight + Constants.ShooterConstants.AutoShoot.hubHeightOffset
+                        - Constants.ShooterConstants.AutoShoot.ShooterHeight,
+                distance + Constants.ShooterConstants.AutoShoot.hubXOffset,
+                hubHeight - Constants.ShooterConstants.AutoShoot.ShooterHeight);
 
-
-        double shooter_velocity = ShooterMath.calculateV(shooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);   
+        double shooter_velocity = ShooterMath.calculateV(shooter_angle, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
         Angle driveTrainAngle = Radians.of(alignAngle);
 
-        
-        double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle, alignAngle);
+        double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
+                alignAngle);
         double velocityMoving = shootingDataWhileMoving[1];
         double angleMoving = shootingDataWhileMoving[0];
         double adjustmentMoving = shootingDataWhileMoving[2];
         AngularVelocity rpmMoving = speedToMotorRotations(shooter_velocity);
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
-        
+
         // Stationary shooting
-        return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm);
+        return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm,
+                Meters.of(distance));
         // On the fly
-        // return new ShootingData(new Rotation2d(driveTrainAngleMoving), Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
-        
+        // return new ShootingData(new Rotation2d(driveTrainAngleMoving),
+        // Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
+
     }
+
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
-        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
+        return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb
+                * (velocity) / (Math.PI * Units
+                        .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
+
     public static AngularVelocity speedToMotorRotationsforClose(double velocity) { // In rpm
-        return RotationsPerSecond.of(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose* (velocity)/(Math.PI*Units.inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+        return RotationsPerSecond.of(
+                Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose * (velocity) / (Math.PI * Units
+                        .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
+    }
+
+    public static double getEfficiencyByDistance(Distance distance) { 
+        if (distance.lt(Meters.of(Constants.ShooterConstants.AutoShoot.RangeThreshold))) {
+            return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyClose;
+        }
+        return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyFar;
     }
     // public static double getEfficiency(Angle angle) {
-    //     if (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians)))) {
-    //         return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
-    //     }
-    //     return Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
+    // if
+    // (Constants.ShooterConstants.HoodMotorConfigs.offsetAngle.gt(Radians.of(Math.PI/2-angle.in(Radians))))
+    // {
+    // return
+    // Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose;
     // }
-    
-    // public static void main(String[] args) throws Exception {
-    //   double hubX = 4;
-    //   double hubY = 4;
-    //   double robotX = 1;
-    //   double robotZ = 2;
-    //   double poseX = 0;
-    //   double poseY = 0;
-      
-    //   double hubHeight = 4;
-    //   double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
-    //   double alignAngle = angleToAlign(poseX, hubX, poseY, hubY);
-    //   double shooter_angle = calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
-    //   System.out.println("Static angle of shooter" + shooter_angle);
-    //   double shooter_velocity = calculateV(shooter_angle,poseX, poseY,hubX,hubY,hubHeight, -9.8);
-    //   System.out.println("Static velocity " + shooter_velocity);
-    //   double nshooter_velocity = calculateV(shooter_angle,  poseX, poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);
-    //   System.out.println("Theoretical velocity while moving" + nshooter_velocity);
-    //   double adjustment = calculateAdjustment(robotX,robotZ,nshooter_velocity,angleToAlign(poseX, hubX, poseY, hubY));
-    //   System.out.println("Theoretical adjustment angle to shoot while moving " + adjustment + " Normal angle " + alignAngle) ;
-    //   double nshooter_angle = calculateAngle(0, 0, distance-0.5,  hubY+0.5, distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8, alignAngle);
-    //   System.out.println("Theoretical hood angle to shoot from while moving " + nshooter_angle);
+    // return
+    // Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierFar;
     // }
 
-    
+    // public static void main(String[] args) throws Exception {
+    // double hubX = 4;
+    // double hubY = 4;
+    // double robotX = 1;
+    // double robotZ = 2;
+    // double poseX = 0;
+    // double poseY = 0;
+
+    // double hubHeight = 4;
+    // double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
+    // double alignAngle = angleToAlign(poseX, hubX, poseY, hubY);
+    // double shooter_angle = calculateAngle(0, 0, distance-0.5, hubHeight+0.5 ,
+    // distance, hubHeight);
+    // System.out.println("Static angle of shooter" + shooter_angle);
+    // double shooter_velocity = calculateV(shooter_angle,poseX,
+    // poseY,hubX,hubY,hubHeight, -9.8);
+    // System.out.println("Static velocity " + shooter_velocity);
+    // double nshooter_velocity = calculateV(shooter_angle, poseX,
+    // poseY,hubX,hubY,hubHeight, -9.8, robotX, robotZ, alignAngle);
+    // System.out.println("Theoretical velocity while moving" + nshooter_velocity);
+    // double adjustment =
+    // calculateAdjustment(robotX,robotZ,nshooter_velocity,angleToAlign(poseX, hubX,
+    // poseY, hubY));
+    // System.out.println("Theoretical adjustment angle to shoot while moving " +
+    // adjustment + " Normal angle " + alignAngle) ;
+    // double nshooter_angle = calculateAngle(0, 0, distance-0.5, hubY+0.5,
+    // distance, hubY, robotX, robotZ, poseX, poseY, hubX, hubY, hubHeight, -9.8,
+    // alignAngle);
+    // System.out.println("Theoretical hood angle to shoot from while moving " +
+    // nshooter_angle);
+    // }
+
 }
