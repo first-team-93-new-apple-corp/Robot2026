@@ -230,7 +230,8 @@ public class ShooterMath {
         double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
                 alignAngle);
         
-        
+        // From in front of trench v should be 7.41 m/s and angle should be 1.11 rad
+        // 36 rps, 26 rad
         double velocityMoving = shootingDataWhileMoving[1];
         double angleMoving = shootingDataWhileMoving[0];
         double adjustmentMoving = shootingDataWhileMoving[2];
