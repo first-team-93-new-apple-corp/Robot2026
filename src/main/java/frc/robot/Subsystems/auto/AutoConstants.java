@@ -44,8 +44,9 @@ public class AutoConstants {
                     return Red3d;
                 } 
                 return Blue3d; // Default to blue
+            } else {
+                return Blue3d;
             }
-            return null;
         }
     }
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}

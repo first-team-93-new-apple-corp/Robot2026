@@ -65,7 +65,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    private NTSubsystem networkTables = new NTSubsystem();
 
     // Vision
     // * Quest
@@ -175,7 +175,7 @@ public class RobotContainer {
     }
 
     public void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         SmartDashboard.putNumberArray("Target Shooting Math", test);

@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -27,7 +28,6 @@ public class NTSubsystem {
 
 	// Our NT
 	private NetworkTableInstance ntInst = NetworkTableInstance.getDefault();
-	// private NetworkTable questInst = ntInst.getTable("questnav");
 
 	// Classes
 	public ntSwerve swerve = new ntSwerve();
@@ -37,16 +37,13 @@ public class NTSubsystem {
 	private final Field2d m_field = new Field2d();
 
 	// Constructors
-	public NTSubsystem(Pose2d robotPose, Pose2d questPose) {
+	public NTSubsystem() {
 		SmartDashboard.putData("Field", m_field);
-		m_field.setRobotPose(robotPose);
-		m_field.getObject("Quest").setPose(questPose);
-	}
-
-	public NTSubsystem(Pose3d robotPose, Pose3d questPose) {
-		SmartDashboard.putData("Field", m_field);
-		m_field.setRobotPose(robotPose.toPose2d());
-		m_field.getObject("Quest").setPose(questPose.toPose2d());
+		m_field.setRobotPose(new Pose2d());
+		m_field.getObject("Quest").setPose(new Pose2d());
+		SignalLogger.setPath("/media/sda1/logs/");  // TODO: change
+		SignalLogger.enableAutoLogging(true);
+		SignalLogger.start();
 	}
 
 	public class ntSwerve {
@@ -72,9 +69,9 @@ public class NTSubsystem {
 				.publish();
 
 		/* Robot pose for field positioning */
-		private final NetworkTable table = ntInst.getTable("Pose");
-		private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
-		private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+		// private final NetworkTable table = ntInst.getTable("Pose");
+		// private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
+		// private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
 
 		/* Mechanisms to represent the swerve module states */
 		private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] { new Mechanism2d(1, 1),
@@ -107,7 +104,7 @@ public class NTSubsystem {
 
 		}
 
-		private final double[] m_poseArray = new double[3];
+		// private final double[] m_poseArray = new double[3];
 
 		/**
 		 * Accept the swerve drive state and telemeterize it to SmartDashboard and
@@ -132,13 +129,13 @@ public class NTSubsystem {
 					state.ModulePositions);
 			SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
-			/* Telemeterize the pose to a Field2d */
-			fieldTypePub.set("Field2d");
+			// /* Telemeterize the pose to a Field2d */
+			// fieldTypePub.set("Field2d");
 
-			m_poseArray[0] = state.Pose.getX();
-			m_poseArray[1] = state.Pose.getY();
-			m_poseArray[2] = state.Pose.getRotation().getDegrees();
-			fieldPub.set(m_poseArray);
+			// m_poseArray[0] = state.Pose.getX();
+			// m_poseArray[1] = state.Pose.getY();
+			// m_poseArray[2] = state.Pose.getRotation().getDegrees();
+			// fieldPub.set(m_poseArray);
 
 			/* Telemeterize each module state to a Mechanism2d */
 			for (int i = 0; i < 4; ++i) {
@@ -205,6 +202,10 @@ public class NTSubsystem {
 
 		public void updatePiPose(Pose3d pose) {
 			m_field.getObject("PI").setPose(pose.toPose2d());
+		}
+		
+		public void addTrajectory(Trajectory traj) {
+			m_field.getRobotObject().setTrajectory(traj);
 		}
 	}
 }
