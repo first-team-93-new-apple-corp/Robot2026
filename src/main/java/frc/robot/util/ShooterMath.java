@@ -212,7 +212,7 @@ public class ShooterMath {
         
         double hubHeight = AutoConstants.Hub.getHub().getZ();
         double distance = Math.sqrt(Math.pow(hubX-poseX,2)+Math.pow(hubY-poseY,2));
-        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-0.5, hubHeight+0.5  , distance, hubHeight);
+        double shooter_angle = ShooterMath.calculateAngle(0, 0,  distance-Constants.ShooterConstants.AutoShoot.hubXOffset, hubHeight+Constants.ShooterConstants.AutoShoot.hubHeightOffset  , distance, hubHeight);
 
 
         double shooter_velocity = ShooterMath.calculateV(shooter_angle,poseX,poseY,hubX,hubY,hubHeight,-9.8);   

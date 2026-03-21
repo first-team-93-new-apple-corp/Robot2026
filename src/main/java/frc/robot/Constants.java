@@ -253,7 +253,11 @@ public class Constants {
 
 
         }
-
+        public class AutoShoot {
+            public static final double hubHeightOffset = 1.25;
+            public static final double hubXOffset = 0.35;
+            public static final double PrimeEfficiency = 1.3;
+        }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;

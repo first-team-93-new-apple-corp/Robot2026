@@ -80,8 +80,7 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation,
-            driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -145,7 +144,8 @@ public class RobotContainer {
         driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
-
+        
+        
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
                 .onTrue(subsystems.climber().commands.manualRetract()
