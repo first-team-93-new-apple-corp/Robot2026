@@ -259,11 +259,13 @@ public class ShooterMath {
                         .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
 
-    public static double getEfficiencyByDistance(Distance distance) { 
-        if (distance.lt(Meters.of(Constants.ShooterConstants.AutoShoot.RangeThreshold))) {
-            return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyClose;
+    public static double getEfficiencyByAngle(Angle shootingAngle) { 
+        if (shootingAngle.lt(Radians.of(1.134))) {
+          return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyFar;
+
         }
-        return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyFar;
+        return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyClose;
+        
     }
     // public static double getEfficiency(Angle angle) {
     // if
