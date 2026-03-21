@@ -225,7 +225,7 @@ public class ShooterMath {
         AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
         Angle driveTrainAngle = Radians.of(alignAngle);
         if ( Degrees.of(90).minus(Radians.of(shooter_angle)).lt(Degrees.of(25))) {
-            shooter_velocity = ShooterMath.calculateV(1.309, poseX, poseY, hubX, hubY, hubHeight, -9.8);
+            shooter_velocity = ShooterMath.calculateV(1.134, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         }
         double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
                 alignAngle);
