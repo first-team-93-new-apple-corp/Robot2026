@@ -113,7 +113,7 @@ public class RobotContainer {
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        driver.Shoot().onTrue(subsystems.shoot());
+        driver.Shoot().whileTrue(subsystems.Prime().andThen(subsystems.shoot()));
         driver.Shoot().onFalse(subsystems.shootFalse());
 
         driver.Prime().whileTrue(subsystems.Prime().repeatedly());
