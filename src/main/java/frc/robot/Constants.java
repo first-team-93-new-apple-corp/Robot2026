@@ -250,10 +250,18 @@ public class Constants {
             public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
             // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08
             // public static final double EfficiencyMultiplierDepotRight =  1.4; // 3.61
-
+            // Climber Controls moving to sticks 
+            // Shooter controls move to xbox
 
         }
-
+        public class AutoShoot {
+            public static final double hubHeightOffset = 0.5;
+            public static final double hubXOffset = 0.35;
+            public static final double PrimeEfficiencyFar = 1.5; // Need to tune
+            public static final double PrimeEfficiencyClose = 1.43; // Need to tune
+            public static final double ShooterHeight = 0.6;
+            public static final double RangeThreshold = 3;  
+        }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;
