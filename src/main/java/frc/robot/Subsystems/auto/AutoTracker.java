@@ -159,6 +159,24 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
+    public void addShootPathCenter(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            followSnapShoot(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addShootPathCenterSide(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            followSnapShootSide(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void shootWhilstGoingTo(Supplier<Pose2d> pose) {
         Command followPath = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
         Command delayedShoot = Commands.waitSeconds(0.75)
@@ -226,11 +244,29 @@ public class AutoTracker extends SequentialCommandGroup {
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
         Command delayedShoot = Commands.waitSeconds(0.5)
-                .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
+                .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
 
         addCommands(
                 followPath
                         .alongWith(subsystems.PrimeHubClose())
+                        // .alongWith(delayedShoot)
+                        // .andThen(subsystems.shootFalse())
+                        .andThen(
+                                Commands.run(
+                                        () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .withTimeout(1))
+                        .andThen(delayedShoot));
+    }
+
+    public void followSnapShootSide(PathPlannerPath path) {
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+
+        Command delayedShoot = Commands.waitSeconds(0.5)
+                .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
+
+        addCommands(
+                followPath
+                        .alongWith(subsystems.PrimeHubCloseSide())
                         // .alongWith(delayedShoot)
                         // .andThen(subsystems.shootFalse())
                         .andThen(

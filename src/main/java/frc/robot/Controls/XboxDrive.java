@@ -96,7 +96,7 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger middleIntake() {
-        return new Trigger(() -> false);
+        return Xbox.start();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger PrimeRight() {
-        return Xbox.povRight();
+        return new Trigger(()->false);
     }
 
     @Override
@@ -169,4 +169,30 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger resetPose() {
         return Xbox.back();
     }
+
+    @Override
+    public Trigger manHood(){
+        return Xbox.rightTrigger(0.01);
+    }
+    @Override
+    public Trigger manShoot(){
+        return Xbox.leftTrigger(0.01);
+    }
+
+    @Override
+    public double rightTrigger(){
+        return Xbox.getRightTriggerAxis();
+    }
+
+    @Override
+    public double leftTrigger(){
+        return Xbox.getLeftTriggerAxis();
+    }
+
+    @Override
+    public Trigger Pass() {
+        return Xbox.povRight();
+    }
+
+
 }

@@ -65,7 +65,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    private NTSubsystem networkTables = new NTSubsystem();
 
     // Vision
     // * Quest
@@ -97,10 +97,6 @@ public class RobotContainer {
                         .withVelocityY(driver.DriveUp())
                         .withRotationalRate(driver.DriveTheta())));
 
-        driver.robotRel()
-                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                                .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta())));
         driver.robotRel()
                 .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                 .withVelocityY(driver.DriveUp())
@@ -138,6 +134,7 @@ public class RobotContainer {
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+        driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 
@@ -146,15 +143,20 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
+        driver.Pass().onTrue(subsystems.pass());
+        driver.Pass().onFalse(subsystems.PrimeFalse());
+        // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
+
+        driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
+        driver.manShoot().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
+        driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
         // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
         RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
         
-        RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Autonomous Start")));
-        RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Teleop Start")));
-
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
                 .onTrue(subsystems.climber().commands.manualRetract()
@@ -176,7 +178,7 @@ public class RobotContainer {
     }
 
     public void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         SmartDashboard.putNumberArray("Target Shooting Math", test);

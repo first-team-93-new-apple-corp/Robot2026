@@ -95,7 +95,13 @@ public interface ControllerSchemeIO {
 
     public Trigger PrimeFar();
 
+    public Trigger manHood();
+
+    public Trigger manShoot();
+
     public Trigger testingButton();
+
+    public Trigger Pass();
 
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
@@ -112,6 +118,10 @@ public interface ControllerSchemeIO {
     public default ChassisSpeeds Speeds() {
         return new ChassisSpeeds(DriveLeft(), DriveUp(), DriveTheta());
     }
+
+    public double rightTrigger();
+
+    public double leftTrigger();
 
     public default Translation2d AngleToPOV(int Angle) {
         switch (Angle) {
