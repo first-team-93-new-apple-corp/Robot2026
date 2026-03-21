@@ -80,8 +80,7 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation,
-            driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -145,7 +144,6 @@ public class RobotContainer {
         driver.Outtake().onFalse(subsystems.OutakeFalse());
         driver.Pass().onTrue(subsystems.pass());
         driver.Pass().onFalse(subsystems.PrimeFalse());
-        // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
         driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
