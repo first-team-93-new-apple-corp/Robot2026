@@ -97,10 +97,14 @@ public class RobotContainer {
                         .withVelocityY(driver.DriveUp())
                         .withRotationalRate(driver.DriveTheta())));
 
-        // driver.robotRel()
-        //         .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-        //                         .withVelocityY(driver.DriveUp())
-        //                         .withRotationalRate(driver.DriveTheta())));
+        driver.robotRel()
+                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+                                .withVelocityY(driver.DriveUp())
+                                .withRotationalRate(driver.DriveTheta())));
+        driver.robotRel()
+                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
+                                .withVelocityY(driver.DriveUp())
+                                .withRotationalRate(driver.DriveTheta())));
 
         // final var idle = new SwerveRequest.Idle();
         // RobotModeTriggers.disabled().whileTrue(
@@ -142,9 +146,14 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
-        driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
+        // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
+        RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
+        RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
+        
+        RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Autonomous Start")));
+        RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Teleop Start")));
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
@@ -159,19 +168,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        // final var idle = new SwerveRequest.Idle();
-        // return Commands.sequence(
-        //         // Reset our field centric heading to match the robot
-        //         // facing away from our alliance station wall (0 deg).
-        //         drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        //         // Then slowly drive forward (away from us) for 5 seconds.
-        //         drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-        //                 .withVelocityY(0)
-        //                 .withRotationalRate(0))
-        //                 .withTimeout(5.0),
-        //         // Finally idle for the rest of auton
-        //         drivetrain.applyRequest(() -> idle));
         return auto.autoChooser.getSelected().command();
     }
 

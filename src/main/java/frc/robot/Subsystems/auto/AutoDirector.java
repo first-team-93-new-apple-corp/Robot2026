@@ -299,7 +299,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-        tracker.addShootPath("Shoot Center Left");
+        tracker.addShootPath("Shoot Center");
         tracker.endAuto();
         return new Auto("IntakeDepotScore", tracker, startPose);
     }

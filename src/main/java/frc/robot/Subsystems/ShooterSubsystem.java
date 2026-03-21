@@ -54,6 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private DigitalInput hoodLimitSwitch;
 
     private Angle lastSetpoint;
+    private AngularVelocity lastShooterSetpoint;
 
     private final MotionMagicVelocityVoltage m_velRequest;
 
@@ -140,6 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
 
         lastSetpoint = Rotations.of(0);
+        lastShooterSetpoint = RotationsPerSecond.of(0);
 
         // hoodCanCoder = new CANcoder(Constants.CAN.hoodEncoder);
 
@@ -188,6 +190,9 @@ public class ShooterSubsystem extends SubsystemBase {
         
         onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
         onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
+
+        SmartDashboard.putBoolean("Shooter Ready?", shooterAtSetpoint(lastShooterSetpoint));
+        
         // if (uniLogger != null) uniLogger.flushAll();
     }
 
@@ -212,11 +217,13 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setLeftShooterVelocity(AngularVelocity velocity) {
         topLeftShooter.setControl(m_velRequest
                 .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
+        lastShooterSetpoint = velocity;
     }
 
     public void setRightShooterVelocity(AngularVelocity velocity) {
         topRightShooter.setControl(m_velRequest
                 .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
+        lastShooterSetpoint = velocity;
     }
 
     public void setMasterVelocity(AngularVelocity velocity) {
