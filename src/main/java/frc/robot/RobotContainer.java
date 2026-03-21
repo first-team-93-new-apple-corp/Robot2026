@@ -144,6 +144,11 @@ public class RobotContainer {
         driver.Outtake().onFalse(subsystems.OutakeFalse());
         driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
+        driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
+        driver.manShoot().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
+        driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
+
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
 
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
