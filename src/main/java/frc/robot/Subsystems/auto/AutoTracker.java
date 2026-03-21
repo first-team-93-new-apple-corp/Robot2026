@@ -159,6 +159,15 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
+    public void addShootPathCenter(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            followSnapShoot(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void shootWhilstGoingTo(Supplier<Pose2d> pose) {
         Command followPath = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
         Command delayedShoot = Commands.waitSeconds(0.75)
