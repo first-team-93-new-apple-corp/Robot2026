@@ -250,11 +250,12 @@ public class Constants {
             public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
             // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08
             // public static final double EfficiencyMultiplierDepotRight =  1.4; // 3.61
-
+            // Climber Controls moving to sticks 
+            // Shooter controls move to xbox
 
         }
         public class AutoShoot {
-            public static final double hubHeightOffset = 1.25;
+            public static final double hubHeightOffset = 1;
             public static final double hubXOffset = 0.35;
             public static final double PrimeEfficiency = 1.3;
         }

@@ -62,7 +62,7 @@ public class TwoStickDriveXboxOp extends XboxDrive {
 
     @Override
     public Trigger Shoot(){
-        return RightStick.button(Constants.Thrustmaster.Trigger).or(Xbox.rightStick());
+        return RightStick.button(Constants.Thrustmaster.Trigger).or(Xbox.rightStick()).or(Xbox.leftStick());
     }
 
     @Override
@@ -78,4 +78,14 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     public Trigger resetPose() {
         return LeftStick.button(3);
     }
+    
+    @Override 
+    public Trigger autoExtendClimber() {
+        return RightStick.povUp();
+    }
+     @Override 
+    public Trigger autoRetractClimber() {
+        return RightStick.povDown();
+    }
+
 }
