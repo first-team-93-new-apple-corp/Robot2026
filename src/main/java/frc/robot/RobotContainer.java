@@ -101,10 +101,6 @@ public class RobotContainer {
                 .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                 .withVelocityY(driver.DriveUp())
                                 .withRotationalRate(driver.DriveTheta())));
-        driver.robotRel()
-                .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                                .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta())));
 
         // final var idle = new SwerveRequest.Idle();
         // RobotModeTriggers.disabled().whileTrue(
@@ -152,9 +148,6 @@ public class RobotContainer {
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
         
-        RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Autonomous Start")));
-        RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Teleop Start")));
-
         driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
         driver.autoRetractClimber()
                 .onTrue(subsystems.climber().commands.manualRetract()
