@@ -118,6 +118,8 @@ public class AutoTracker extends SequentialCommandGroup {
      */
     public void Intake(PathPlannerPath path) {
         addCommands(subsystems.Intake());
+        // Command cmdHooperFix = subsystems.intake().commands.autoPivotUp().andThen(subsystems.Intake());
+        // addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).alongWith(cmdHooperFix));
         addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
         // addCommands(AutoBuilder.followPath(path));
     }

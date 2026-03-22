@@ -85,9 +85,9 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 5;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 7;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 8;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 6;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 7;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;

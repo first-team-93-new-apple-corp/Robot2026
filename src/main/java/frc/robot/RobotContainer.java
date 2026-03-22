@@ -84,7 +84,7 @@ public class RobotContainer {
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-        RobotController.setBrownoutVoltage(Volts.of(7));
+        RobotController.setBrownoutVoltage(Volts.of(6.5));
 
         configureBindings();
 
@@ -106,8 +106,8 @@ public class RobotContainer {
         //         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver.brake().whileTrue(drivetrain
-                .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
+        // driver.brake().whileTrue(drivetrain
+        //         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
