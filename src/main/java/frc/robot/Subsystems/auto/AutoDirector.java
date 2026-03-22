@@ -331,7 +331,7 @@ public class AutoDirector {
         tracker.addOverBumpLeft("BakcOverbump");
         tracker.addShootPathCenter("Shoot Center");
         tracker.endAuto();
-        return new Auto("Depot Shoot Center Right", tracker, startPose);
+        return new Auto("Depot Shoot Center Right", tracker);
     }
     public Auto ScoreCenter() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
