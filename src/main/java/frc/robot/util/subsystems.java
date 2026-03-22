@@ -79,8 +79,8 @@ public record subsystems(
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(efficiencyCalculate())));
-
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity()));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(efficiencyCalculate())));
         return cmds.withTimeout(1);
     }
 

@@ -308,7 +308,7 @@ public class AutoDirector {
     public Auto DepotScoreCenterLeft() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         tracker.addShootPathCenterSide("Shoot Center Left");
         tracker.endAuto();
         return new Auto("IntakeDepotScoreLeft", tracker, startPose);
@@ -316,21 +316,10 @@ public class AutoDirector {
     public Auto DepotScoreCenterRight() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         tracker.addShootPathCenterSide("Shoot Center Right");
         tracker.endAuto();
         return new Auto("IntakeDepotScoreRight", tracker, startPose);
-    }
-
-    public Auto OverBumpLeftShootCenter(){
-        AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addOverBumpLeft("Overbump");
-        tracker.addIntakeChoreo("L_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("BakcOverbump");
-        tracker.addShootPathCenter("Shoot Center");
-        tracker.endAuto();
-        return new Auto("CenterShootCenter", tracker);
     }
 
     public Auto OverBumpLeftShootCenter(){
