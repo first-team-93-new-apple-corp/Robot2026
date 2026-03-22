@@ -151,6 +151,7 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
         SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putData("IntakeZero",commands.setIntakeZero());
     }
 
     public class IntakeCommands {
@@ -222,6 +223,12 @@ public class IntakeSubsystem extends SubsystemBase {
                     intakePivotMotor.getConfigurator().apply(intakePivotConfig);
                 }
 
+            }).ignoringDisable(true);
+        }
+
+        public Command setIntakeZero (){
+            return runOnce(() -> {
+                    pivotEncoder.setPosition(0);
             }).ignoringDisable(true);
         }
     }
