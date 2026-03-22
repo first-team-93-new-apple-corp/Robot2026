@@ -175,7 +175,7 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-        public static final double idleSpeed = 0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 45;
         public static final double pivotkI = 0.5;
@@ -187,8 +187,8 @@ public class Constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(120);
-        public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
+        public static final Angle pivotDownPosition = Degrees.of(100);
+        public static final Angle pivotMiddlePosition = Degrees.of(30);
         // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1
@@ -250,10 +250,18 @@ public class Constants {
             public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
             // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08
             // public static final double EfficiencyMultiplierDepotRight =  1.4; // 3.61
-
+            // Climber Controls moving to sticks 
+            // Shooter controls move to xbox
 
         }
-
+        public class AutoShoot {
+            public static final double hubHeightOffset = 0.5;
+            public static final double hubXOffset = 0.35;
+            public static final double PrimeEfficiencyFar = 1.5; // Need to tune
+            public static final double PrimeEfficiencyClose = 1.43; // Need to tune
+            public static final double ShooterHeight = 0.6;
+            public static final double RangeThreshold = 3;  
+        }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;

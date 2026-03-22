@@ -101,6 +101,8 @@ public interface ControllerSchemeIO {
 
     public Trigger testingButton();
 
+    public Trigger Pass();
+
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

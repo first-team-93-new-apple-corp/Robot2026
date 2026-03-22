@@ -7,6 +7,7 @@ import com.ctre.phoenix.platform.can.AutocacheState;
 
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Constants;
+import frc.robot.Constants.ManipulationConstants.shoot;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -61,7 +62,12 @@ public record subsystems(
     public Command shoot() {
         return manipulation.commands.shootCommand();
     }
-
+    public Command pass() {
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
+        return cmds.withTimeout(0.5);
+    }
     public Command shootFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
@@ -72,6 +78,7 @@ public record subsystems(
 
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(efficiencyCalculate())));
 
         return cmds.withTimeout(1);
@@ -87,48 +94,54 @@ public record subsystems(
 
     public Command PrimeHubClose() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getClose()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubCloseSide() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getCloseSide()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubFar() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getFar()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubLeft() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getLeft()));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubRight() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getRight()));
         return cmds.withTimeout(1);
     }
 
-    public double efficiencyCalculate() {
-        double hubX = AutoConstants.Hub.getHub().getX();
-        double hubY = AutoConstants.Hub.getHub().getY();
-        double distance = Math.sqrt(Math.pow(hubX - drivetrain.getState().Pose.getX(), 2)
-                + Math.pow(hubY - drivetrain.getState().Pose.getY(), 2));
-        double a = 0.0444713;
-        double b = -0.474115;
-        double c = 1.90894;
-        double d = -0.803343;
-        return a * (Math.pow(distance, 3)) + b * (Math.pow(distance, 2)) + c * distance + d;
-    }
+    // public double efficiencyCalculate() {
+    //     double hubX = AutoConstants.Hub.getHub().getX();
+    //     double hubY = AutoConstants.Hub.getHub().getY();
+    //     double distance = Math.sqrt(Math.pow(hubX - drivetrain.getState().Pose.getX(), 2)
+    //             + Math.pow(hubY - drivetrain.getState().Pose.getY(), 2));
+    //     double a = 0.0444713;
+    //     double b = -0.474115;
+    //     double c = 1.90894;
+    //     double d = -0.803343;
+    //     return a * (Math.pow(distance, 3)) + b * (Math.pow(distance, 2)) + c * distance + d;
+    // }
 
     public Command AutoPrime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(),
@@ -138,6 +151,7 @@ public record subsystems(
 
     public Command PrimeFalse() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+        cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter.commands.stopShooter());
         cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
@@ -157,7 +171,7 @@ public record subsystems(
         // var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(manipulation.commands.idleCommand());
-        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(0)));
+        cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
     }
 

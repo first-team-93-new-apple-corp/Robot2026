@@ -65,7 +65,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Network Tables
-    private NTSubsystem networkTables = new NTSubsystem(new Pose2d(), new Pose2d());
+    private NTSubsystem networkTables = new NTSubsystem();
 
     // Vision
     // * Quest
@@ -80,8 +80,7 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation,
-            driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -134,6 +133,7 @@ public class RobotContainer {
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
+        driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
 
@@ -142,10 +142,11 @@ public class RobotContainer {
 
         driver.Outtake().onTrue(subsystems.Outake());
         driver.Outtake().onFalse(subsystems.OutakeFalse());
-        driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
+        driver.Pass().onTrue(subsystems.pass());
+        driver.Pass().onFalse(subsystems.PrimeFalse());
 
         driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
-        driver.manShoot().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
         driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
         driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
@@ -175,7 +176,7 @@ public class RobotContainer {
     }
 
     public void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         SmartDashboard.putNumberArray("Target Shooting Math", test);
