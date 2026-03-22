@@ -96,17 +96,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     @Override
     public void setControl(SwerveRequest request) {
-        try {
-            // Log the concrete request type and the request.toString() so we can
-            // see what the drivetrain received in the logs. Flushing ensures the
-            // text appears promptly in the roboRIO console.
-            String cls = request == null ? "null" : request.getClass().getSimpleName();
-            System.out.printf("[Drivetrain.setControl] %s %s\\n", cls, request == null ? "null" : request.toString());
-            System.out.flush();
-        } catch (Exception e) {
-            System.out.println("[Drivetrain.setControl] (toString failed)");
-            System.out.flush();
-        }
+        // try {
+        //     // Log the concrete request type and the request.toString() so we can
+        //     // see what the drivetrain received in the logs. Flushing ensures the
+        //     // text appears promptly in the roboRIO console.
+        //     String cls = request == null ? "null" : request.getClass().getSimpleName();
+        //     System.out.printf("[Drivetrain.setControl] %s %s\\n", cls, request == null ? "null" : request.toString());
+        //     System.out.flush();
+        // } catch (Exception e) {
+        //     System.out.println("[Drivetrain.setControl] (toString failed)");
+        //     System.out.flush();
+        // }
         super.setControl(request);
     }
 

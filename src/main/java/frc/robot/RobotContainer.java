@@ -107,8 +107,8 @@ public class RobotContainer {
         //         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver.brake().whileTrue(drivetrain
-                .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
+        // driver.brake().whileTrue(drivetrain
+        //         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -148,7 +148,7 @@ public class RobotContainer {
         // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
-        driver.manShoot().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
         driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
         driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
