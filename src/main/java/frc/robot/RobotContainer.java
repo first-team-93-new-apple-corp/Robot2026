@@ -85,7 +85,7 @@ public class RobotContainer {
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-        RobotController.setBrownoutVoltage(Volts.of(7));
+        RobotController.setBrownoutVoltage(Volts.of(6.5));
 
         configureBindings();
 

@@ -124,8 +124,8 @@ public class AutoDirector {
                     // ----------------------------------------------------------------
         },
         new PPHolonomicDriveController(
-            new PIDConstants(2, 0.0, 0.1),
-            new PIDConstants(2, 0.0, 0.0)),
+            new PIDConstants(2, 0.0, 0.01),
+            new PIDConstants(1.5, 0.0, 0.01)),
         config,
         () -> {
             // Boolean supplier that controls when the path will be mirrored for the red
@@ -312,7 +312,7 @@ public class AutoDirector {
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
         tracker.addShootPath("Shoot Center");
         tracker.endAuto();
-        return new Auto("Depot Shoot Center left", tracker, startPose);
+        return new Auto("Depot Shoot Center Left", tracker, startPose);
     }
     public Auto DepotScoreCenterRight() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
@@ -320,7 +320,7 @@ public class AutoDirector {
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
         tracker.addShootPath("Shoot Center Right");
         tracker.endAuto();
-        return new Auto("Depot shoot cetner right", tracker, startPose);
+        return new Auto("Depot Shoot Center Right", tracker, startPose);
     }
     public Auto ScoreCenter() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
