@@ -121,16 +121,6 @@ public class AutoTracker extends SequentialCommandGroup {
         // Command cmdHooperFix = subsystems.intake().commands.autoPivotUp().andThen(subsystems.Intake());
         // addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).alongWith(cmdHooperFix));
         addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
-        // 
-        
-        addCommands(AutoBuilder.followPath(path));
-    }
-
-    public void Intake(PathPlannerPath path) {
-        addCommands(subsystems.Intake());
-        // Command cmdHooperFix = subsystems.intake().commands.autoPivotUp().andThen(subsystems.Intake());
-        // addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).alongWith(cmdHooperFix));
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
         // addCommands(AutoBuilder.followPath(path));
     }
 
@@ -284,37 +274,6 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
 
         addCommands(driveCmd.andThen(subsystems.AutoPrime().andThen(delayedShoot)));
-    }
-     public void addOverBumpLeft(String name){
-        try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            overBump(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addOverBumpRight(String name){
-         try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            overBump(path.mirrorPath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void overBump(PathPlannerPath path){
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
-        addCommands(Commands.runOnce(()->subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path))).withTimeout(3));
-    }
-
-    public void addIntakeChoreo(String name){
-         try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            Intake(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public ShootingData getShootingData() {
