@@ -16,13 +16,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.Slot0Configs;
-// import com.ctre.phoenix6.controls.DutyCycleOut;
 
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.IntakeConstants;
@@ -33,7 +29,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private TalonFX intakePivotMotor;
 
     private CANcoder pivotEncoder;
-    private CANcoderConfiguration pivotEncoderConfig;
 
     private TalonFXConfiguration intakePivotConfig;
     private TalonFXConfiguration intakeRollerConfig;
@@ -57,7 +52,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
-        pivotEncoderConfig = new CANcoderConfiguration();
 
         // Encoder
         // Encoder is handled entirly through Phoenix tuner and if you wish to zero it

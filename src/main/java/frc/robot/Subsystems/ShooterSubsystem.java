@@ -9,22 +9,17 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.Subsystems.auto.AutoConstants.PresetShootingPoint;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
-import frc.robot.util.subsystems;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -44,7 +39,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private TalonFX hoodMotor;
 
-    // public CANcoder hoodCanCoder;
 
     private TalonFXConfiguration allShooterConfig;
     private TalonFXConfiguration hoodConfig;
@@ -64,8 +58,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double onTheFlyHoodDegrees = 0;
     private double onTheFlyRPM = 0;
-
-    private final NeutralOut m_neutral;
 
     // Telemetry registry
     // private UniversalNTLogger uniLogger;
@@ -140,14 +132,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         hoodMotor.getConfigurator().apply(hoodConfig);
 
-        // hoodLimitSwitch = new DigitalInput(Constants.CAN.hoodLimitSwitch);
-
         lastSetpoint = Rotations.of(0);
         lastShooterSetpoint = RotationsPerSecond.of(0);
-
-        // hoodCanCoder = new CANcoder(Constants.CAN.hoodEncoder);
-
-        m_neutral = new NeutralOut();
 
         SmartDashboard.putNumber("setVelocity (RPS)", 0);
         SmartDashboard.putNumber("setHood (Degrees)", 0);

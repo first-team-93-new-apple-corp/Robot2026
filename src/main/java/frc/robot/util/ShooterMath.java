@@ -4,12 +4,8 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
 
@@ -25,6 +21,7 @@ public class ShooterMath {
                 generateTotalDeterminant(point1, point2, point3));
         double b = calculateCoefficent(generatePartialDeterminant("b", point1, point2, point3),
                 generateTotalDeterminant(point1, point2, point3));
+        @SuppressWarnings("unused")
         double c = calculateCoefficent(generatePartialDeterminant("c", point1, point2, point3),
                 generateTotalDeterminant(point1, point2, point3));
 
@@ -232,10 +229,14 @@ public class ShooterMath {
         
         // From in front of trench v should be 7.41 m/s and angle should be 1.11 rad
         // 36 rps, 26 rad
+        @SuppressWarnings("unused")
         double velocityMoving = shootingDataWhileMoving[1];
+        @SuppressWarnings("unused")
         double angleMoving = shootingDataWhileMoving[0];
         double adjustmentMoving = shootingDataWhileMoving[2];
+        @SuppressWarnings("unused")
         AngularVelocity rpmMoving = speedToMotorRotations(shooter_velocity);
+        @SuppressWarnings("unused")
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
 
         // Stationary shooting

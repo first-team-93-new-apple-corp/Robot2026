@@ -4,21 +4,13 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
-import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -31,46 +23,6 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public AutoTracker(subsystems subsystems) {
         this(subsystems, new Pose2d());
-    }
-
-    private Command Intake() {
-        return (subsystems.intake().commands.intake());
-    }
-
-    private Command Outtake() {
-        return (subsystems.intake().commands.outtake());
-    }
-
-    private Command Idle() {
-        return (subsystems.intake().commands.idle());
-    }
-
-    private Command wigglePivot(Time time) {
-        return (subsystems.intake().commands.wigglePivot(time));
-    }
-
-    private Command pivotUp() {
-        return (subsystems.intake().commands.autoPivotUp());
-    }
-
-    private Command pivotDown() {
-        return (subsystems.intake().commands.autoPivotDown());
-    }
-
-    private Command pivotMiddle() {
-        return (subsystems.intake().commands.autoPivotUp());
-    }
-
-    private Command manipIdle() {
-        return subsystems.manipulation().commands.idleCommand();
-    }
-
-    private Command manipIntake() {
-        return (subsystems.manipulation().commands.intakeCommand());
-    }
-
-    private Command manipOuttake() {
-        return (subsystems.manipulation().commands.outtakeCommand());
     }
 
     private double getDrivePoseX() {
@@ -124,14 +76,6 @@ public class AutoTracker extends SequentialCommandGroup {
         // 
         
         addCommands(AutoBuilder.followPath(path));
-    }
-
-    public void Intake(PathPlannerPath path) {
-        addCommands(subsystems.Intake());
-        // Command cmdHooperFix = subsystems.intake().commands.autoPivotUp().andThen(subsystems.Intake());
-        // addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).alongWith(cmdHooperFix));
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
-        // addCommands(AutoBuilder.followPath(path));
     }
 
     public void addShootPath(String pathName) {
@@ -322,37 +266,6 @@ public class AutoTracker extends SequentialCommandGroup {
                 getDriveSpeedY());
     }
 
-    public void addOverBumpLeft(String name){
-        try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            overBump(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addOverBumpRight(String name){
-         try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            overBump(path.mirrorPath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void overBump(PathPlannerPath path){
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
-        addCommands(Commands.runOnce(()->subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path))).withTimeout(3));
-    }
-
-    public void addIntakeChoreo(String name){
-         try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            Intake(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public void endAuto() {
         addCommands(subsystems.IntakeFalse());
