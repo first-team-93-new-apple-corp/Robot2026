@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -39,9 +40,11 @@ public class NTSubsystem {
 		SmartDashboard.putData("Field", m_field);
 		m_field.setRobotPose(new Pose2d());
 		m_field.getObject("Quest").setPose(new Pose2d());
-		SignalLogger.setPath("/media/sda1/logs/");  // TODO: change
-		SignalLogger.enableAutoLogging(true);
-		SignalLogger.start();
+		if (!Utils.isSimulation()) {
+			SignalLogger.setPath("/media/sda1/logs/"); // TODO: change
+			SignalLogger.enableAutoLogging(true);
+			SignalLogger.start();
+		}
 	}
 
 	public class ntSwerve {
@@ -68,8 +71,10 @@ public class NTSubsystem {
 
 		/* Robot pose for field positioning */
 		// private final NetworkTable table = ntInst.getTable("Pose");
-		// private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
-		// private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+		// private final DoubleArrayPublisher fieldPub =
+		// table.getDoubleArrayTopic("robotPose").publish();
+		// private final StringPublisher fieldTypePub =
+		// table.getStringTopic(".type").publish();
 
 		/* Mechanisms to represent the swerve module states */
 		private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] { new Mechanism2d(1, 1),
@@ -201,7 +206,7 @@ public class NTSubsystem {
 		public void updatePiPose(Pose3d pose) {
 			m_field.getObject("PI").setPose(pose.toPose2d());
 		}
-		
+
 		public void addTrajectory(Trajectory traj) {
 			m_field.getRobotObject().setTrajectory(traj);
 		}

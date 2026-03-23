@@ -103,6 +103,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         SmartDashboard.putData("Brake IntakePivot", commands.brakePivotMotor(true));
         SmartDashboard.putData("Coast IntakePivot", commands.brakePivotMotor(false));
+        SmartDashboard.putData("IntakeZero", commands.setIntakeZero());
+
     }
 
     public void setRollerSpeed(double speed) {
@@ -145,7 +147,6 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
         SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putData("IntakeZero",commands.setIntakeZero());
     }
 
     public class IntakeCommands {

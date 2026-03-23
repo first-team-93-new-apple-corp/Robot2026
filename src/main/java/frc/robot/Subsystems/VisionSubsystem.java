@@ -5,13 +5,18 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
 
+import com.ctre.phoenix6.Utils;
 
 // import org.photonvision.PhotonPoseEstimator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,12 +56,33 @@ public class VisionSubsystem extends SubsystemBase {
     private boolean resetting = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
-
+    private VisionSystemSim visionSim;
+    private SimCameraProperties cameraProp = new SimCameraProperties();
+    private PhotonCameraSim cameraSim;
     // Stuff
 
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
         this.drivetrain = drivetrain;
         this.networkTables = nt;
+        if (Utils.isSimulation()) {
+            visionSim = new VisionSystemSim("Vision Simulation");
+            visionSim.addAprilTags(kTagLayout);
+
+            cameraProp.setCalibration(1200, 800, Rotation2d.fromDegrees(80));
+            cameraProp.setCalibError(0.35, 0.08);
+            cameraProp.setFPS(50);
+            cameraProp.setAvgLatencyMs(35);
+            cameraProp.setLatencyStdDevMs(5);
+
+            cameraSim = new PhotonCameraSim(camera, cameraProp, kTagLayout);
+
+            cameraSim.enableRawStream(true);
+            cameraSim.enableProcessedStream(true);
+            cameraSim.enableDrawWireframe(true);
+
+            visionSim.addCamera(cameraSim, Constants.Photon.kRobotToCam);
+        }
+
         // Quest Initialization
         quest = new QuestNav();
         quest.setVersionCheckEnabled(false);
@@ -88,6 +114,10 @@ public class VisionSubsystem extends SubsystemBase {
      * measurements
      */
     public void visionPeriodic() {
+        if (Utils.isSimulation()) {
+            visionSim.update(drivetrain.getState().Pose);
+        }
+
         quest.commandPeriodic();
 
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
@@ -100,24 +130,24 @@ public class VisionSubsystem extends SubsystemBase {
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
         // if (!resetting) {
-            for (var result : camera.getAllUnreadResults()) {
-                visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-                if (visionEst.isEmpty()) {
-                    visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
-                    hasPiPoseData = false;
-                }
-                visionEst.ifPresent(
-                        est -> {
-                            // Change our trust in the measurement based on the tags we can see
-                            // var estStdDevs = getEstimationStdDevs();
-                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                            // est.timestampSeconds, estStdDevs);
-                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                            // est.timestampSeconds, Constants.Photon.standardDevs);
-                            piPose3d = est.estimatedPose;
-                            hasPiPoseData = true;
-                        });
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEst.isEmpty()) {
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                hasPiPoseData = false;
             }
+            visionEst.ifPresent(
+                    est -> {
+                        // Change our trust in the measurement based on the tags we can see
+                        // var estStdDevs = getEstimationStdDevs();
+                        // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
+                        // est.timestampSeconds, estStdDevs);
+                        // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
+                        // est.timestampSeconds, Constants.Photon.standardDevs);
+                        piPose3d = est.estimatedPose;
+                        hasPiPoseData = true;
+                    });
+        }
         // }
         if (hasPoseInit && !resetting) { // Skip quest if it hasn't started up yet
             if (quest.isTracking()) {
@@ -210,6 +240,6 @@ public class VisionSubsystem extends SubsystemBase {
                 resetting = true;
             });
         }
-        
+
     }
 }

@@ -245,7 +245,7 @@ public class AutoDirector {
         tracker.addOverBumpLeft("Overbump");
         tracker.addIntakeChoreo("L_Center_Intake");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("BakcOverbump");
+        tracker.addOverBumpLeft("BackOverbump");
         tracker.addShootPathCenter("Shoot Center");
         tracker.endAuto();
         return new Auto("HailMary Left", tracker);
@@ -336,7 +336,7 @@ public class AutoDirector {
     //     tracker.addOverBumpLeft("Overbump");
     //     tracker.addIntakeChoreo("L_Center_Intake");
     //     tracker.addCommands(autoSubsystems.intake().commands.stop());
-    //     tracker.addOverBumpLeft("BakcOverbump");
+    //     tracker.addOverBumpLeft("BackOverbump");
     //     tracker.addShootPathCenter("Shoot Center");
     //     tracker.endAuto();
     //     return new Auto("Depot Shoot Center Right", tracker);
