@@ -185,6 +185,9 @@ public class AutoDirector {
         Autos.add(DepotScoreCenter());
         Autos.add(DepotScoreCenterLeft());
         Autos.add(DepotScoreCenterRight());
+        Autos.add(OverBumpLeftShootCenter());
+
+        // Autos.add()
         // Autos.add(PreloadOutpost());
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
@@ -241,6 +244,17 @@ public class AutoDirector {
             return alliance.get();
         }
         return Alliance.Blue;
+    }
+
+    public Auto OverBumpLeftShootCenter(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addOverBumpLeft("Overbump");
+        tracker.addIntakeChoreo("L_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBumpLeft("BakcOverbump");
+        tracker.addShootPathCenter("Shoot Center");
+        tracker.endAuto();
+        return new Auto("HailMary Left", tracker);
     }
 
     public Auto PreloadCenter() {
@@ -310,7 +324,7 @@ public class AutoDirector {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
         tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
-        tracker.addShootPath("Shoot Center");
+        tracker.addShootPath("Shoot Center Left");
         tracker.endAuto();
         return new Auto("Depot Shoot Center Left", tracker, startPose);
     }
