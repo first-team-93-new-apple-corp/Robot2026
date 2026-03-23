@@ -10,6 +10,8 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -329,7 +331,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         public Command stopShooter() {
-            return Commands.runOnce(() -> setShooterControl(m_neutral));
+            return Commands.runOnce(() -> setShooterControl(new VoltageOut(5.0)));
         }
 
         // public Command stopHood() {

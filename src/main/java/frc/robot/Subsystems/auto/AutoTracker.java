@@ -89,14 +89,8 @@ public class AutoTracker extends SequentialCommandGroup {
         return subsystems.drivetrain().getState().Speeds.vyMetersPerSecond;
     }
 
-    public void addGroundIntakePath(String pathName, LinearVelocity startSpeed, LinearVelocity endSpeed) {
-        try {
-            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-            groundIntake(path, startSpeed, endSpeed);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    
+    
 
     /**
      * Loads a path and adds commands to intake as the robot drives to the first
@@ -105,10 +99,10 @@ public class AutoTracker extends SequentialCommandGroup {
      * @param pathName
      * @param endSpeed
      */
-    public void addIntakePath(String pathName, LinearVelocity endSpeed) {
+    public void addIntakePath(String pathName) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-            Intake(path, endSpeed);
+            Intake(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,32 +116,12 @@ public class AutoTracker extends SequentialCommandGroup {
      * @param endSpeed
      *                 The goal speed at the end of the path.
      */
-    public void Intake(PathPlannerPath path, LinearVelocity endSpeed) {
+    public void Intake(PathPlannerPath path) {
         addCommands(subsystems.Intake());
+        // Command cmdHooperFix = subsystems.intake().commands.autoPivotUp().andThen(subsystems.Intake());
+        // addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).alongWith(cmdHooperFix));
         addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
         // addCommands(AutoBuilder.followPath(path));
-    }
-
-    /**
-     * Intakes while following the path, then stops intaking and pivots up at the
-     * end of the path.
-     * 
-     * @param path
-     * @param startSpeed
-     * @param endSpeed
-     */
-    public void groundIntake(PathPlannerPath path, LinearVelocity startSpeed, LinearVelocity endSpeed) {
-        // Find the first point in the path and drive to it while intaking, then lower
-        // the arm and continue intaking as we follow the path, then stop intaking and
-        // pivot up at the end of the path.
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
-                startSpeed));
-        addCommands(subsystems.Intake());
-        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
-        ParallelCommandGroup parrallel = followPath.alongWith(subsystems.Intake());
-        addCommands(parrallel);
-        addCommands(AutoBuilder.pathfindToPose(AutoConstants.getFirstPoseInPath(path), AutoConstants.constraints,
-                endSpeed));
     }
 
     public void addShootPath(String pathName) {
@@ -305,6 +279,38 @@ public class AutoTracker extends SequentialCommandGroup {
     public ShootingData getShootingData() {
         return subsystems.shooter().getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
                 getDriveSpeedY());
+    }
+
+    public void addOverBumpLeft(String name){
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+            overBump(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addOverBumpRight(String name){
+         try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+            overBump(path.mirrorPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void overBump(PathPlannerPath path){
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
+        addCommands(Commands.runOnce(()->subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path))).withTimeout(3));
+    }
+
+    public void addIntakeChoreo(String name){
+         try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+            Intake(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void endAuto() {

@@ -124,8 +124,8 @@ public class AutoDirector {
                     // ----------------------------------------------------------------
         },
         new PPHolonomicDriveController(
-            new PIDConstants(2, 0.0, 0.1),
-            new PIDConstants(2, 0.0, 0.0)),
+            new PIDConstants(2, 0.0, 0.01),
+            new PIDConstants(1.5, 0.0, 0.01)),
         config,
         () -> {
             // Boolean supplier that controls when the path will be mirrored for the red
@@ -175,12 +175,13 @@ public class AutoDirector {
     }
 
     public void addAutos() {
-        autoChooser.setDefaultOption("Do Nothing", new Auto("Do Nothing", Commands.none()));
+        autoChooser.setDefaultOption("Do something", ScoreCenter());
         // Autos.add(Demo());
         // Autos.add(PreloadCenter());
         // Autos.add(PreloadLeftOrRight());
         // Autos.add(PreloadClimbLeft());
         // Autos.add(PreloadClimbRight());
+        Autos.add(ScoreCenter());
         Autos.add(DepotScoreCenter());
         Autos.add(DepotScoreCenterLeft());
         Autos.add(DepotScoreCenterRight());
@@ -300,32 +301,51 @@ public class AutoDirector {
     public Auto DepotScoreCenter() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Shoot Center");
         tracker.endAuto();
-        return new Auto("IntakeDepotScore", tracker, startPose);
+        return new Auto("Depot Shoot Center", tracker, startPose);
     }
     public Auto DepotScoreCenterLeft() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         tracker.addShootPathCenterSide("Shoot Center Left");
         tracker.endAuto();
-        return new Auto("IntakeDepotScoreLeft", tracker, startPose);
+        return new Auto("Depot Shoot Center Left", tracker, startPose);
     }
     public Auto DepotScoreCenterRight() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         tracker.addShootPathCenterSide("Shoot Center Right");
         tracker.endAuto();
         return new Auto("IntakeDepotScoreRight", tracker, startPose);
     }
 
+    public Auto OverBumpLeftShootCenter(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addOverBumpLeft("Overbump");
+        tracker.addIntakeChoreo("L_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBumpLeft("BakcOverbump");
+        tracker.addShootPathCenter("Shoot Center");
+        tracker.endAuto();
+        return new Auto("Depot Shoot Center Right", tracker);
+    }
+    public Auto ScoreCenter() {
+        Pose2d startPose = autoSubsystems.drivetrain().getPose();
+        AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
+        // tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addShootPath("Shoot Center");
+        tracker.endAuto();
+        return new Auto("Score Center Prelod", tracker, startPose);
+    }
+
     public Auto PreloadOutpost() {
         Pose2d startPose = autoSubsystems.drivetrain().getPose();
         AutoTracker tracker = new AutoTracker(autoSubsystems, startPose);
-        tracker.addIntakePath("depotIntake", MetersPerSecond.of(0.1));
+        tracker.addIntakePath("depotIntake");
         if (getAlliance() == Alliance.Red) {
             tracker.goToAndThenShootClose(()->new Pose2d(autoSubsystems.drivetrain().getState().Pose.getX() - 1,
                     autoSubsystems.drivetrain().getState().Pose.getY() - 1,

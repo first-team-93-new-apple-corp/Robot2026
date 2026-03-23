@@ -80,12 +80,11 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation,
-            driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
-        RobotController.setBrownoutVoltage(Volts.of(7));
+        RobotController.setBrownoutVoltage(Volts.of(6.5));
 
         configureBindings();
 
@@ -107,8 +106,8 @@ public class RobotContainer {
         //         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
-        driver.brake().whileTrue(drivetrain
-                .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
+        // driver.brake().whileTrue(drivetrain
+        //         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -145,10 +144,9 @@ public class RobotContainer {
         driver.Outtake().onFalse(subsystems.OutakeFalse());
         driver.Pass().onTrue(subsystems.pass());
         driver.Pass().onFalse(subsystems.PrimeFalse());
-        // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
 
         driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
-        driver.manShoot().onFalse(subsystems.shooter().commands.autoShoot(RotationsPerSecond.of(0)));
+        driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
         driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
         driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
