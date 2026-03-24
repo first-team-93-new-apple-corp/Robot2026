@@ -6,7 +6,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.Subsystems.ClimberSubsystem;
+// import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -18,13 +18,12 @@ public record subsystems(
         CommandSwerveDrivetrain drivetrain,
         VisionSubsystem questNav,
         ShooterSubsystem shooter,
-        ClimberSubsystem climber,
         IntakeSubsystem intake,
         ManipulationSubsystem manipulation,
         ControllerSchemeIO driver) {
-    public subsystems(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter, ClimberSubsystem climber,
+    public subsystems(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter,
             IntakeSubsystem intake, ManipulationSubsystem manipulation, ControllerSchemeIO driver) {
-        this(drivetrain, null, shooter, climber, intake, manipulation, driver);
+        this(drivetrain, null, shooter, intake, manipulation, driver);
     }
 
     public Command Intake() {

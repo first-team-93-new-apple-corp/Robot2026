@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
-import frc.robot.Subsystems.ClimberSubsystem;
+// import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -61,14 +61,14 @@ public class RobotContainer {
 
     // Subsystems
     // * Shooter
-    private ClimberSubsystem climber = new ClimberSubsystem();
+    // private ClimberSubsystem climber = new ClimberSubsystem();
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, climber, intake, manipulation, driver);
+    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -143,16 +143,16 @@ public class RobotContainer {
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
         
-        driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
-        driver.autoRetractClimber()
-                .onTrue(subsystems.climber().commands.manualRetract()
-                        .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
-                        .andThen(subsystems.climber().commands.Stop()));
+        // driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
+        // driver.autoRetractClimber()
+        //         .onTrue(subsystems.climber().commands.manualRetract()
+        //                 .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
+        //                 .andThen(subsystems.climber().commands.Stop()));
 
-        RobotModeTriggers.test()
-                .onTrue(subsystems.climber().commands.manualRetract()
-                        .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
-                        .andThen(subsystems.climber().commands.Stop()));
+        // RobotModeTriggers.test()
+        //         .onTrue(subsystems.climber().commands.manualRetract()
+        //                 .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
+        //                 .andThen(subsystems.climber().commands.Stop()));
     }
 
     public Command getAutonomousCommand() {
