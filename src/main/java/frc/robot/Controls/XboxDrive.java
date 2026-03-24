@@ -59,26 +59,6 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger manRetractClimber() {
-        return new Trigger(() -> false);
-    }
-
-    @Override
-    public Trigger manExtendClimber() {
-        return new Trigger(() -> false);
-    }
-
-    @Override
-    public Trigger autoRetractClimber() {
-        return Xbox.leftStick();
-    }
-
-    @Override
-    public Trigger autoExtendClimber() {
-        return Xbox.rightStick();
-    }
-
-    @Override
     public Trigger WiggleIntake() {
         return Xbox.rightBumper();
     }
@@ -117,12 +97,7 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger robotRel() {
         return new Trigger(() -> false);
     }
-
-    @Override
-    public Trigger resetClimberEncoder() {
-        return Xbox.back();
-    }
-
+    
     @Override
     public double halfRotate() {
         return InputTheta() * 0.5;

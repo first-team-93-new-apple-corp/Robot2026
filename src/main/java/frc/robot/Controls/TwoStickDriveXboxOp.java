@@ -77,12 +77,5 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     public Trigger resetPose() {
         return LeftStick.button(3);
     }
-    @Override
-    public Trigger autoRetractClimber() {
-        return RightStick.povDown();
-    }
-    @Override
-    public Trigger autoExtendClimber() {
-        return RightStick.povUp();
-    }
+
 }
