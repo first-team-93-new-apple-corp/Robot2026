@@ -169,7 +169,8 @@ public class RobotContainer {
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
                 subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
-                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees) };
+                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
+            subsystems.getShootingDataFallback().distance().in(Meters)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
         SmartDashboard.putNumberArray("Target Fallback Math", test2 );
     }
