@@ -105,7 +105,7 @@ public class RobotContainer {
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        driver.Shoot().whileTrue(subsystems.Prime().andThen(subsystems.shoot()));
+        driver.Shoot().whileTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
         driver.Prime().whileTrue(subsystems.Prime().repeatedly());
@@ -128,6 +128,7 @@ public class RobotContainer {
         driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+        driver.WiggleIntake().onFalse(subsystems.manipulation().commands.idleCommand());
 
         driver.Intake().onTrue(subsystems.Intake());
         driver.Intake().onFalse(subsystems.IntakeFalse());

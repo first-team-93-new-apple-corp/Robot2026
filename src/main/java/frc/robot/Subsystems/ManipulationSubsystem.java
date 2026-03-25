@@ -83,5 +83,11 @@ public class ManipulationSubsystem {
         public Command offCommand() {
             return Commands.runOnce(() -> off());
         }
+
+        public Command jam(){
+            Command cmd1 = Commands.runOnce(()->sideRollerMotor.set(-1));
+            Command cmd2 = Commands.runOnce(()->sideRollerMotor.set(0.2));
+            return cmd1.withTimeout(2).andThen(cmd2.withTimeout(0.2)).repeatedly();
+        }
     }
 }

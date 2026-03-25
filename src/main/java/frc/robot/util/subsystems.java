@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;

@@ -85,8 +85,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotionMagic.MotionMagicAcceleration = 6;
         intakePivotConfig.MotionMagic.MotionMagicJerk = 7;
 
-        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
 
         intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
         intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -196,7 +196,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.6;
+            double delay = 0.8;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
@@ -205,7 +205,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.6;
+            double delay = 0.8;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
