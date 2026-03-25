@@ -71,7 +71,8 @@ public record subsystems(
     public Command Prime() {
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity()));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(), () -> getShootingDataFallback().shooterVelocity()));
         // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingData().shooterAngle(), () -> getShootingData().shooterVelocity().times(efficiencyCalculate())));
         return cmds.withTimeout(1);
     }
@@ -186,6 +187,11 @@ public record subsystems(
     public ShootingData getShootingData() {
         return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
                 getDriveSpeedY());
+        
+    }
+    public ShootingData getShootingDataFallback() {
+        return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
+        
     }
 
 }

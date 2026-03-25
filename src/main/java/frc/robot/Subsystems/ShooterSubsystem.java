@@ -197,7 +197,10 @@ public class ShooterSubsystem extends SubsystemBase {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
         return data;
     }
-
+    public ShootingData getShootingDataFallback(double poseX, double poseY) {
+        data = ShooterMath.fallBack(poseX, poseY);
+        return data;
+    }
     public ShootingData getShootingData() {
         return data;
     }
