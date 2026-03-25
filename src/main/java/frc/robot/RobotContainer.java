@@ -71,10 +71,14 @@ public class RobotContainer {
     private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
+    
+
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(6.5));
 
         configureBindings();
+
+        
 
     }
 
