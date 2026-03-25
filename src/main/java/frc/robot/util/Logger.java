@@ -14,6 +14,8 @@ public class Logger extends DogLog {
     log(motor.getDescription() + "/Temperature", motor.getDeviceTemp().getValue());
     log(motor.getDescription() + "/FaultField", motor.getFaultField().getStatus().toString());
     log(motor.getDescription() + "/StickyFaultField", motor.getStickyFaultField().getStatus().toString());
+    log(motor.getDescription() + "/Connected", motor.isConnected());
+    log(motor.getDescription() + "/Alive", motor.isAlive());
 
   }
   public static void log(String key, Pose3d pose) {
