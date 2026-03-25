@@ -22,6 +22,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.util.Logger;
+import dev.doglog.*;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -147,6 +149,9 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
         SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+
+        Logger.log(intakePivotMotor);
+        Logger.log(intakeRollerMotor);
     }
 
     public class IntakeCommands {
