@@ -210,7 +210,7 @@ public class Constants {
         }
 
         public class idle {
-            public static final double bottomRollerSpeed = 0.1;
+            public static final double bottomRollerSpeed = 0;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
