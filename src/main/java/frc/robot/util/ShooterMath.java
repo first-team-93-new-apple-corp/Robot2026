@@ -2,14 +2,21 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Set;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants.AutoShoot;
+import frc.robot.Constants.ShooterConstants.AutoShoot.Ranges;
 
 public class ShooterMath {
+
+    
     public static double calculateAngle(double xinit, double yinit, double xmid, double ymid, double xfinal,
             double yfinal) {
 
@@ -204,7 +211,20 @@ public class ShooterMath {
                         .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
         return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
     }
+    public static ShootingData fallBack(double poseX, double poseY) {
+        double hubX = AutoConstants.Hub.getHub().getX();
+        double hubY = AutoConstants.Hub.getHub().getY();
+        double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
+        double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
 
+        if(distance>7.5) {
+            distance = 7.5;
+        }
+        int funny_math_idx = (int) Math.floor(distance*2-2);
+        Ranges range = AutoShoot.labels.get(funny_math_idx);
+
+        return new ShootingData(new Rotation2d(alignAngle),AutoShoot.map.get(range).shootingAngle(),AutoShoot.map.get(range).rps(),Meters.of(distance));
+    }
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
         double hubX = AutoConstants.Hub.getHub().getX();
         double hubY = AutoConstants.Hub.getHub().getY();
@@ -247,7 +267,11 @@ public class ShooterMath {
         // Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
 
     }
-
+    public static AngularVelocity speedToRPM(double velocity,double efficiency) {
+        return RotationsPerSecond.of(((velocity*efficiency) / (Math.PI * Units
+                                .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
+    }
+    
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
         return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb
                 * (velocity) / (Math.PI * Units

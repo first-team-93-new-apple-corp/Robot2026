@@ -1,8 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.units.measure.*;
+import frc.robot.util.ShooterMath;
+import frc.robot.util.ShootingMap;
 
 import static edu.wpi.first.units.Units.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.pathplanner.lib.path.PathConstraints;
 
@@ -259,6 +264,53 @@ public class Constants {
             public static final double PrimeEfficiencyClose = 1.43; // Need to tune
             public static final double ShooterHeight = 0.6;
             public static final double RangeThreshold = 3;  
+
+            public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1))),
+                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1))),
+                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),ShooterMath.speedToRPM(6.44,1))),
+                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),ShooterMath.speedToRPM(6.80,1))),
+                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),ShooterMath.speedToRPM(7.16,1))),
+                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),ShooterMath.speedToRPM(7.50,1))),
+                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),ShooterMath.speedToRPM(7.83,1))),
+                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),ShooterMath.speedToRPM(8.15,1))),
+                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.46,1))),
+                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.6,1))),
+                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),ShooterMath.speedToRPM(9.04,1))),
+                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.32,1))),
+                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
+            );
+            public static final Map<Integer,Ranges> labels = Map.ofEntries( // Labeling each segment
+                Map.entry(0, Ranges.Range1to1pt5),
+                Map.entry(1, Ranges.Range1pt5to2),
+                Map.entry(2, Ranges.Range2to2pt5),
+                Map.entry(3, Ranges.Range2pt5to3),
+                Map.entry(4, Ranges.Range3to3pt5),
+                Map.entry(5, Ranges.Range3pt5to4),
+                Map.entry(6, Ranges.Range4to4pt5),
+                Map.entry(7, Ranges.Range4pt5to5),
+                Map.entry(8, Ranges.Range5to5pt5),
+                Map.entry(9, Ranges.Range5pt5to6),
+                Map.entry(10, Ranges.Range6to6pt5),
+                Map.entry(11, Ranges.Range6pt5to7),
+                Map.entry(12, Ranges.Range7to7pt5)
+            );
+            public enum Ranges {
+                // Each enum stores the numeric value previously used in the map (lower bound)
+                Range1to1pt5,
+                Range1pt5to2,
+                Range2to2pt5,
+                Range2pt5to3,
+                Range3to3pt5,
+                Range3pt5to4,
+                Range4to4pt5,
+                Range4pt5to5,
+                Range5to5pt5,
+                Range5pt5to6,
+                Range6to6pt5,
+                Range6pt5to7,
+                Range7to7pt5
+            }
         }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
