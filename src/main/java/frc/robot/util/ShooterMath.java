@@ -223,7 +223,7 @@ public class ShooterMath {
         int funny_math_idx = (int) Math.floor(distance*2-2);
         Ranges range = AutoShoot.labels.get(funny_math_idx < 1 ? 1 : funny_math_idx);
 
-        return new ShootingData(new Rotation2d(alignAngle),AutoShoot.map.get(range).shootingAngle(),AutoShoot.map.get(range).rps(),Meters.of(distance));
+        return new ShootingData(new Rotation2d(alignAngle),Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),AutoShoot.map.get(range).rps(),Meters.of(distance));
     }
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
         double hubX = AutoConstants.Hub.getHub().getX();

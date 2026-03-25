@@ -359,7 +359,7 @@ public class ShooterSubsystem extends SubsystemBase {
                     Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
             return angle.alongWith(shoot);
         }
-
+       
         public Command velocityAndHood(Supplier<PresetShootingPoint> point){
             var angle = Commands.sequence(
                     Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())),
