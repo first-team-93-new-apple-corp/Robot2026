@@ -23,7 +23,6 @@ import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
-import frc.robot.generated.TunerConstants;
 import frc.robot.util.NTSubsystem;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
