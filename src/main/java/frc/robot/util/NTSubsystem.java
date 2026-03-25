@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,11 +39,6 @@ public class NTSubsystem {
 		SmartDashboard.putData("Field", m_field);
 		m_field.setRobotPose(new Pose2d());
 		m_field.getObject("Quest").setPose(new Pose2d());
-		// if (!Utils.isSimulation()) {
-		// 	SignalLogger.setPath("/media/sda1/logs/"); // TODO: change
-		// 	SignalLogger.enableAutoLogging(true);
-		// 	SignalLogger.start();
-		// }
 	}
 
 	public class ntSwerve {
