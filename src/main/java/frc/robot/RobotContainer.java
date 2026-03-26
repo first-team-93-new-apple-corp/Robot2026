@@ -66,7 +66,7 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
+    public subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -163,7 +163,7 @@ public class RobotContainer {
     }
 
     public void visionPeriodic() {
-        visionSubsystem.visionPeriodic();
+        visionSubsystem.questPeriodic();
     }
 
     public void telePeriodic() {
