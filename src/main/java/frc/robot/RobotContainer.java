@@ -115,10 +115,10 @@ public class RobotContainer {
         driver.Shoot().whileTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.Prime().whileTrue(subsystems.Prime().repeatedly());
+        driver.Prime().whileTrue(subsystems.Prime());
         driver.Prime().onFalse(subsystems.PrimeFalse());
 
-        driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
+        driver.DriverPrime().whileTrue(subsystems.DriverPrime());
 
         driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
         driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
@@ -176,6 +176,7 @@ public class RobotContainer {
             subsystems.getShootingDataFallback().distance().in(Meters)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
         SmartDashboard.putNumberArray("Target Fallback Math", test2 );
+        
     }
 
     public Command seed() {
