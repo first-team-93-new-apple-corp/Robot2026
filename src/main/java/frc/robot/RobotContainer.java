@@ -32,7 +32,7 @@ import dev.doglog.*;
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-
+    public static double Efficiency_Tuning = 1.8;
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -176,7 +176,6 @@ public class RobotContainer {
             subsystems.getShootingDataFallback().distance().in(Meters)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
         SmartDashboard.putNumberArray("Target Fallback Math", test2 );
-        
     }
 
     public Command seed() {

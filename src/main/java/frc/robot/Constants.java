@@ -229,8 +229,8 @@ public class Constants {
 
     public class ShooterConstants {
         public class HeadingController {
-            public static final double kP = 6;
-            public static final double kI = 0.05;
+            public static final double kP = 2;
+            public static final double kI = 0;
             public static final double kD = 0.1;
         }
         public class ShooterMotorConfigs {
@@ -266,8 +266,8 @@ public class Constants {
             public static final double RangeThreshold = 3;  
 
             public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1.8))),
-                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1.8))),
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1.7))), // tuned
+                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1.65))), // tuned
                 Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),ShooterMath.speedToRPM(6.44,1.8))),
                 Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),ShooterMath.speedToRPM(6.80,1.8))),
                 Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),ShooterMath.speedToRPM(7.16,1.8))),

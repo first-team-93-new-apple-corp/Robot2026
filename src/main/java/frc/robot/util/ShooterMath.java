@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.AutoShoot;
 import frc.robot.Constants.ShooterConstants.AutoShoot.Ranges;
@@ -275,7 +276,8 @@ public class ShooterMath {
     }
 
     public static AngularVelocity speedToRPM(double velocity, double efficiency) {
-        return RotationsPerSecond.of(((velocity * efficiency) / (Math.PI * Units
+        // Make sure to change efficiecy tuning to efficiency
+        return RotationsPerSecond.of(((velocity * RobotContainer.Efficiency_Tuning) / (Math.PI * Units
                 .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
 
