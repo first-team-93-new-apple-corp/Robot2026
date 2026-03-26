@@ -120,12 +120,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         quest.commandPeriodic();
 
-        SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
-        SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
-        SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
-        SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
-        SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
-        SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
+        
 
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
@@ -191,6 +186,15 @@ public class VisionSubsystem extends SubsystemBase {
         questPoseAverager.addPose(questPose3d);
         robotPoseAverager.addPose(robotPose3d);
         piPoseAverager.addPose(piPose3d);
+    }
+
+    public void visionPeriodic2(){
+        SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
+        SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
+        SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
+        SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
+        SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
+        SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
     }
 
     public String questPoseInfo() {

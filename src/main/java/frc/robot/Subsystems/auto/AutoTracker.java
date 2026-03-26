@@ -94,7 +94,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void Intake(PathPlannerPath path) {
         addCommands(subsystems.Intake());
         addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
-        addCommands(AutoBuilder.followPath(path));
+        // addCommands(AutoBuilder.followPath(path));
     }
     
     
@@ -234,8 +234,8 @@ public class AutoTracker extends SequentialCommandGroup {
 
     private void overBump(PathPlannerPath path) {
         addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
-        addCommands(Commands.runOnce(() -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                .withTimeout(3));
+        // addCommands(Commands.runOnce(() -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+        //         .withTimeout(3));
     }
 
    

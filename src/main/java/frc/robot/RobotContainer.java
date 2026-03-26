@@ -77,7 +77,7 @@ public class RobotContainer {
                 .withCaptureConsole(true)
                 .withCaptureNt(true)
                 .withUseLogThread(true));
-        DogLog.setEnabled(true);
+        DogLog.setEnabled(false);
     }
 
     private void configureBindings() {
@@ -159,10 +159,11 @@ public class RobotContainer {
     }
 
     public void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
-                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
-                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
-        SmartDashboard.putNumberArray("Target Shooting Math", test);
+        // double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
+        //         subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
+        //         (subsystems.getShootingData().shooterAngle()).in(Degrees) };
+        // SmartDashboard.putNumberArray("Target Shooting Math", test);
+        visionSubsystem.visionPeriodic2();
     }
 
     public Command seed() {

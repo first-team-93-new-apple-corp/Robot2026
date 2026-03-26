@@ -142,7 +142,7 @@ public class AutoConstants {
 
     public static Pose2d getLastPoseInPath(PathPlannerPath path) {
         PathPoint point = path.getAllPathPoints().get(path.getAllPathPoints().size() - 1);
-        return new Pose2d(point.position, point.rotationTarget.rotation());
+        return new Pose2d(point.position, point.rotationTarget.rotation() == null ? new Rotation2d(0.0) : point.rotationTarget.rotation());
     }
 
     public static Pose2d getFirstPoseInPath(PathPlannerPath path) {

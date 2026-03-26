@@ -48,8 +48,8 @@ public class AutoDirector {
                 this::getSpeeds,
                 (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
                 new PPHolonomicDriveController(
-                        new PIDConstants(2, 0.0, 0.01),
-                        new PIDConstants(1.5, 0.0, 0.01)),
+                        new PIDConstants(0.75, 0.0, 0.01),
+                        new PIDConstants(0.5, 0.0, 0.01)),
                 config,
                 () -> {
                     var alliance = DriverStation.getAlliance();
@@ -232,6 +232,7 @@ public class AutoDirector {
 
     public Auto LeftCenterLeftHalfScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBumpLeft("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
