@@ -78,7 +78,7 @@ public class RobotContainer {
                 .withCaptureConsole(true)
                 .withCaptureNt(true)
                 .withUseLogThread(true));
-        DogLog.setEnabled(false);
+        DogLog.setEnabled(true);
     }
 
     private void configureBindings() {

@@ -146,9 +146,9 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
-        SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
-        SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
+        // SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
 
         Logger.log(intakePivotMotor);
         Logger.log(intakeRollerMotor);

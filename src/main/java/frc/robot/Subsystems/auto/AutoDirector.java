@@ -98,7 +98,8 @@ public class AutoDirector {
         autoChooser.setDefaultOption(Default().name, Default());
         try {
             Autos.add(TuningAuto());
-            Autos.add(TunningAuto2());
+            Autos.add(TuningAuto2());
+            Autos.add(TuningAuto3());
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -119,12 +120,17 @@ public class AutoDirector {
         SmartDashboard.putData("AutoChooser", autoChooser);
     }
     public Auto TuningAuto() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
-        return new Auto("TuningTranslational", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path")));
+        return new Auto("TuningTranslational", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path Forward")));
     }
 
-    public Auto TunningAuto2() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
-        return new Auto("TuningTranslationalInverse", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path2")));
+    public Auto TuningAuto2() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
+        return new Auto("TuningTranslationalInverse", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path Backward")));
     }
+
+    public Auto TuningAuto3() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
+        return new Auto("TuningTranslationalRotate", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path 90")));
+    }
+
 
     public Auto combineAutos(Auto... autos) {
         List<Command> list = new ArrayList<>();
