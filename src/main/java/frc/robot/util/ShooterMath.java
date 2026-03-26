@@ -16,7 +16,6 @@ import frc.robot.Constants.ShooterConstants.AutoShoot.Ranges;
 
 public class ShooterMath {
 
-    
     public static double calculateAngle(double xinit, double yinit, double xmid, double ymid, double xfinal,
             double yfinal) {
 
@@ -63,7 +62,7 @@ public class ShooterMath {
             double hubHeight, double gravity) {
         double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
 
-        double xfinal = Math.abs(distance+ Constants.ShooterConstants.AutoShoot.hubXOffset);
+        double xfinal = Math.abs(distance + Constants.ShooterConstants.AutoShoot.hubXOffset);
         double yfinal = Math.abs(hubHeight - Constants.ShooterConstants.AutoShoot.ShooterHeight);
         // System.out.println("Time " + Math.sqrt((2 / gravity) * (yfinal - (xfinal *
         // Math.tan(theta)))));
@@ -211,20 +210,27 @@ public class ShooterMath {
                         .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
         return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
     }
+
     public static ShootingData fallBack(double poseX, double poseY) {
         double hubX = AutoConstants.Hub.getHub().getX();
         double hubY = AutoConstants.Hub.getHub().getY();
         double distance = Math.sqrt(Math.pow(hubX - poseX, 2) + Math.pow(hubY - poseY, 2));
         double alignAngle = ShooterMath.angleToAlign(poseX, hubX, poseY, hubY);
 
-        if(distance>7.5) {
+        if (distance > 7.5) {
             distance = 7.5;
         }
-        int funny_math_idx = (int) Math.floor(distance*2-2);
-        Ranges range = AutoShoot.labels.get(funny_math_idx < 1 ? 1 : funny_math_idx);
+        
+        int funny_math_idx = (int) Math.floor(distance * 2 - 2);
+        Ranges range = AutoShoot.labels.get(funny_math_idx < 0 ? 0 : funny_math_idx);
 
-        return new ShootingData(new Rotation2d(alignAngle),Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),AutoShoot.map.get(range).rps(),Meters.of(distance));
+        return new ShootingData(
+                new Rotation2d(alignAngle), 
+                Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
+                AutoShoot.map.get(range).rps(),
+                Meters.of(distance));
     }
+
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
         double hubX = AutoConstants.Hub.getHub().getX();
         double hubY = AutoConstants.Hub.getHub().getY();
@@ -241,12 +247,12 @@ public class ShooterMath {
         double shooter_velocity = ShooterMath.calculateV(shooter_angle, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         AngularVelocity rpm = speedToMotorRotations(shooter_velocity);
         Angle driveTrainAngle = Radians.of(alignAngle);
-        if ( Degrees.of(90).minus(Radians.of(shooter_angle)).lt(Degrees.of(25))) {
+        if (Degrees.of(90).minus(Radians.of(shooter_angle)).lt(Degrees.of(25))) {
             shooter_velocity = ShooterMath.calculateV(1.134, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         }
         double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
                 alignAngle);
-        
+
         // From in front of trench v should be 7.41 m/s and angle should be 1.11 rad
         // 36 rps, 26 rad
         @SuppressWarnings("unused")
@@ -267,11 +273,12 @@ public class ShooterMath {
         // Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
 
     }
-    public static AngularVelocity speedToRPM(double velocity,double efficiency) {
-        return RotationsPerSecond.of(((velocity*efficiency) / (Math.PI * Units
-                                .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
+
+    public static AngularVelocity speedToRPM(double velocity, double efficiency) {
+        return RotationsPerSecond.of(((velocity * efficiency) / (Math.PI * Units
+                .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
-    
+
     public static AngularVelocity speedToMotorRotations(double velocity) { // In rpm
         return RotationsPerSecond.of((Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb
                 * (velocity) / (Math.PI * Units
@@ -284,13 +291,13 @@ public class ShooterMath {
                         .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude())));
     }
 
-    public static double getEfficiencyByAngle(Angle shootingAngle) { 
+    public static double getEfficiencyByAngle(Angle shootingAngle) {
         if (shootingAngle.lt(Radians.of(1.134))) {
-          return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyFar;
+            return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyFar;
 
         }
         return Constants.ShooterConstants.AutoShoot.PrimeEfficiencyClose;
-        
+
     }
     // public static double getEfficiency(Angle angle) {
     // if

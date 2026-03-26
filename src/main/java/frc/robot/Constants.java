@@ -266,7 +266,7 @@ public class Constants {
             public static final double RangeThreshold = 3;  
 
             public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1))),
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1.3))),
                 Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1))),
                 Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),ShooterMath.speedToRPM(6.44,1))),
                 Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),ShooterMath.speedToRPM(6.80,1))),
@@ -278,7 +278,9 @@ public class Constants {
                 Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.6,1))),
                 Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),ShooterMath.speedToRPM(9.04,1))),
                 Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.32,1))),
-                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
+                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1))),
+                Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
+
             );
             public static final Map<Integer,Ranges> labels = Map.ofEntries( // Labeling each segment
                 Map.entry(0, Ranges.Range1to1pt5),
@@ -293,7 +295,8 @@ public class Constants {
                 Map.entry(9, Ranges.Range5pt5to6),
                 Map.entry(10, Ranges.Range6to6pt5),
                 Map.entry(11, Ranges.Range6pt5to7),
-                Map.entry(12, Ranges.Range7to7pt5)
+                Map.entry(12, Ranges.Range7to7pt5),
+                Map.entry(13, Ranges.Range7pt5to8)
             );
             public enum Ranges {
                 // Each enum stores the numeric value previously used in the map (lower bound)
@@ -309,7 +312,8 @@ public class Constants {
                 Range5pt5to6,
                 Range6to6pt5,
                 Range6pt5to7,
-                Range7to7pt5
+                Range7to7pt5,
+                Range7pt5to8
             }
         }
         public class HoodMotorConfigs {
