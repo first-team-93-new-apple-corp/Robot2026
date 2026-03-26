@@ -66,5 +66,7 @@
   "spellright.documentTypes": [
     "markdown",
     "latex"
-  ]
+  ],
+  "wpilib.autoStartRioLog": false,
+  "java.compile.nullAnalysis.mode": "automatic"
 }

@@ -3,7 +3,7 @@ package frc.robot.Controls;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.generated.TunerConstants;
+import frc.robot.TunerConstants;
 import static edu.wpi.first.units.Units.*;
 
 public interface ControllerSchemeIO {
@@ -54,14 +54,6 @@ public interface ControllerSchemeIO {
 
     public Trigger Shoot(); // Shoots
 
-    public Trigger manRetractClimber(); // slowly retract climber
-
-    public Trigger manExtendClimber(); // slowly extend climber
-
-    public Trigger autoRetractClimber(); // Retracts climber to max
-
-    public Trigger autoExtendClimber(); // Extends climber to max
-
     public Trigger WiggleIntake(); // Move intake up and down
 
     public Trigger LowerIntake(); //Move Intake Down
@@ -79,8 +71,6 @@ public interface ControllerSchemeIO {
     public Trigger brake(); // Stops Movments
     
     public Trigger robotRel(); // Robot Rel (duh)
-
-    public Trigger resetClimberEncoder(); // Resets Climber encoder
 
     public Trigger PrimeLeft();
 

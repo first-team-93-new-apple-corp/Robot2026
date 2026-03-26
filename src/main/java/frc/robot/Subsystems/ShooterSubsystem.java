@@ -18,13 +18,13 @@ import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.Subsystems.auto.AutoConstants.PresetShootingPoint;
+import frc.robot.util.Logger;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.util.UniversalNTLogger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -137,6 +137,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("setVelocity (RPS)", 0);
         SmartDashboard.putNumber("setHood (Degrees)", 0);
+
+        Logger.log(hoodMotor);
+        Logger.log(topLeftShooter);
+        Logger.log(topRightShooter);
 
         // Initialize universal telemetry logger
         // uniLogger = new UniversalNTLogger("ShooterMirror");

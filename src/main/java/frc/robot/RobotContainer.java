@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -14,9 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants.Swerve;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
-// import frc.robot.Subsystems.ClimberSubsystem;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -24,10 +23,11 @@ import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
-import frc.robot.generated.TunerConstants;
+import frc.robot.util.Logger;
 import frc.robot.util.NTSubsystem;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
+import dev.doglog.*;
 
 public class RobotContainer {
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -60,8 +60,6 @@ public class RobotContainer {
     private VisionSubsystem visionSubsystem = new VisionSubsystem(drivetrain, networkTables);
 
     // Subsystems
-    // * Shooter
-    // private ClimberSubsystem climber = new ClimberSubsystem();
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
@@ -73,9 +71,21 @@ public class RobotContainer {
 
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(6.5));
-
         configureBindings();
+        DogLog.setOptions(new DogLogOptions()
+                .withCaptureDs(true)
+                .withLogExtras(true)
+                .withCaptureConsole(true)
+                .withCaptureNt(true)
+                .withUseLogThread(true));
+        DogLog.setEnabled(true);
 
+        for (int module : Swerve.modules) {
+            var currentModule = drivetrain.getModule(module);
+            Logger.log(currentModule.getDriveMotor());
+            Logger.log(currentModule.getSteerMotor());
+            Logger.log(currentModule.getEncoder());
+        }
     }
 
     private void configureBindings() {
@@ -86,22 +96,23 @@ public class RobotContainer {
 
         driver.robotRel()
                 .whileTrue(drivetrain.applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
-                                .withVelocityY(driver.DriveUp())
-                                .withRotationalRate(driver.DriveTheta())));
+                        .withVelocityY(driver.DriveUp())
+                        .withRotationalRate(driver.DriveTheta())));
 
         // final var idle = new SwerveRequest.Idle();
         // RobotModeTriggers.disabled().whileTrue(
-        //         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+        // drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
         // driver.brake().whileTrue(drivetrain
-        //         .applyRequest(() -> point.withModuleDirection(new Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
+        // .applyRequest(() -> point.withModuleDirection(new
+        // Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        driver.Shoot().whileTrue(subsystems.Prime().andThen(subsystems.shoot()));
+        driver.Shoot().whileTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
         driver.Prime().whileTrue(subsystems.Prime().repeatedly());
@@ -124,6 +135,7 @@ public class RobotContainer {
         driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
+        driver.WiggleIntake().onFalse(subsystems.manipulation().commands.idleCommand());
 
         driver.Intake().onTrue(subsystems.Intake());
         driver.Intake().onFalse(subsystems.IntakeFalse());
@@ -133,26 +145,17 @@ public class RobotContainer {
         driver.Pass().onTrue(subsystems.pass());
         driver.Pass().onFalse(subsystems.PrimeFalse());
 
-        driver.manShoot().whileTrue(subsystems.shooter().commands.autoShoot(()-> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
+        driver.manShoot().whileTrue(subsystems.shooter().commands
+                .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(100)).repeatedly());
         driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
-        driver.manHood().whileTrue(subsystems.shooter().commands.autoAngleNoOffset(()-> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
+        driver.manHood().whileTrue(subsystems.shooter().commands
+                .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
         driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
-        // driver.testingButton().onTrue(AutoBuilder.pathfindToPose(new Pose2d(subsystems.drivetrain().getState().Pose.getX()-1,subsystems.drivetrain().getState().Pose.getY(), subsystems.drivetrain().getState().Pose.getRotation()) , AutoConstants.constraints));
         RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
-        driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true).andThen(Commands.print("Reset Pose due to Button Press")));
-        
-        // driver.autoExtendClimber().onTrue(subsystems.climber().commands.autoExtend());
-        // driver.autoRetractClimber()
-        //         .onTrue(subsystems.climber().commands.manualRetract()
-        //                 .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
-        //                 .andThen(subsystems.climber().commands.Stop()));
-
-        // RobotModeTriggers.test()
-        //         .onTrue(subsystems.climber().commands.manualRetract()
-        //                 .andThen(Commands.waitUntil(() -> subsystems.climber().isAtBottom()))
-        //                 .andThen(subsystems.climber().commands.Stop()));
+        driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true)
+                .andThen(Commands.print("Reset Pose due to Button Press")));
     }
 
     public Command getAutonomousCommand() {
@@ -164,7 +167,7 @@ public class RobotContainer {
     }
 
     public void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
         double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle

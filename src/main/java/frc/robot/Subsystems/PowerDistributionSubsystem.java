@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.RollingAverageDouble;
+import dev.doglog.DogLog;
 
 public class PowerDistributionSubsystem extends SubsystemBase{
 
@@ -13,7 +14,9 @@ public class PowerDistributionSubsystem extends SubsystemBase{
 
     public double totalCurrent;
     public double voltage;
-
+    public PowerDistributionSubsystem() {
+        DogLog.setPdh(PDH);
+    }
     @Override
     public void periodic() {
         currentAverage.addValue(PDH.getTotalCurrent());

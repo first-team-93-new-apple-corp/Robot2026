@@ -210,12 +210,12 @@ public class Constants {
 
         public class shoot {
             public static final double bottomRollerSpeed = 1;
-            public static final double sideRollerSpeed = -0.7;
-            public static final double kickerSpeed = 0.9;
+            public static final double sideRollerSpeed = -1;
+            public static final double kickerSpeed = 1;
         }
 
         public class idle {
-            public static final double bottomRollerSpeed = 0.1;
+            public static final double bottomRollerSpeed = 0;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
@@ -248,7 +248,7 @@ public class Constants {
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
             public static final double ShootToFlyGearRatio = 24/18;
-            public static final double EfficiencyMultiplierClose =  1.3; // 1 ish
+            public static final double EfficiencyMultiplierClose =  1.275; // 1 ish
             public static final double EfficiencyMultiplierClimb =  1.6; // 2.954  
             public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
             // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08

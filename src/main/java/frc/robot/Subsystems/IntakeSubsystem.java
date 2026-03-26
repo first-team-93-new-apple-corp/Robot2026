@@ -22,6 +22,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.util.Logger;
+import dev.doglog.*;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -83,8 +85,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotionMagic.MotionMagicAcceleration = 6;
         intakePivotConfig.MotionMagic.MotionMagicJerk = 7;
 
-        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 40;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
 
         intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
         intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -147,6 +149,9 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
         SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+
+        Logger.log(intakePivotMotor);
+        Logger.log(intakeRollerMotor);
     }
 
     public class IntakeCommands {
@@ -191,7 +196,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.6;
+            double delay = 0.8;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
@@ -200,7 +205,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.6;
+            double delay = 0.8;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
