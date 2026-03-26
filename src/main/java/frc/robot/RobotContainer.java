@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -14,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants.Swerve;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
@@ -23,6 +23,7 @@ import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
+import frc.robot.util.Logger;
 import frc.robot.util.NTSubsystem;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
@@ -65,7 +66,7 @@ public class RobotContainer {
     public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    private subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
+    public subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -155,7 +156,7 @@ public class RobotContainer {
     }
 
     public void visionPeriodic() {
-        visionSubsystem.visionPeriodic();
+        visionSubsystem.questPeriodic();
     }
 
     public void telePeriodic() {

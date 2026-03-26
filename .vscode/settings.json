@@ -67,5 +67,6 @@
     "markdown",
     "latex"
   ],
-  "wpilib.autoStartRioLog": false
+  "wpilib.autoStartRioLog": false,
+  "java.compile.nullAnalysis.mode": "automatic"
 }

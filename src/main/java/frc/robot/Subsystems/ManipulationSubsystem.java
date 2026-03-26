@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
+import frc.robot.util.Logger;
 
 public class ManipulationSubsystem {
     private TalonFX bottomRollerMotor = new TalonFX(Constants.ManipulationConstants.bottomRollerMotorID); // Bottom
@@ -31,6 +32,10 @@ public class ManipulationSubsystem {
         kickerMotor.getConfigurator().apply(motorConfig);
         bottomRollerMotor.getConfigurator().apply(motorConfig);
         sideRollerMotor.getConfigurator().apply(motorConfig);
+
+        Logger.log(kickerMotor);
+        Logger.log(bottomRollerMotor);
+        Logger.log(sideRollerMotor);
     }
 
     public void intake() {
@@ -84,9 +89,9 @@ public class ManipulationSubsystem {
             return Commands.runOnce(() -> off());
         }
 
-        public Command jam(){
-            Command cmd1 = Commands.runOnce(()->sideRollerMotor.set(-1));
-            Command cmd2 = Commands.runOnce(()->sideRollerMotor.set(0.2));
+        public Command jam() {
+            Command cmd1 = Commands.runOnce(() -> sideRollerMotor.set(-1));
+            Command cmd2 = Commands.runOnce(() -> sideRollerMotor.set(0.2));
             return cmd1.withTimeout(2).andThen(cmd2.withTimeout(0.2)).repeatedly();
         }
     }

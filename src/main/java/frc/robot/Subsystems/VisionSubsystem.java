@@ -109,22 +109,21 @@ public class VisionSubsystem extends SubsystemBase {
         piPoseAverager.reset();
     }
 
-    /**
-     * This is the method that should be called periodically to update quest
-     * measurements
-     */
-    public void visionPeriodic() {
+    public void smartDash() {
+        SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
+        SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
+        SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
+        SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
+        SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
+        SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
+    }
+
+    public void piPeriodic() {
         if (Utils.isSimulation()) {
             visionSim.update(drivetrain.getState().Pose);
         }
-
-        quest.commandPeriodic();
-
-        
-
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        // if (!resetting) {
         for (var result : camera.getAllUnreadResults()) {
             visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
             if (visionEst.isEmpty()) {
@@ -133,18 +132,20 @@ public class VisionSubsystem extends SubsystemBase {
             }
             visionEst.ifPresent(
                     est -> {
-                        // Change our trust in the measurement based on the tags we can see
-                        // var estStdDevs = getEstimationStdDevs();
-                        // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                        // est.timestampSeconds, estStdDevs);
-                        // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                        // est.timestampSeconds, Constants.Photon.standardDevs);
                         piPose3d = est.estimatedPose;
                         hasPiPoseData = true;
                     });
         }
-        // }
-        if (hasPoseInit && !resetting) { // Skip quest if it hasn't started up yet
+    }
+
+    /**
+     * This is the method that should be called periodically to update quest
+     * measurements
+     */
+    public void questPeriodic() {
+        quest.commandPeriodic();
+
+        if (hasPoseInit && !resetting) {
             if (quest.isTracking()) {
                 // Get the latest pose data frames from the Quest
                 PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
@@ -242,6 +243,20 @@ public class VisionSubsystem extends SubsystemBase {
                 hasPiPoseData = false;
                 hasPoseInit = false;
                 resetting = true;
+            });
+        }
+
+        public Command quest() {
+            return Commands.runOnce(() -> {
+                questPeriodic();
+            });
+        }
+
+        public Command pi() {
+            return Commands.runOnce(() -> {
+                // if (hasPoseInit || resetting) {
+                    piPeriodic();
+                // }
             });
         }
 

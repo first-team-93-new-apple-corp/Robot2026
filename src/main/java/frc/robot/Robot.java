@@ -26,7 +26,9 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
+        // addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
+        addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.quest(), Milliseconds.of(20));
+        addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
         if (Utils.isSimulation()) {
             DriverStation.silenceJoystickConnectionWarning(true);
