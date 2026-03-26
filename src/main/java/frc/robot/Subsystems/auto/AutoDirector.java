@@ -1,5 +1,6 @@
 package frc.robot.Subsystems.auto;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +11,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FileVersionException;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.struct.parser.ParseException;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -48,8 +52,8 @@ public class AutoDirector {
                 this::getSpeeds,
                 (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
                 new PPHolonomicDriveController(
-                        new PIDConstants(0.75, 0.0, 0.01),
-                        new PIDConstants(0.5, 0.0, 0.01)),
+                        new PIDConstants(10, 0.0, 0.001),
+                        new PIDConstants(12, 0.0, 0.001)),
                 config,
                 () -> {
                     var alliance = DriverStation.getAlliance();
@@ -92,7 +96,12 @@ public class AutoDirector {
 
     public void addAutos() {
         autoChooser.setDefaultOption(Default().name, Default());
-
+        try {
+            Autos.add(TuningAuto());
+            Autos.add(TunningAuto2());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         Autos.add(DoNothing());
         Autos.add(PreloadClose());
         Autos.add(PreloadCloseLeft());
@@ -108,6 +117,13 @@ public class AutoDirector {
             autoChooser.addOption(auto.name, auto);
         }
         SmartDashboard.putData("AutoChooser", autoChooser);
+    }
+    public Auto TuningAuto() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
+        return new Auto("TuningTranslational", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path")));
+    }
+
+    public Auto TunningAuto2() throws IOException, FileVersionException, org.json.simple.parser.ParseException {
+        return new Auto("TuningTranslationalInverse", AutoBuilder.followPath(PathPlannerPath.fromPathFile("Tuning Path2")));
     }
 
     public Auto combineAutos(Auto... autos) {
