@@ -30,7 +30,7 @@ public class AutoConstants {
     }
 
     public class Hub {
-        public static final Pose2d Blue = new Pose2d(4.625, 3.95, Rotation2d.fromDegrees(0));
+        public static final Pose2d Blue = new Pose2d(Inches.of(182.1), Inches.of(158.84), Rotation2d.fromDegrees(0));
         public static final Pose2d Red = FlippingUtil.flipFieldPose(Blue);
         public static final Pose3d Blue3d = new Pose3d(Inches.of(182.1), Inches.of(158.84), Inches.of(56.5), new Rotation3d());
         public static final Pose3d Red3d = new Pose3d(Red.getX(), Red.getY(), 1.47, new Rotation3d());
@@ -49,7 +49,6 @@ public class AutoConstants {
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
     public class PresetShootingPoints {
         public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
-
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
         public static final PresetShootingPoint BlueCloseSide = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(6.55).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedCloseSide = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueCloseSide.pose), BlueCloseSide.velocity, BlueCloseSide.hoodAngle);
