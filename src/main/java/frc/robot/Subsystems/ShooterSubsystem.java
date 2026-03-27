@@ -24,6 +24,8 @@ import frc.robot.util.ShootingData;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -163,10 +165,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getAvgVelocityFeet() {
         return ((getAvgVelocity()) * 4 * Math.PI) / 12;
     }
+    public void smartDash() {
+        DriverStation.reportWarning("Shooter S" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
 
-    @Override
-    public void periodic() {
-        // SmartDashboard.putNumber("Hood Position", hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
+        SmartDashboard.putNumber("Hood Position", hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         // SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
 
         // SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
@@ -174,26 +176,24 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
         // SmartDashboard.putNumber("Velocity Feet/s (avg)", getAvgVelocityFeet());
 
-        // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
-        // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
-
         SmartDashboard.putBoolean("Shooter Ready?", shooterAtSetpoint(lastShooterSetpoint));
 
-        // if (uniLogger != null) uniLogger.flushAll();
-
+        DriverStation.reportWarning("Shooter E" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
+    }
+    public void log() {
         Logger.log(hoodMotor);
         Logger.log(topLeftShooter);
         Logger.log(topRightShooter);
     }
+    // @Override
+    // public void periodic() {
+        // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
+        // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
+    // }
 
     public boolean getHoodLimit() {
         return hoodLimitSwitch.get();
     }
-
-    // public void resetHood() {
-    // hoodMotor.setPosition(HoodMotorConfigs.minAngleNoOffset);
-    // System.out.println("Rest HOod!!!!!!**********************");
-    // }
 
     public ShootingData getShootingData(double poseX, double poseY, double velX, double velY) {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
@@ -369,6 +369,12 @@ public class ShooterSubsystem extends SubsystemBase {
             var shoot = Commands.sequence(
                     Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
             return angle.alongWith(shoot);
+        }
+        public Command logging() {
+            return Commands.run(() -> log());
+        }
+        public Command smartDashboard() {
+            return Commands.run(() -> smartDash());
         }
     }
 

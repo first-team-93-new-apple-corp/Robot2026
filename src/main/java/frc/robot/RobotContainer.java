@@ -155,18 +155,6 @@ public class RobotContainer {
         return auto.autoChooser.getSelected().command();
     }
 
-    public void visionPeriodic() {
-        visionSubsystem.questPeriodic();
-    }
-
-    public void telePeriodic() {
-        // double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
-        //         subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
-        //         (subsystems.getShootingData().shooterAngle()).in(Degrees) };
-        // SmartDashboard.putNumberArray("Target Shooting Math", test);
-        visionSubsystem.visionPeriodic2();
-    }
-
     public Command seed() {
         return Commands.runOnce(() -> {
             drivetrain.seedFieldCentric();

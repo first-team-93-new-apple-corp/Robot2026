@@ -189,26 +189,6 @@ public class VisionSubsystem extends SubsystemBase {
         piPoseAverager.addPose(piPose3d);
     }
 
-    public void visionPeriodic2(){
-        SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
-        SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
-        SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
-        SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
-        SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
-        SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
-    }
-
-    public String questPoseInfo() {
-        double timestamp = RobotController.getFPGATime();
-        String logEntry = String.format(
-                "%f,%f,%f",
-                timestamp,
-                robotPose3d.getX(),
-                robotPose3d.getY());
-        return logEntry;
-
-    }
-
     public Pose3d getAverageRobotPose3D() {
         return robotPoseAverager.getAveragePose();
     }
@@ -255,9 +235,13 @@ public class VisionSubsystem extends SubsystemBase {
         public Command pi() {
             return Commands.runOnce(() -> {
                 // if (hasPoseInit || resetting) {
-                    piPeriodic();
+                piPeriodic();
                 // }
             });
+        }
+
+        public Command smartDashboard() {
+            return Commands.run(() -> smartDash());
         }
 
     }

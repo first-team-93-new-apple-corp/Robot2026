@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -63,12 +64,13 @@ public class AutoTracker extends SequentialCommandGroup {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             Intake(path);
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             try {
                 PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
                 Intake(path);
             } catch (Exception a) {
-               a.printStackTrace();
+            //    a.printStackTrace();
+                DriverStation.reportError("[AutoTracker] Failed to load path: " + pathName, false);
             }
         }
     }

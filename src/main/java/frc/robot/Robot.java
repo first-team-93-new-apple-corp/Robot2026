@@ -26,10 +26,20 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        // addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
+
         addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.quest(), Milliseconds.of(20));
         addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
+
+        addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
+        addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+
+        addPeriodic(() -> m_robotContainer.subsystems.intake().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
+        addPeriodic(() -> m_robotContainer.subsystems.intake().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+
+        addPeriodic(() -> m_robotContainer.subsystems.manipulation().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+        
         if (Utils.isSimulation()) {
             DriverStation.silenceJoystickConnectionWarning(true);
         }
@@ -37,7 +47,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        m_robotContainer.telePeriodic();
         m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
     }
