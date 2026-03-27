@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -221,10 +222,20 @@ public class ShooterMath {
         if (distance > 7.5) {
             distance = 7.5;
         }
-        
+        if (distance <1) {
+            distance = 1;
+        }
         int funny_math_idx = (int) Math.floor(distance * 2 - 2);
-        Ranges range = AutoShoot.labels.get(funny_math_idx < 0 ? 0 : funny_math_idx);
         
+        Ranges range = AutoShoot.labels.get(funny_math_idx < 0 ? 0 : funny_math_idx);
+        if (range == null) {
+            return new ShootingData(
+                new Rotation2d(0), 
+                Radians.of(0),
+                RotationsPerSecond.of(0),
+                Meters.of(0)
+            );
+        }
         return new ShootingData(
                 new Rotation2d(alignAngle), 
                 Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
