@@ -88,6 +88,18 @@ public interface ControllerSchemeIO {
 
     public Trigger Pass();
 
+    public Trigger SysIdForwardD();
+
+    public Trigger SysIdBackwardD();
+
+    public Trigger SysIdForwardQ();
+
+    public Trigger SysIdBackwordQ();
+
+    public Trigger SysIdStart();
+
+    public Trigger SysIdEnd();
+
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

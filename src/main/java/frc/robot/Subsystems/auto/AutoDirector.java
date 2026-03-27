@@ -53,7 +53,7 @@ public class AutoDirector {
                 (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
                 new PPHolonomicDriveController(
                         new PIDConstants(10, 0.0, 0.001),
-                        new PIDConstants(12, 0.0, 0.001)),
+                        new PIDConstants(5, 0.0, 0.0)),
                 config,
                 () -> {
                     var alliance = DriverStation.getAlliance();
