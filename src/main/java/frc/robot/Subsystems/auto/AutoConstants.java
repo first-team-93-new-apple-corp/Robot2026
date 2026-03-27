@@ -170,7 +170,7 @@ public class AutoConstants {
     // Default path constraints used by AutoBuilder (maxSpeed, maxAcceleration, etc.)
     // Tune these values in AutoConstants if your robot is not following paths as
     // expected (too aggressive controllers can fail to converge).
-    public static final PathConstraints constraints = new PathConstraints(2, 3, Math.PI , Math.PI * 2);
+    public static final PathConstraints constraints = new PathConstraints(4, 3, Math.PI*2 , Math.PI * 3);
 
     public static final SwerveRequest.FieldCentricFacingAngle driveFacingAngle = new SwerveRequest.FieldCentricFacingAngle()
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive

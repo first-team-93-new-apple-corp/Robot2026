@@ -17,7 +17,6 @@ import com.pathplanner.lib.util.FileVersionException;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.util.struct.parser.ParseException;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -96,23 +95,35 @@ public class AutoDirector {
 
     public void addAutos() {
         autoChooser.setDefaultOption(Default().name, Default());
-        try {
-            Autos.add(TuningAuto());
-            Autos.add(TuningAuto2());
-            Autos.add(TuningAuto3());
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        // try {
+        //     Autos.add(TuningAuto());
+        //     Autos.add(TuningAuto2());
+        //     Autos.add(TuningAuto3());
+        // } catch (Exception e) {
+        //     // TODO: handle exception
+        // }
         Autos.add(DoNothing());
+        // *** vvv Confident
         Autos.add(PreloadClose());
         Autos.add(PreloadCloseLeft());
         Autos.add(PreloadCloseRight());
         Autos.add(DepotScoreClose());
         Autos.add(DepotScoreCloseLeft());
         Autos.add(DepotScoreCloseRight());
+        // *** ^^^ Confident
+        // *** vvv Never tested
         Autos.add(OutpostScoreClose());
+        // *** ^^^ never tested
+        // *** vvvvv maybe?!?!? might not finish in time
         Autos.add(LeftCenterLeftHalfScoreClose());
         Autos.add(LeftCenterLeftHalfScoreCloseLeft());
+        Autos.add(LeftCenterLeftHalfScoreCloseRight());
+        Autos.add(RightCenterRightHalfScoreClose());
+        Autos.add(RightCenterRightHalfScoreCloseLeft());
+        Autos.add(RightCenterRightHalfScoreCloseRight());
+        // *** ^^^^^  maybe?!?!? might not finish in time
+
+
 
         for (Auto auto : Autos) {
             autoChooser.addOption(auto.name, auto);
@@ -264,4 +275,38 @@ public class AutoDirector {
         return new Auto("Left Side Intake Center Score Close Right", tracker);
     }
 
+
+    public Auto RightCenterRightHalfScoreClose() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addOverBumpRight("Overbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBumpRight("BackOverbump");
+        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.endAuto();
+        return new Auto("Right Side Intake Left Half Center Score Close", tracker);
+    }
+
+    public Auto RightCenterRightHalfScoreCloseLeft() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addOverBumpRight("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBumpRight("BackOverbump");
+        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.endAuto();
+        return new Auto("Right Side Intake Center Score Close Left", tracker);
+    }
+
+    public Auto RightCenterRightHalfScoreCloseRight() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBumpRight("Overbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBumpRight("BackOverbump");
+        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.endAuto();
+        return new Auto("Right Side Intake Center Score Close Right", tracker);
+    }
 }
