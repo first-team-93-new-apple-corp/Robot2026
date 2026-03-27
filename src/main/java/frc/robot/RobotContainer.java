@@ -36,8 +36,7 @@ public class RobotContainer {
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                     // motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SwerveRequest.RobotCentric robotCentricDrive = new SwerveRequest.RobotCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
@@ -45,7 +44,7 @@ public class RobotContainer {
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    // private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
     // private final ControllerSchemeIO driver = new XboxDrive(2);
@@ -103,7 +102,7 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press.
         driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        drivetrain.registerTelemetry(logger::telemeterize);
+        // drivetrain.registerTelemetry(logger::telemeterize);
 
         driver.Shoot().whileTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
