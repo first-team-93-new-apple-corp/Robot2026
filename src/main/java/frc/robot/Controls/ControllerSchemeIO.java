@@ -2,14 +2,9 @@ package frc.robot.Controls;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.generated.TunerConstants;
+import frc.robot.TunerConstants;
 import static edu.wpi.first.units.Units.*;
-
-import java.util.function.BooleanSupplier;
 
 public interface ControllerSchemeIO {
     // public CommandJoystick LeftStick = new CommandJoystick(0);
@@ -59,14 +54,6 @@ public interface ControllerSchemeIO {
 
     public Trigger Shoot(); // Shoots
 
-    public Trigger manRetractClimber(); // slowly retract climber
-
-    public Trigger manExtendClimber(); // slowly extend climber
-
-    public Trigger autoRetractClimber(); // Retracts climber to max
-
-    public Trigger autoExtendClimber(); // Extends climber to max
-
     public Trigger WiggleIntake(); // Move intake up and down
 
     public Trigger LowerIntake(); //Move Intake Down
@@ -85,8 +72,6 @@ public interface ControllerSchemeIO {
     
     public Trigger robotRel(); // Robot Rel (duh)
 
-    public Trigger resetClimberEncoder(); // Resets Climber encoder
-
     public Trigger PrimeLeft();
 
     public Trigger PrimeRight();
@@ -102,6 +87,18 @@ public interface ControllerSchemeIO {
     public Trigger testingButton();
 
     public Trigger Pass();
+
+    public Trigger SysIdForwardD();
+
+    public Trigger SysIdBackwardD();
+
+    public Trigger SysIdForwardQ();
+
+    public Trigger SysIdBackwordQ();
+
+    public Trigger SysIdStart();
+
+    public Trigger SysIdEnd();
 
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;

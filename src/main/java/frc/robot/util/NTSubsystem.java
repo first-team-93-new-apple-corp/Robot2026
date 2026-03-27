@@ -9,11 +9,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -41,9 +39,6 @@ public class NTSubsystem {
 		SmartDashboard.putData("Field", m_field);
 		m_field.setRobotPose(new Pose2d());
 		m_field.getObject("Quest").setPose(new Pose2d());
-		SignalLogger.setPath("/media/sda1/logs/");  // TODO: change
-		SignalLogger.enableAutoLogging(true);
-		SignalLogger.start();
 	}
 
 	public class ntSwerve {
@@ -70,8 +65,10 @@ public class NTSubsystem {
 
 		/* Robot pose for field positioning */
 		// private final NetworkTable table = ntInst.getTable("Pose");
-		// private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
-		// private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+		// private final DoubleArrayPublisher fieldPub =
+		// table.getDoubleArrayTopic("robotPose").publish();
+		// private final StringPublisher fieldTypePub =
+		// table.getStringTopic(".type").publish();
 
 		/* Mechanisms to represent the swerve module states */
 		private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] { new Mechanism2d(1, 1),
@@ -203,7 +200,7 @@ public class NTSubsystem {
 		public void updatePiPose(Pose3d pose) {
 			m_field.getObject("PI").setPose(pose.toPose2d());
 		}
-		
+
 		public void addTrajectory(Trajectory traj) {
 			m_field.getRobotObject().setTrajectory(traj);
 		}

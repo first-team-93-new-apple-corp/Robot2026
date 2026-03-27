@@ -9,9 +9,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
@@ -175,7 +173,7 @@ public class Constants {
         // Rollers
         public static final double intakeSpeed = 1.0;
         public static final double outtakeSpeed = -1.0;
-        public static final double idleSpeed = 0;
+        public static final double idleSpeed = 0.2;
         // Pivot
         public static final double pivotkP = 45;
         public static final double pivotkI = 0.5;
@@ -187,8 +185,8 @@ public class Constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(120);
-        public static final Angle pivotMiddlePosition = pivotUpPosition.div(2.0);
+        public static final Angle pivotDownPosition = Degrees.of(135);
+        public static final Angle pivotMiddlePosition = Degrees.of(60);
         // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1
@@ -207,12 +205,12 @@ public class Constants {
 
         public class shoot {
             public static final double bottomRollerSpeed = 1;
-            public static final double sideRollerSpeed = -0.7;
-            public static final double kickerSpeed = 0.9;
+            public static final double sideRollerSpeed = -1;
+            public static final double kickerSpeed = 1;
         }
 
         public class idle {
-            public static final double bottomRollerSpeed = 0.01;
+            public static final double bottomRollerSpeed = 0;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
@@ -245,15 +243,23 @@ public class Constants {
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
             public static final double ShootToFlyGearRatio = 24/18;
-            public static final double EfficiencyMultiplierClose =  1.25; // 1 ish
+            public static final double EfficiencyMultiplierClose =  1.275; // 1 ish
             public static final double EfficiencyMultiplierClimb =  1.6; // 2.954  
             public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
             // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08
             // public static final double EfficiencyMultiplierDepotRight =  1.4; // 3.61
-
+            // Climber Controls moving to sticks 
+            // Shooter controls move to xbox
 
         }
-
+        public class AutoShoot {
+            public static final double hubHeightOffset = 0.5;
+            public static final double hubXOffset = 0.35;
+            public static final double PrimeEfficiencyFar = 1.5; // Need to tune
+            public static final double PrimeEfficiencyClose = 1.43; // Need to tune
+            public static final double ShooterHeight = 0.6;
+            public static final double RangeThreshold = 3;  
+        }
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;

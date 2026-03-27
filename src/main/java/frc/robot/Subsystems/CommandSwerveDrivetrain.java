@@ -9,7 +9,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.jni.SwerveJNI.DriveState;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.Matrix;
@@ -96,17 +95,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     @Override
     public void setControl(SwerveRequest request) {
-        try {
-            // Log the concrete request type and the request.toString() so we can
-            // see what the drivetrain received in the logs. Flushing ensures the
-            // text appears promptly in the roboRIO console.
-            String cls = request == null ? "null" : request.getClass().getSimpleName();
-            System.out.printf("[Drivetrain.setControl] %s %s\\n", cls, request == null ? "null" : request.toString());
-            System.out.flush();
-        } catch (Exception e) {
-            System.out.println("[Drivetrain.setControl] (toString failed)");
-            System.out.flush();
-        }
+        // try {
+        //     // Log the concrete request type and the request.toString() so we can
+        //     // see what the drivetrain received in the logs. Flushing ensures the
+        //     // text appears promptly in the roboRIO console.
+        //     String cls = request == null ? "null" : request.getClass().getSimpleName();
+        //     System.out.printf("[Drivetrain.setControl] %s %s\\n", cls, request == null ? "null" : request.toString());
+        //     System.out.flush();
+        // } catch (Exception e) {
+        //     System.out.println("[Drivetrain.setControl] (toString failed)");
+        //     System.out.flush();
+        // }
         super.setControl(request);
     }
 
@@ -222,7 +221,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }, null, this));
 
         /* The SysId routine to test */
-        private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+        private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
         public void setSysIdRoutine(String routine) {
             switch (routine) {
@@ -293,7 +292,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 visionMeasurementStdDevs);
     }
 
-    // TODO implement pose get with photon camera
     public Pose2d getPose() {
         return getState().Pose;
     }

@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Constants.xbox;
 
 public class TwoStickDriveXboxOp extends XboxDrive {
 
@@ -78,12 +77,5 @@ public class TwoStickDriveXboxOp extends XboxDrive {
     public Trigger resetPose() {
         return LeftStick.button(3);
     }
-    @Override
-    public Trigger autoRetractClimber() {
-        return RightStick.povDown();
-    }
-    @Override
-    public Trigger autoExtendClimber() {
-        return RightStick.povUp();
-    }
+
 }

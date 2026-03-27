@@ -1,8 +1,5 @@
 package frc.robot.Controls;
 
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
-
 public class ThrottleableDrive extends TwoStickDriveXboxOp{
     public ThrottleableDrive(int LeftPort, int RightPort, int opPort){
         super(LeftPort, RightPort, opPort);

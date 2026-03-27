@@ -1,25 +1,22 @@
 package frc.robot.Subsystems;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+
+import com.ctre.phoenix6.Utils;
 
 // import org.photonvision.PhotonPoseEstimator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,14 +56,33 @@ public class VisionSubsystem extends SubsystemBase {
     private boolean resetting = true;
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     private PhotonPoseEstimator photonEstimator = new PhotonPoseEstimator(kTagLayout, Constants.Photon.kRobotToCam);
-
+    private VisionSystemSim visionSim;
+    private SimCameraProperties cameraProp = new SimCameraProperties();
+    private PhotonCameraSim cameraSim;
     // Stuff
-
-    private Matrix<N3, N1> curStdDevs;
 
     public VisionSubsystem(CommandSwerveDrivetrain drivetrain, NTSubsystem nt) {
         this.drivetrain = drivetrain;
         this.networkTables = nt;
+        if (Utils.isSimulation()) {
+            visionSim = new VisionSystemSim("Vision Simulation");
+            visionSim.addAprilTags(kTagLayout);
+
+            cameraProp.setCalibration(1200, 800, Rotation2d.fromDegrees(80));
+            cameraProp.setCalibError(0.35, 0.08);
+            cameraProp.setFPS(50);
+            cameraProp.setAvgLatencyMs(35);
+            cameraProp.setLatencyStdDevMs(5);
+
+            cameraSim = new PhotonCameraSim(camera, cameraProp, kTagLayout);
+
+            cameraSim.enableRawStream(true);
+            cameraSim.enableProcessedStream(true);
+            cameraSim.enableDrawWireframe(true);
+
+            visionSim.addCamera(cameraSim, Constants.Photon.kRobotToCam);
+        }
+
         // Quest Initialization
         quest = new QuestNav();
         quest.setVersionCheckEnabled(false);
@@ -93,43 +109,43 @@ public class VisionSubsystem extends SubsystemBase {
         piPoseAverager.reset();
     }
 
-    /**
-     * This is the method that should be called periodically to update quest
-     * measurements
-     */
-    public void visionPeriodic() {
-        quest.commandPeriodic();
-
+    public void smartDash() {
         SmartDashboard.putBoolean("Quest Connected", quest.isConnected());
         SmartDashboard.putBoolean("Quest Tracking?", quest.isTracking());
         SmartDashboard.putNumber("Quest Battery %", quest.getBatteryPercent().getAsInt());
         SmartDashboard.putNumber("Quest Tracking Lost", quest.getTrackingLostCounter().getAsInt());
         SmartDashboard.putBoolean("Has Pose Init?", hasPoseInit);
         SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
+    }
 
+    public void piPeriodic() {
+        if (Utils.isSimulation()) {
+            visionSim.update(drivetrain.getState().Pose);
+        }
         // PhotonVision Estimation
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        // if (!resetting) {
-            for (var result : camera.getAllUnreadResults()) {
-                visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
-                if (visionEst.isEmpty()) {
-                    visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
-                    hasPiPoseData = false;
-                }
-                visionEst.ifPresent(
-                        est -> {
-                            // Change our trust in the measurement based on the tags we can see
-                            // var estStdDevs = getEstimationStdDevs();
-                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                            // est.timestampSeconds, estStdDevs);
-                            // drivetrain.addVisionMeasurement(est.estimatedPose.toPose2d(),
-                            // est.timestampSeconds, Constants.Photon.standardDevs);
-                            piPose3d = est.estimatedPose;
-                            hasPiPoseData = true;
-                        });
+        for (var result : camera.getAllUnreadResults()) {
+            visionEst = photonEstimator.estimateCoprocMultiTagPose(result);
+            if (visionEst.isEmpty()) {
+                visionEst = photonEstimator.estimateLowestAmbiguityPose(result);
+                hasPiPoseData = false;
             }
-        // }
-        if (hasPoseInit && !resetting) { // Skip quest if it hasn't started up yet
+            visionEst.ifPresent(
+                    est -> {
+                        piPose3d = est.estimatedPose;
+                        hasPiPoseData = true;
+                    });
+        }
+    }
+
+    /**
+     * This is the method that should be called periodically to update quest
+     * measurements
+     */
+    public void questPeriodic() {
+        quest.commandPeriodic();
+
+        if (hasPoseInit && !resetting) {
             if (quest.isTracking()) {
                 // Get the latest pose data frames from the Quest
                 PoseFrame[] questFrames = quest.getAllUnreadPoseFrames();
@@ -173,17 +189,6 @@ public class VisionSubsystem extends SubsystemBase {
         piPoseAverager.addPose(piPose3d);
     }
 
-    public String questPoseInfo() {
-        double timestamp = RobotController.getFPGATime();
-        String logEntry = String.format(
-                "%f,%f,%f",
-                timestamp,
-                robotPose3d.getX(),
-                robotPose3d.getY());
-        return logEntry;
-
-    }
-
     public Pose3d getAverageRobotPose3D() {
         return robotPoseAverager.getAveragePose();
     }
@@ -220,6 +225,24 @@ public class VisionSubsystem extends SubsystemBase {
                 resetting = true;
             });
         }
-        
+
+        public Command quest() {
+            return Commands.runOnce(() -> {
+                questPeriodic();
+            });
+        }
+
+        public Command pi() {
+            return Commands.runOnce(() -> {
+                // if (hasPoseInit || resetting) {
+                piPeriodic();
+                // }
+            });
+        }
+
+        public Command smartDashboard() {
+            return Commands.run(() -> smartDash());
+        }
+
     }
 }

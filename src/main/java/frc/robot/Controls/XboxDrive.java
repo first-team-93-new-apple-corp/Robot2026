@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Constants.xbox;
 
 public class XboxDrive implements ControllerSchemeIO {
 
@@ -60,26 +59,6 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger manRetractClimber() {
-        return new Trigger(() -> false);
-    }
-
-    @Override
-    public Trigger manExtendClimber() {
-        return new Trigger(() -> false);
-    }
-
-    @Override
-    public Trigger autoRetractClimber() {
-        return Xbox.leftStick();
-    }
-
-    @Override
-    public Trigger autoExtendClimber() {
-        return Xbox.rightStick();
-    }
-
-    @Override
     public Trigger WiggleIntake() {
         return Xbox.rightBumper();
     }
@@ -118,12 +97,7 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger robotRel() {
         return new Trigger(() -> false);
     }
-
-    @Override
-    public Trigger resetClimberEncoder() {
-        return Xbox.back();
-    }
-
+    
     @Override
     public double halfRotate() {
         return InputTheta() * 0.5;
@@ -194,5 +168,32 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.povRight();
     }
 
+    @Override
+    public Trigger SysIdForwardQ(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Right);
+    }
 
+    @Override
+    public Trigger SysIdBackwordQ(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Right);
+    }
+
+    @Override
+    public Trigger SysIdForwardD(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Middle);
+    }
+
+    @Override
+    public Trigger SysIdBackwardD(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Middle);
+    }
+
+    @Override
+    public Trigger SysIdStart(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Left);
+    }
+    @Override
+    public Trigger SysIdEnd(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Left);
+    }
 }
