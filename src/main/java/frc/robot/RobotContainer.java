@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.RobotController;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Swerve;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
@@ -149,6 +152,16 @@ public class RobotContainer {
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true)
                 .andThen(Commands.print("Reset Pose due to Button Press")));
+        // driver.SysIdForwardQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // driver.SysIdForwardD().whileTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // driver.SysIdBackwordQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // driver.SysIdBackwardD().whileTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // // driver.SysIdBackwardD().or(null)
+        // driver.SysIdStart().onTrue(Commands.runOnce(SignalLogger::start));
+        // driver.SysIdEnd().onTrue(Commands.runOnce(SignalLogger::stop));
+        // driver.SysIdCCW().onTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+
     }
 
     public Command getAutonomousCommand() {

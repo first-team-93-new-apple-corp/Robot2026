@@ -168,5 +168,32 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.povRight();
     }
 
+    @Override
+    public Trigger SysIdForwardQ(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Right);
+    }
 
+    @Override
+    public Trigger SysIdBackwordQ(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Right);
+    }
+
+    @Override
+    public Trigger SysIdForwardD(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Middle);
+    }
+
+    @Override
+    public Trigger SysIdBackwardD(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Middle);
+    }
+
+    @Override
+    public Trigger SysIdStart(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Left);
+    }
+    @Override
+    public Trigger SysIdEnd(){
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Left);
+    }
 }
