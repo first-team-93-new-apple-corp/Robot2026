@@ -101,6 +101,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeRollerConfig = new TalonFXConfiguration();
         intakeRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         intakeRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        intakeRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        intakeRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.SupplyCurrentLimit = 50;
+
         intakeRollerMotor.getConfigurator().apply(intakeRollerConfig);
 
         SmartDashboard.putData("Brake IntakePivot", commands.brakePivotMotor(true));

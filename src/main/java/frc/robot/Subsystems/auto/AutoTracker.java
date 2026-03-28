@@ -230,7 +230,7 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     private void overBump(PathPlannerPath path) {
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)).withTimeout(1.5));
         //TODO Never got to test this
         // addCommands(AutoBuilder.pathfindToPose(path.getStartingHolonomicPose().get(), PathConstraints.unlimitedConstraints(12), MetersPerSecond.of(1)));
         // addCommands(AutoBuilder.followPath(path));
