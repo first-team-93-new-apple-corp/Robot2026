@@ -111,8 +111,8 @@ public class RobotContainer {
         driver.Shoot().whileTrue(subsystems.shoot());
         driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.Prime().whileTrue(subsystems.Prime().repeatedly());
-        driver.Prime().onFalse(subsystems.PrimeFalse());
+        // driver.Prime().whileTrue(subsystems.Prime().repeatedly());
+        // driver.Prime().onFalse(subsystems.PrimeFalse());
 
         driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
@@ -174,24 +174,24 @@ public class RobotContainer {
         });
     }
 
-    private double getDrivePoseX() {
-        return drivetrain.getState().Pose.getX();
-    }
+    // private double getDrivePoseX() {
+    //     return drivetrain.getState().Pose.getX();
+    // }
 
-    private double getDrivePoseY() {
-        return drivetrain.getState().Pose.getY();
-    }
+    // private double getDrivePoseY() {
+    //     return drivetrain.getState().Pose.getY();
+    // }
 
-    private double getDriveSpeedX() {
-        return drivetrain.getState().Speeds.vxMetersPerSecond;
-    }
+    // private double getDriveSpeedX() {
+    //     return drivetrain.getState().Speeds.vxMetersPerSecond;
+    // }
 
-    private double getDriveSpeedY() {
-        return drivetrain.getState().Speeds.vyMetersPerSecond;
-    }
+    // private double getDriveSpeedY() {
+    //     return drivetrain.getState().Speeds.vyMetersPerSecond;
+    // }
 
-    public ShootingData getShootingData() {
-        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
-                getDriveSpeedY());
-    }
+    // public ShootingData getShootingData() {
+    //     return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+    //             getDriveSpeedY());
+    // }
 }
