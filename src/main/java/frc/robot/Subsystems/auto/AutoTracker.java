@@ -20,14 +20,8 @@ import frc.robot.util.subsystems;
 
 public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
-    private HashMap<PresetShootingPoint, Command> points;
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
-        points = new HashMap<>();
-        points.put(AutoConstants.PresetShootingPoints.getClose(), subsystems.PrimeHubClose());
-        points.put(AutoConstants.PresetShootingPoints.getCloseSide(), subsystems.PrimeHubCloseSide());
-        points.put(AutoConstants.PresetShootingPoints.getFar(), subsystems.PrimeHubFar());
-        points.put(null, subsystems.PrimeHubFar());
         // points.put(AutoConstants.PresetShootingPoints.getCloseSide(), subsystems.PrimeHubCloseSide());
         
     }
@@ -192,7 +186,7 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     public void followSnapShoot(PathPlannerPath path, PresetShootingPoint point) {
-        Command shootPreset = points.get(point);
+        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
         Command delayedShoot = Commands.waitSeconds(0.5)
