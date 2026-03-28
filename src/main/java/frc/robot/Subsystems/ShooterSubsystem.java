@@ -167,13 +167,16 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     // @Override
     // public void periodic(){
-        
+
     // }
     public void smartDash() {
-        // DriverStation.reportWarning("Shooter S" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
+        // DriverStation.reportWarning("Shooter S" +
+        // Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
 
-        SmartDashboard.putNumber("Hood Position", hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
-        // SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
+        SmartDashboard.putNumber("Hood Position",
+                hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
+        // SmartDashboard.putNumber("Raw Hood",
+        // hoodMotor.getPosition().getValue().in(Degrees));
 
         // SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
 
@@ -182,8 +185,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Shooter Ready?", shooterAtSetpoint(lastShooterSetpoint));
 
-        // DriverStation.reportWarning("Shooter E" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
+        // DriverStation.reportWarning("Shooter E" +
+        // Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
     }
+
     public void log() {
         Logger.log(hoodMotor);
         Logger.log(topLeftShooter);
@@ -191,8 +196,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     // @Override
     // public void periodic() {
-        // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
-        // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
+    // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
+    // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
     // }
 
     public boolean getHoodLimit() {
@@ -272,10 +277,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return topLeftShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1))
                 && topRightShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1));
     }
+
     public double getAngleToHub() {
         return getAngleToHub();
     }
-    
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
@@ -285,42 +290,46 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
-            return Commands.runOnce(() -> {
+            return Commands.sequence(Commands.runOnce(() -> {
                 setMasterVelocity(calculatedLeftVelocity, calculatedRightVelocity);
-            });
+            }), Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedVelocity) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this));
-            // Commands.waitUntil(() -> shooterAtSetpoint(calculatedVelocity.get())));
+                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity,
                 Supplier<AngularVelocity> calculatedRightVelocity) {
-            return Commands.runOnce(() -> {
-                setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get());
-            });
+            return Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get())),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoAngleNoOffset(Angle calculatedAngle) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this));
+                    Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoAngle(Angle calculatedAngle) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this));
+                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoAngleNoOffset(Supplier<Angle> calculatedAngle) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(calculatedAngle.get()), ShooterSubsystem.this));
+                    Commands.runOnce(() -> setHoodPosition(calculatedAngle.get()), ShooterSubsystem.this),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command autoAngle(Supplier<Angle> calculatedAngle) {
             return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle.get()), ShooterSubsystem.this));
+                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle.get()), ShooterSubsystem.this),
+                    Commands.waitTime(Milliseconds.of(20)));
         }
 
         public Command stopShooter() {
@@ -342,36 +351,48 @@ public class ShooterSubsystem extends SubsystemBase {
 
         public Command velocityAndHoodNoOffset(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
             var anglecmd = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(angle.get())));
-            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
+                    Commands.runOnce(() -> setHoodPosition(angle.get())),
+                    Commands.waitTime(Milliseconds.of(20)));
+            var shoot = Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(velocity.get())),
+                    Commands.waitTime(Milliseconds.of(20)));
             return anglecmd.alongWith(shoot);
         }
 
         public Command velocityAndHood(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
             var anglecmd = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(angle.get())));
-            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
+                    Commands.runOnce(() -> setHoodPositionWithOffset(angle.get())),
+                    Commands.waitTime(Milliseconds.of(20)));
+            var shoot = Commands.sequence(
+                    Commands.runOnce(() -> setMasterVelocity(velocity.get())),
+                    Commands.waitTime(Milliseconds.of(20)));
             return anglecmd.alongWith(shoot);
         }
 
         public Command velocityAndHoodNoOffset(Supplier<PresetShootingPoint> point) {
             var angle = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())));
+                    Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())),
+                    Commands.waitTime(Milliseconds.of(20)));
             var shoot = Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
+                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())),
+                    Commands.waitTime(Milliseconds.of(20)));
             return angle.alongWith(shoot);
         }
 
         public Command velocityAndHood(Supplier<PresetShootingPoint> point) {
             var angle = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())));
+                    Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())),
+                    Commands.waitTime(Milliseconds.of(20)));
             var shoot = Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
+                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())),
+                    Commands.waitTime(Milliseconds.of(20)));
             return angle.alongWith(shoot);
         }
+
         public Command logging() {
             return Commands.run(() -> log());
         }
+
         public Command smartDashboard() {
             return Commands.run(() -> smartDash());
         }
