@@ -128,7 +128,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .andThen(subsystems.Prime())
+                        .andThen(subsystems.PrimeHubClose())
                         .andThen(delayedShoot));
     }
 
@@ -140,7 +140,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -154,7 +154,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot));
     }
 
@@ -164,7 +164,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .andThen(delayedShoot));
     }
 
@@ -176,7 +176,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.AutoPrime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -208,7 +208,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
 
-        addCommands(driveCmd.andThen(subsystems.AutoPrime().andThen(delayedShoot)));
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
     }
 
     public void addOverBumpLeft(String name) {
