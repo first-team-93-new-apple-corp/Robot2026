@@ -82,8 +82,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // Motion Magic Configs
         intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 6;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 7;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 3;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 4;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
@@ -144,9 +144,9 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     public void smartDash() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
-        SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
-        SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
+        // SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
 
     }
     @Override
@@ -200,7 +200,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.8;
+            double delay = 0.7;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
@@ -209,7 +209,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.8;
+            double delay = 0.7;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
