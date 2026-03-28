@@ -5,7 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Milliseconds;
-import com.ctre.phoenix6.HootAutoReplay;
+
 import com.ctre.phoenix6.Utils;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
@@ -27,16 +27,16 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
 
-        addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.quest(), Milliseconds.of(20));
-        addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
+        // addPeriodic(() -> _robotContainer.subsystems.quesmtNav().commands.quest(), Milliseconds.of(20));
+        // addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
 
-        addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
+        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
 
-        addPeriodic(() -> m_robotContainer.subsystems.intake().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        addPeriodic(() -> m_robotContainer.subsystems.intake().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
+        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
 
-        addPeriodic(() -> m_robotContainer.subsystems.manipulation().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+        // addPeriodic(() -> m_robotContainer.subsystems.manipulation().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
 
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
         
@@ -49,6 +49,10 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
+        // m_robotContainer.subsystems.intake().commands.smartDashboard();
+        // m_robotContainer.subsystems.shooter().commands.smartDashboard();
+        // m_robotContainer.subsystems.questNav().commands.quest();
+        // m_robotContainer.subsystems.questNav().commands.pi();
     }
 
     @Override

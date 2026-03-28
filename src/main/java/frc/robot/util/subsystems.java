@@ -32,7 +32,7 @@ public record subsystems(
         var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands(cmd1.andThen(intake.commands.intake()));
         cmds.addCommands(manipulation.commands.intakeCommand());
-        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
+        // cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
         return cmds;
     }
 
@@ -41,7 +41,7 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.intake());
         cmds.addCommands(manipulation.commands.intakeCommand());
-        cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
+        // cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
         return cmds;
     }
 
@@ -50,7 +50,7 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
-        cmds.addCommands(shooter.commands.stopShooter());
+        // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
     }
 

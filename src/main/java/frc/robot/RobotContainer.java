@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.motorcontrol.Faults;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -74,13 +75,13 @@ public class RobotContainer {
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(6.5));
         configureBindings();
-        DogLog.setOptions(new DogLogOptions()
-                .withCaptureDs(true)
-                .withLogExtras(true)
-                .withCaptureConsole(true)
-                .withCaptureNt(true)
-                .withUseLogThread(true));
-        DogLog.setEnabled(true);
+        // DogLog.setOptions(new DogLogOptions()
+        //         .withCaptureDs(true)
+        //         .withLogExtras(true)
+        //         .withCaptureConsole(true)
+        //         .withCaptureNt(true)
+        //         .withUseLogThread(true));
+        // DogLog.setEnabled(false);
     }
 
     private void configureBindings() {
