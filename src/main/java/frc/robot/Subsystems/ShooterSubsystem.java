@@ -165,8 +165,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getAvgVelocityFeet() {
         return ((getAvgVelocity()) * 4 * Math.PI) / 12;
     }
+    @Override
+    public void periodic(){
+        smartDash();
+    }
     public void smartDash() {
-        DriverStation.reportWarning("Shooter S" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
+        // DriverStation.reportWarning("Shooter S" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
 
         SmartDashboard.putNumber("Hood Position", hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         // SmartDashboard.putNumber("Raw Hood", hoodMotor.getPosition().getValue().in(Degrees));
@@ -178,7 +182,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Shooter Ready?", shooterAtSetpoint(lastShooterSetpoint));
 
-        DriverStation.reportWarning("Shooter E" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
+        // DriverStation.reportWarning("Shooter E" + Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
     }
     public void log() {
         Logger.log(hoodMotor);

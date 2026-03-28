@@ -206,6 +206,12 @@ public class VisionSubsystem extends SubsystemBase {
     public Integer getQuestBattery() {
         return quest.getBatteryPercent().getAsInt();
     }
+    @Override
+    public void periodic(){
+        smartDash();
+        questPeriodic();
+        piPeriodic();
+    }
 
     /**
      * Class of quest commands

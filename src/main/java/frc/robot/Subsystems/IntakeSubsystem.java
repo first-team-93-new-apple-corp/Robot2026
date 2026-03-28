@@ -149,6 +149,10 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
 
     }
+    @Override
+    public void periodic(){
+        smartDash();
+    }
     public void log() {
         Logger.log(intakePivotMotor);
         Logger.log(intakeRollerMotor);
