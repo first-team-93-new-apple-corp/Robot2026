@@ -192,7 +192,6 @@ public class ShooterMath {
         }
         return matrix;
     }
-
     public static double[] calcShootingDataWhileMoving(double robotX, double robotZ, double shooter_velocity,
             double originalPitch, double angleToHub) {
         double vcosThetaPrime = Math
