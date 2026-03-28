@@ -51,8 +51,8 @@ public class AutoDirector {
                 this::getSpeeds,
                 (speeds, feedforwards) -> autoSubsystems.drivetrain().setControl(autoRequest.withSpeeds(speeds)),
                 new PPHolonomicDriveController(
-                        new PIDConstants(10, 0.0, 0.001),
-                        new PIDConstants(5, 0.0, 0.0)),
+                        new PIDConstants(9.5, 0.0, 0.001),
+                        new PIDConstants(4.5, 0.0, 0.0)),
                 config,
                 () -> {
                     var alliance = DriverStation.getAlliance();
@@ -74,7 +74,7 @@ public class AutoDirector {
         return autoSubsystems.drivetrain().getState().Pose;
     }
 
-    private ChassisSpeeds getSpeeds() {
+    private ChassisSpeeds getSpeeds() { 
         return autoSubsystems.drivetrain().getState().Speeds;
     }
 
