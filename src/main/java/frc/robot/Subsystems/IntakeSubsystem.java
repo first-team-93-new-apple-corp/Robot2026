@@ -146,17 +146,22 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean pivotAtSetpoint(Angle setpoint) {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
+
     public void smartDash() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
         // SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
-        // SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
-        // SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotCurrentStator",
+        // intakePivotMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotCurrentSupply",
+        // intakePivotMotor.getSupplyCurrent().getValueAsDouble());
 
     }
+
     @Override
-    public void periodic(){
+    public void periodic() {
         smartDash();
     }
+
     public void log() {
         Logger.log(intakePivotMotor);
         Logger.log(intakeRollerMotor);
@@ -234,14 +239,14 @@ public class IntakeSubsystem extends SubsystemBase {
             }).ignoringDisable(true);
         }
 
-        public Command setIntakeZero (){
-            return runOnce(() -> {
-                    pivotEncoder.setPosition(0);
-            }).ignoringDisable(true);
+        public Command setIntakeZero() {
+            return runOnce(() -> pivotEncoder.setPosition(0)).ignoringDisable(true);
         }
+
         public Command logging() {
             return Commands.run(() -> log());
         }
+
         public Command smartDashboard() {
             return Commands.run(() -> smartDash());
         }

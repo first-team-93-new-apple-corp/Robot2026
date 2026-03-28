@@ -74,6 +74,16 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
+    public Trigger manUpIntake(){
+        return Xbox.start();
+    }
+
+    @Override
+    public Trigger manDownIntake(){
+        return Xbox.back();
+    }
+
+    @Override
     public Trigger middleIntake() {
         return Xbox.start();
     }

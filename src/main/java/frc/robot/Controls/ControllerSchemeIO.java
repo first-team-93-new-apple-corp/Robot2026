@@ -100,6 +100,10 @@ public interface ControllerSchemeIO {
 
     public Trigger SysIdEnd();
 
+    public Trigger manUpIntake();
+
+    public Trigger manDownIntake();
+
     public default double DriveLeft() {
         return InputLeft() * MaxSpeed;
     }

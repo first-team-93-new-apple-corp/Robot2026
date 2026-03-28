@@ -64,7 +64,7 @@ public record subsystems(
     public Command pass() {
         DogLog.timestamp("pass");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
         return cmds.withTimeout(0.5);
     }
@@ -72,7 +72,7 @@ public record subsystems(
     public Command shootFalse() {
         DogLog.timestamp("shootFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(intake.commands.idle());
+        // cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
         // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
@@ -93,7 +93,7 @@ public record subsystems(
     public Command Prime() {
         // DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity()));
@@ -115,7 +115,7 @@ public record subsystems(
     public Command PrimeHubClose() {
         DogLog.timestamp("PrimeHubClose");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getClose()));
         return cmds.withTimeout(1);
     }
@@ -123,7 +123,7 @@ public record subsystems(
     public Command PrimeHubCloseSide() {
         DogLog.timestamp("PrimeHubCloseSide");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getCloseSide()));
         return cmds.withTimeout(1);
     }
@@ -131,7 +131,7 @@ public record subsystems(
     public Command PrimeHubFar() {
         DogLog.timestamp("PrimeHubFar");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getFar()));
         return cmds.withTimeout(1);
     }
@@ -139,7 +139,7 @@ public record subsystems(
     public Command PrimeHubLeft() {
         DogLog.timestamp("PrimeHubLeft");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getLeft()));
         return cmds.withTimeout(1);
     }
@@ -147,7 +147,7 @@ public record subsystems(
     public Command PrimeHubRight() {
         DogLog.timestamp("PrimeHubRight");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getRight()));
         return cmds.withTimeout(1);
     }
@@ -181,7 +181,7 @@ public record subsystems(
     public Command AutoPrime() {
         // DogLog.timestamp("AutoPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         // cmds.addCommands(drivetrain.applyRequest(
         // () ->
         // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
@@ -194,7 +194,7 @@ public record subsystems(
     public Command PrimeFalse() {
         DogLog.timestamp("PrimeFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands((intake.commands.idle()));
+        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter.commands.stopShooter());
         cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
