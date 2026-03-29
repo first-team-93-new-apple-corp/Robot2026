@@ -91,7 +91,7 @@ public record subsystems(
     // return cmds.withTimeout(1);
     // }
     public Command Prime() {
-        // DogLog.timestamp("Prime");
+        DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
@@ -179,7 +179,7 @@ public record subsystems(
     // return cmds.withTimeout(2);
     // }
     public Command AutoPrime() {
-        // DogLog.timestamp("AutoPrime");
+        DogLog.timestamp("AutoPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
         // cmds.addCommands(drivetrain.applyRequest(

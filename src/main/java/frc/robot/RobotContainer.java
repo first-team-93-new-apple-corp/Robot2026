@@ -76,12 +76,12 @@ public class RobotContainer {
         RobotController.setBrownoutVoltage(Volts.of(6.5));
         configureBindings();
         DogLog.setOptions(new DogLogOptions()
-                .withCaptureDs(false)
+                .withCaptureDs(true)
                 .withLogExtras(false)
-                .withCaptureConsole(false)
+                .withCaptureConsole(true)
                 .withCaptureNt(false)
-                .withUseLogThread(false));
-        DogLog.setEnabled(false);
+                .withUseLogThread(true));
+        DogLog.setEnabled(true);
     }
 
     private void configureBindings() {
