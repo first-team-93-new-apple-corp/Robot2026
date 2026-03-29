@@ -6,18 +6,12 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
-import com.ctre.phoenix.motorcontrol.Faults;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Swerve;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
@@ -27,9 +21,7 @@ import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
-import frc.robot.util.Logger;
 import frc.robot.util.NTSubsystem;
-import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 import dev.doglog.*;
 
@@ -155,8 +147,11 @@ public class RobotContainer {
 
         RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
         RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
+        
         driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true)
                 .andThen(Commands.print("Reset Pose due to Button Press")));
+
+
         // driver.SysIdForwardQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // driver.SysIdForwardD().whileTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // driver.SysIdBackwordQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
