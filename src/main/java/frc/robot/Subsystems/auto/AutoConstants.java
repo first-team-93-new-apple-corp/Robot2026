@@ -50,7 +50,7 @@ public class AutoConstants {
     public class PresetShootingPoints {
         public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
-        public static final PresetShootingPoint BlueCloseSide = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(6.55).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
+        public static final PresetShootingPoint BlueCloseSide = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.5).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedCloseSide = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueCloseSide.pose), BlueCloseSide.velocity, BlueCloseSide.hoodAngle);
         public static final PresetShootingPoint BlueInfrontofClimb = new PresetShootingPoint(new Pose2d(1.599, 3.771, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.13).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClimb), Degrees.of(90).minus(Radians.of(1.15)));
         public static final PresetShootingPoint RedInfrontofClimb = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueInfrontofClimb.pose), BlueInfrontofClimb.velocity, BlueInfrontofClimb.hoodAngle);
@@ -69,7 +69,7 @@ public class AutoConstants {
                 } 
                 return BlueClose; // Default to blue
             }
-            return null;
+            return BlueClose;
         }
 
         public static PresetShootingPoint getCloseSide() {
@@ -80,7 +80,7 @@ public class AutoConstants {
                 } 
                 return BlueCloseSide; // Default to blue
             }
-            return null;
+            return BlueCloseSide;
         }
 
         public static PresetShootingPoint getFar() {
@@ -91,7 +91,7 @@ public class AutoConstants {
                 } 
                 return BlueInfrontofClimb; // Default to blue
             }
-            return null;
+            return BlueInfrontofClimb;
         }
 
         public static PresetShootingPoint getLeft() {
@@ -102,7 +102,7 @@ public class AutoConstants {
                 } 
                 return BlueLeftWing; // Default to blue
             }
-            return null;
+            return BlueLeftWing;
         }
          public static PresetShootingPoint getRight() {
             var alliance = DriverStation.getAlliance();
@@ -112,7 +112,7 @@ public class AutoConstants {
                 } 
                 return BlueRightWing; // Default to blue
             }
-            return null;
+            return BlueRightWing;
         }
          public static PresetShootingPoint getDepotLeft() {
             var alliance = DriverStation.getAlliance();
@@ -122,7 +122,7 @@ public class AutoConstants {
                 } 
                 return BlueDepotLeft; // Default to blue
             }
-            return null;
+            return BlueDepotLeft;
         }
          public static PresetShootingPoint getDepotRight() {
             var alliance = DriverStation.getAlliance();
@@ -132,7 +132,7 @@ public class AutoConstants {
                 } 
                 return BlueDepotRight; // Default to blue
             }
-            return null;
+            return BlueDepotRight;
         }
         // right up agasibnst hub
         // left corner
