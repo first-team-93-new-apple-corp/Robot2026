@@ -128,7 +128,6 @@ public class RobotContainer {
 
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
-        driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
 
         driver.manDownIntake().onTrue(subsystems.intake().commands.manPivotDown());
         driver.manUpIntake().onTrue(subsystems.intake().commands.manPivotUp());
