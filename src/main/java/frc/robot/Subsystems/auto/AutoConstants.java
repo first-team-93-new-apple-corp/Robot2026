@@ -69,7 +69,7 @@ public class AutoConstants {
                 } 
                 return BlueClose; // Default to blue
             }
-            return null;
+            return BlueClose;
         }
 
         public static PresetShootingPoint getCloseSide() {
@@ -80,7 +80,7 @@ public class AutoConstants {
                 } 
                 return BlueCloseSide; // Default to blue
             }
-            return null;
+            return BlueCloseSide;
         }
 
         public static PresetShootingPoint getFar() {
@@ -91,7 +91,7 @@ public class AutoConstants {
                 } 
                 return BlueInfrontofClimb; // Default to blue
             }
-            return null;
+            return BlueInfrontofClimb;
         }
 
         public static PresetShootingPoint getLeft() {
@@ -102,7 +102,7 @@ public class AutoConstants {
                 } 
                 return BlueLeftWing; // Default to blue
             }
-            return null;
+            return BlueLeftWing;
         }
          public static PresetShootingPoint getRight() {
             var alliance = DriverStation.getAlliance();
@@ -112,7 +112,7 @@ public class AutoConstants {
                 } 
                 return BlueRightWing; // Default to blue
             }
-            return null;
+            return BlueRightWing;
         }
          public static PresetShootingPoint getDepotLeft() {
             var alliance = DriverStation.getAlliance();
@@ -122,7 +122,7 @@ public class AutoConstants {
                 } 
                 return BlueDepotLeft; // Default to blue
             }
-            return null;
+            return BlueDepotLeft;
         }
          public static PresetShootingPoint getDepotRight() {
             var alliance = DriverStation.getAlliance();
@@ -132,7 +132,7 @@ public class AutoConstants {
                 } 
                 return BlueDepotRight; // Default to blue
             }
-            return null;
+            return BlueDepotRight;
         }
         // right up agasibnst hub
         // left corner
