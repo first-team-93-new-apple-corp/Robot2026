@@ -245,8 +245,9 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addOverBumpLeft("Overbump");
         tracker.addIntakePath("L_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
         tracker.endAuto();
         return new Auto("Left Side Intake Left Half Center Score Close", tracker);
@@ -256,8 +257,9 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addOverBumpLeft("Overbump");
         tracker.addIntakePath("L_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
         tracker.endAuto();
         return new Auto("Left Side Intake Center Score Close Left", tracker);
@@ -268,8 +270,9 @@ public class AutoDirector {
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBumpLeft("Overbump");
         tracker.addIntakePath("L_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
         tracker.endAuto();
         return new Auto("Left Side Intake Center Score Close Right", tracker);
@@ -280,8 +283,9 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addOverBumpLeft("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close", tracker);
@@ -291,8 +295,9 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addOverBumpLeft("RightOverbump");
         tracker.addIntakePath("L_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close Left", tracker);
@@ -303,9 +308,10 @@ public class AutoDirector {
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBumpLeft("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
-        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close Right", tracker);
     }

@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,7 +92,7 @@ public class AutoTracker extends SequentialCommandGroup {
      */
     public void Intake(PathPlannerPath path) {
         addCommands(subsystems.Intake());
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints));
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints).andThen(Commands.runOnce(() -> DogLog.timestamp("INTAKE " + path.name))));
         // addCommands(AutoBuilder.followPath(path));
     }
     
@@ -128,7 +130,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .andThen(subsystems.Prime())
+                        .andThen(subsystems.PrimeHubClose())
                         .andThen(delayedShoot));
     }
 
@@ -140,7 +142,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -154,7 +156,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot));
     }
 
@@ -164,7 +166,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.Prime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .andThen(delayedShoot));
     }
 
@@ -176,7 +178,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.AutoPrime())
+                        .alongWith(subsystems.PrimeHubClose())
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -199,7 +201,7 @@ public class AutoTracker extends SequentialCommandGroup {
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
                                         .withTimeout(1))
-                        .andThen(delayedShoot));
+                        .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
                 
     }
 
@@ -208,7 +210,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
 
-        addCommands(driveCmd.andThen(subsystems.AutoPrime().andThen(delayedShoot)));
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
     }
 
     public void addOverBumpLeft(String name) {
@@ -230,12 +232,13 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     private void overBump(PathPlannerPath path) {
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)));
+        // addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)).until(()->subsystems.drivetrain().getState().Speeds.vxMetersPerSecond < 0.2));
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12)).andThen(Commands.runOnce(() -> DogLog.timestamp("OVER BUMP " + path.name))));
         //TODO Never got to test this
         // addCommands(AutoBuilder.pathfindToPose(path.getStartingHolonomicPose().get(), PathConstraints.unlimitedConstraints(12), MetersPerSecond.of(1)));
         // addCommands(AutoBuilder.followPath(path));
         // addCommands(Commands.runOnce(() -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-        //         .withTimeout(3));
+        //         .withTimeout(2));
     }
 
    

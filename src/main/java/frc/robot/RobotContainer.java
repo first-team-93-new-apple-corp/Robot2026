@@ -77,11 +77,11 @@ public class RobotContainer {
         configureBindings();
         DogLog.setOptions(new DogLogOptions()
                 .withCaptureDs(true)
-                .withLogExtras(true)
+                .withLogExtras(false)
                 .withCaptureConsole(true)
-                .withCaptureNt(true)
+                .withCaptureNt(false)
                 .withUseLogThread(true));
-        DogLog.setEnabled(false);
+        DogLog.setEnabled(true);
     }
 
     private void configureBindings() {
@@ -129,6 +129,11 @@ public class RobotContainer {
         driver.LowerIntake().onTrue(subsystems.intake().commands.autoPivotDown());
         driver.RaiseIntake().onTrue(subsystems.intake().commands.autoPivotUp());
         driver.middleIntake().onTrue(subsystems.intake().commands.autoPivotMiddle());
+
+        driver.manDownIntake().onTrue(subsystems.intake().commands.manPivotDown());
+        driver.manUpIntake().onTrue(subsystems.intake().commands.manPivotUp());
+        driver.manDownIntake().onFalse(subsystems.intake().commands.manPivotStop());
+        driver.manUpIntake().onFalse(subsystems.intake().commands.manPivotStop());
 
         driver.WiggleIntake().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleIntake()));
         driver.WiggleIntake().onFalse(subsystems.manipulation().commands.idleCommand());
