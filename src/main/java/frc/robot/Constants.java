@@ -187,7 +187,8 @@ public class Constants {
         public static final Angle pivotUpPosition = Degrees.of(0);
         public static final Angle pivotDownPosition = Degrees.of(135);
         public static final Angle pivotMiddlePosition = Degrees.of(60);
-        // public static final Angle encoderOffset = Rotations.of("Replace me with encoderValue at 0 Degrees".length());
+        // public static final Angle encoderOffset = Rotations.of("Replace me with
+        // encoderValue at 0 Degrees".length());
         public static final double gearBoxRatio = 9; // 9:1 for torque
         public static final double chainRatio = 1; // 1:1
     }
@@ -228,6 +229,7 @@ public class Constants {
             public static final double kI = 0.05;
             public static final double kD = 0.1;
         }
+
         public class ShooterMotorConfigs {
             public static final Distance flyWheelDiameter = Inches.of(4);
             public static final double StatorLimit = 200.0;
@@ -242,24 +244,57 @@ public class Constants {
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
             public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
-            public static final double ShootToFlyGearRatio = 24/18;
-            public static final double EfficiencyMultiplierClose =  1.275; // 1 ish
-            public static final double EfficiencyMultiplierClimb =  1.6; // 2.954  
-            public static final double EfficiencyMultiplierTrench =  1.5; //  4.16     
-            // public static final double EfficiencyMultiplierDepotLeft =  1.8; // 5.08
-            // public static final double EfficiencyMultiplierDepotRight =  1.4; // 3.61
-            // Climber Controls moving to sticks 
+            public static final double ShootToFlyGearRatio = 24 / 18;
+            public static final double EfficiencyMultiplierClose = 1.275; // 1 ish
+            public static final double EfficiencyMultiplierClimb = 1.6; // 2.954
+            public static final double EfficiencyMultiplierTrench = 1.5; // 4.16
+            // public static final double EfficiencyMultiplierDepotLeft = 1.8; // 5.08
+            // public static final double EfficiencyMultiplierDepotRight = 1.4; // 3.61
+            // Climber Controls moving to sticks
             // Shooter controls move to xbox
 
         }
+
         public class AutoShoot {
             public static final double hubHeightOffset = 0.5;
             public static final double hubXOffset = 0.35;
             public static final double PrimeEfficiencyFar = 1.5; // Need to tune
             public static final double PrimeEfficiencyClose = 1.43; // Need to tune
             public static final double ShooterHeight = 0.6;
-            public static final double RangeThreshold = 3;  
+            public static final double RangeThreshold = 3;
+            public record preset(AngularVelocity velocity, Angle hoodAngle) {
+                public preset(AngularVelocity velocity) {
+                    this(velocity, Degrees.of(20));          
+                }   
+            }
+            public class Presets {
+                public static final double closeRPS = 32.6;
+                public static final double closeSideRPS = 41.9;
+                public static final double inFrontOfClimbRPS = 57.2;
+                public static final double leftWingRPS = 37.3;
+                public static final double rightWingRPS = 29.8;
+                public static final double depotLeftRPS = 41.6;
+                public static final double depotRightRPS = 39.0;
+
+                public static final double closeDeg = 10.0;
+                public static final double closeSideDeg = 10.0;
+                public static final double inFrontOfClimbDeg = 25.0;
+                public static final double leftWingDeg = 26.4;
+                public static final double rightWingDeg = 26.4;
+                public static final double depotLeftDeg = 30.4;
+                public static final double depotRightDeg = 28.1;
+
+                public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
+                public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS), Degrees.of(closeSideDeg));
+                public static final preset inFrontOfClimb = new preset(RotationsPerSecond.of(inFrontOfClimbRPS), Degrees.of(inFrontOfClimbDeg));
+                public static final preset leftWing = new preset(RotationsPerSecond.of(leftWingRPS), Degrees.of(leftWingDeg));
+                public static final preset rightWing = new preset(RotationsPerSecond.of(rightWingRPS), Degrees.of(rightWingDeg));
+                public static final preset depotLeft = new preset(RotationsPerSecond.of(depotLeftRPS), Degrees.of(depotLeftDeg));
+                public static final preset depotRight = new preset(RotationsPerSecond.of(depotRightRPS), Degrees.of(depotRightDeg));
+
+            }
         }
+
         public class HoodMotorConfigs {
             public static final double StatorLimit = 60.0;
             public static final double SupplyLimit = 40.0;
@@ -311,13 +346,13 @@ public class Constants {
         public static final Angle QuestPitchOffset = Degrees.of(0);
         public static final Angle QuestRollOffset = Degrees.of(90);
 
-        public static Transform3d RobotToQuest3D = 
-                new Transform3d(QuestX.in(Meters), QuestY.in(Meters), QuestZ.in(Meters), 
+        public static Transform3d RobotToQuest3D = new Transform3d(QuestX.in(Meters), QuestY.in(Meters),
+                QuestZ.in(Meters),
                 new Rotation3d(QuestRollOffset, QuestPitchOffset, QuestYawOffset));
 
-                
-        // public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters), QuestY.in(Meters),
-        //         new Rotation2d(QuestYawOffset.in(Degrees)));
+        // public static Transform2d RobotToQuest2D = new Transform2d(QuestX.in(Meters),
+        // QuestY.in(Meters),
+        // new Rotation2d(QuestYawOffset.in(Degrees)));
         public static final Matrix<N3, N1> QUESTNAV_STD_DEVS = VecBuilder.fill(0, 0, 0);
     }
 
@@ -329,8 +364,6 @@ public class Constants {
         public static final Matrix<N3, N1> singleTagDevs = VecBuilder.fill(0.2, 0.2, 0.2);
         public static final Matrix<N3, N1> multiTagDevs = VecBuilder.fill(0.02, 0.02, 0.05); // probably not used
         public static final Matrix<N3, N1> standardDevs = VecBuilder.fill(0.15, 0.15, 0.05); // probably not used
-
-
 
     }
 

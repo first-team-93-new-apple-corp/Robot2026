@@ -46,7 +46,9 @@ public class AutoConstants {
             }
         }
     }
+    @Deprecated
     public record PresetShootingPoint(Pose2d pose, AngularVelocity velocity, Angle hoodAngle) {}
+    @Deprecated
     public class PresetShootingPoints {
         public static final PresetShootingPoint BlueClose = new PresetShootingPoint(new Pose2d(3.525, 3.965, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotationsforClose(6.4).times(Constants.ShooterConstants.ShooterMotorConfigs.EfficiencyMultiplierClose), Degrees.of(90).minus(Radians.of(1.395)));
         public static final PresetShootingPoint RedClose = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueClose.pose), BlueClose.velocity, BlueClose.hoodAngle);
@@ -60,7 +62,7 @@ public class AutoConstants {
         public static final PresetShootingPoint RedLeftWing = new PresetShootingPoint(FlippingUtil.flipFieldPose(BlueRightWing.pose), BlueRightWing.velocity, BlueRightWing.hoodAngle);
         public static final PresetShootingPoint BlueDepotLeft = new PresetShootingPoint(new Pose2d(0.498, 6.996, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(8.299), Degrees.of(90).minus(Radians.of(1.04)));
         public static final PresetShootingPoint BlueDepotRight = new PresetShootingPoint(new Pose2d(0.547, 4.854, Rotation2d.fromDegrees(0)), ShooterMath.speedToMotorRotations(7.789), Degrees.of(90).minus(Radians.of(1.08)));
-
+         @Deprecated
         public static PresetShootingPoint getClose() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -71,7 +73,7 @@ public class AutoConstants {
             }
             return BlueClose;
         }
-
+        @Deprecated
         public static PresetShootingPoint getCloseSide() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -82,7 +84,7 @@ public class AutoConstants {
             }
             return BlueCloseSide;
         }
-
+         @Deprecated
         public static PresetShootingPoint getFar() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -93,7 +95,7 @@ public class AutoConstants {
             }
             return BlueInfrontofClimb;
         }
-
+         @Deprecated
         public static PresetShootingPoint getLeft() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -104,6 +106,7 @@ public class AutoConstants {
             }
             return BlueLeftWing;
         }
+         @Deprecated
          public static PresetShootingPoint getRight() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -114,6 +117,7 @@ public class AutoConstants {
             }
             return BlueRightWing;
         }
+         @Deprecated
          public static PresetShootingPoint getDepotLeft() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
@@ -124,6 +128,7 @@ public class AutoConstants {
             }
             return BlueDepotLeft;
         }
+         @Deprecated
          public static PresetShootingPoint getDepotRight() {
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent()) {
