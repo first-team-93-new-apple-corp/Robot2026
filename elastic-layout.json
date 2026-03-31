@@ -8,112 +8,8 @@
         "layouts": [],
         "containers": [
           {
-            "title": "HoodSetpoint",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Radial Gauge",
-            "properties": {
-              "topic": "/SmartDashboard/HoodSetpoint",
-              "period": 0.001,
-              "data_type": "double",
-              "start_angle": -80.0,
-              "end_angle": -35.0,
-              "min_value": 25.0,
-              "max_value": 45.0,
-              "number_of_labels": 2,
-              "wrap_value": false,
-              "show_pointer": true,
-              "show_ticks": true
-            }
-          },
-          {
-            "title": "Hood Position",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Radial Gauge",
-            "properties": {
-              "topic": "/SmartDashboard/Hood Position",
-              "period": 0.001,
-              "data_type": "double",
-              "start_angle": -80.0,
-              "end_angle": -35.0,
-              "min_value": 25.0,
-              "max_value": 45.0,
-              "number_of_labels": 2,
-              "wrap_value": false,
-              "show_pointer": true,
-              "show_ticks": true
-            }
-          },
-          {
-            "title": "setHood (Degrees)",
-            "x": 512.0,
-            "y": 128.0,
-            "width": 512.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/setHood (Degrees)",
-              "period": 0.001,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 20.0,
-              "divisions": 5,
-              "update_continuously": true
-            }
-          },
-          {
-            "title": "setVelocity (RPS)",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 512.0,
-            "height": 128.0,
-            "type": "Number Slider",
-            "properties": {
-              "topic": "/SmartDashboard/setVelocity (RPS)",
-              "period": 0.001,
-              "data_type": "double",
-              "min_value": 0.0,
-              "max_value": 80.0,
-              "divisions": 5,
-              "update_continuously": true
-            }
-          },
-          {
-            "title": "Velocity (avg)",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Velocity (avg)",
-              "period": 0.001,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Feet/Second (avg)",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Velocity Feet/s (avg)",
-              "period": 0.001,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "IntakePivotPosition",
-            "x": 1024.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -133,30 +29,9 @@
             }
           },
           {
-            "title": "IntakePivotSetpoint",
-            "x": 1280.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Radial Gauge",
-            "properties": {
-              "topic": "/SmartDashboard/IntakePivotSetpoint",
-              "period": 0.001,
-              "data_type": "double",
-              "start_angle": -95.0,
-              "end_angle": 50.0,
-              "min_value": -5.0,
-              "max_value": 140.0,
-              "number_of_labels": 0,
-              "wrap_value": false,
-              "show_pointer": true,
-              "show_ticks": false
-            }
-          },
-          {
             "title": "Coast IntakePivot",
-            "x": 1024.0,
-            "y": 256.0,
+            "x": 768.0,
+            "y": 512.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -169,8 +44,8 @@
           },
           {
             "title": "Brake IntakePivot",
-            "x": 1280.0,
-            "y": 256.0,
+            "x": 768.0,
+            "y": 640.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -182,37 +57,9 @@
             }
           },
           {
-            "title": "Raw Hood",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Raw Hood",
-              "period": 0.002,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Hood Position",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Hood Position",
-              "period": 0.001,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "pi_Port_1182_Output_MJPEG_Server",
-            "x": 768.0,
-            "y": 384.0,
+            "x": 0.0,
+            "y": 128.0,
             "width": 768.0,
             "height": 512.0,
             "type": "Camera Stream",
@@ -226,7 +73,7 @@
           {
             "title": "Quest Tracking?",
             "x": 512.0,
-            "y": 384.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -243,7 +90,7 @@
           {
             "title": "Quest Connected",
             "x": 0.0,
-            "y": 384.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -260,7 +107,7 @@
           {
             "title": "Quest Battery %",
             "x": 256.0,
-            "y": 384.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -268,6 +115,88 @@
               "topic": "/SmartDashboard/Quest Battery %",
               "period": 0.001,
               "data_type": "double"
+            }
+          },
+          {
+            "title": "Reset Vision",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Reset Vision",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "IntakeZero",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/IntakeZero",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": false
+            }
+          },
+          {
+            "title": "AutoChooser",
+            "x": 1536.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/AutoChooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "source",
+            "x": 0.0,
+            "y": 768.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/CameraPublisher/pi_Port_1181_Input_MJPEG_Server/source",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "streams",
+            "x": 128.0,
+            "y": 768.0,
+            "width": 640.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/CameraPublisher/pi_Port_1181_Input_MJPEG_Server/streams",
+              "period": 0.06,
+              "data_type": "string[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Passthrough",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 640.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/Passthrough",
+              "period": 0.06,
+              "rotation_turns": 1
             }
           }
         ]
@@ -277,7 +206,36 @@
       "name": "Autonomous",
       "grid_layout": {
         "layouts": [],
-        "containers": []
+        "containers": [
+          {
+            "title": "Target Shooting Math",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 768.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Target Shooting Math",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Target Fallback Math",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 768.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Target Fallback Math",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
+            }
+          }
+        ]
       }
     },
     {
@@ -337,7 +295,7 @@
             "x": 0.0,
             "y": 128.0,
             "width": 768.0,
-            "height": 768.0,
+            "height": 512.0,
             "type": "Graph",
             "properties": {
               "topic": "/SmartDashboard/Voltage",
@@ -373,7 +331,7 @@
             "x": 768.0,
             "y": 128.0,
             "width": 768.0,
-            "height": 768.0,
+            "height": 512.0,
             "type": "Graph",
             "properties": {
               "topic": "/SmartDashboard/Total Current",
@@ -384,6 +342,20 @@
               "max_value": 250.0,
               "color": 4278238420,
               "line_width": 2.0
+            }
+          },
+          {
+            "title": "Target Fallback Math",
+            "x": 1536.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Target Fallback Math",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
             }
           }
         ]
