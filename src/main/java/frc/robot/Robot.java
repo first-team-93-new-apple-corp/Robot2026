@@ -11,6 +11,7 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.TimesliceRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -27,16 +28,9 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
 
-        // addPeriodic(() -> _robotContainer.subsystems.quesmtNav().commands.quest(), Milliseconds.of(20));
-        // addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.manipulation().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+        addPeriodic(()->piPeriodic(), Milliseconds.of(250));
+        addPeriodic(()->logging(), Milliseconds.of(50));
+        addPeriodic(()-> smartDashboard(), Milliseconds.of(100));
 
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
         
@@ -47,12 +41,29 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
-        // m_robotContainer.subsystems.intake().commands.smartDashboard();
-        // m_robotContainer.subsystems.shooter().commands.smartDashboard();
-        // m_robotContainer.subsystems.questNav().commands.quest();
-        // m_robotContainer.subsystems.questNav().commands.pi();
+        questPeriodic();
+    }
+
+    public void piPeriodic(){
+        m_robotContainer.subsystems.vision().piPeriodic();
+    }
+
+    public void questPeriodic(){
+        m_robotContainer.subsystems.vision().questPeriodic();
+    }
+
+    public void smartDashboard(){
+        m_robotContainer.subsystems.vision().smartDash();
+        m_robotContainer.subsystems.intake().smartDash();
+        m_robotContainer.subsystems.shooter().smartDash();
+        m_robotContainer.subsystems.pds().smartDash();
+    }
+
+    public void logging(){
+        m_robotContainer.subsystems.intake().log();
+        m_robotContainer.subsystems.shooter().log();
+        m_robotContainer.subsystems.manipulation().log();
     }
 
     @Override

@@ -17,10 +17,8 @@ public class PowerDistributionSubsystem extends SubsystemBase{
     public PowerDistributionSubsystem() {
         DogLog.setPdh(PDH);
     }
-    @Override
-    public void periodic() {
+    public void smartDash() {
         currentAverage.addValue(PDH.getTotalCurrent());
-        // PDH.
         voltage = PDH.getVoltage();
         SmartDashboard.putNumber("Total Current", currentAverage.getAverage());
         SmartDashboard.putNumber("Voltage", voltage);

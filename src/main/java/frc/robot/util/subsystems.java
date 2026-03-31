@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
+import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.ShooterSubsystem;
@@ -18,14 +19,15 @@ import dev.doglog.*;
 
 public record subsystems(
         CommandSwerveDrivetrain drivetrain,
-        VisionSubsystem questNav,
+        VisionSubsystem vision,
         ShooterSubsystem shooter,
         IntakeSubsystem intake,
         ManipulationSubsystem manipulation,
+        PowerDistributionSubsystem pds,
         ControllerSchemeIO driver) {
     public subsystems(CommandSwerveDrivetrain drivetrain, ShooterSubsystem shooter,
-            IntakeSubsystem intake, ManipulationSubsystem manipulation, ControllerSchemeIO driver) {
-        this(drivetrain, null, shooter, intake, manipulation, driver);
+            IntakeSubsystem intake, ManipulationSubsystem manipulation, PowerDistributionSubsystem pds, ControllerSchemeIO driver) {
+        this(drivetrain, null, shooter, intake, manipulation, pds, driver);
     }
 
     public Command Intake() {

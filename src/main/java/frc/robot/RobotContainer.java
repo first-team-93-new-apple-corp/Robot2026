@@ -58,10 +58,10 @@ public class RobotContainer {
     private IntakeSubsystem intake = new IntakeSubsystem();
     private ManipulationSubsystem manipulation = new ManipulationSubsystem();
     private ShooterSubsystem shooter = new ShooterSubsystem();
-    public final PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
+    public PowerDistributionSubsystem DistributionHubsystem = new PowerDistributionSubsystem();
 
     // subsytems var, contains all subsytems, less to implemnt into classes
-    public subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, driver);
+    public subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, DistributionHubsystem, driver);
     private AutoDirector auto = new AutoDirector(subsystems);
 
     public RobotContainer() {
@@ -144,10 +144,10 @@ public class RobotContainer {
                 .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
         driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
-        RobotModeTriggers.autonomous().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
-        RobotModeTriggers.teleop().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true));
+        RobotModeTriggers.autonomous().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
+        RobotModeTriggers.teleop().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
         
-        driver.resetPose().onTrue(subsystems.questNav().commands.resetPose().ignoringDisable(true)
+        driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                 .andThen(Commands.print("Reset Pose due to Button Press")));
 
 

@@ -80,7 +80,7 @@ public class AutoDirector {
 
     public void resetAutoPose(Pose2d pose) {
         autoSubsystems.drivetrain().resetPose(pose);
-        autoSubsystems.questNav().commands.setRobotPose(new Pose3d(pose));
+        autoSubsystems.vision().commands.setRobotPose(new Pose3d(pose));
     }
 
     public record Auto(String name, Command command, Pose2d initPose) {
