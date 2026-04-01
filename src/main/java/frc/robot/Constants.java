@@ -278,6 +278,7 @@ public class Constants {
             public static final double rightWingRPS = 29.8;
             public static final double depotLeftRPS = 41.6;
             public static final double depotRightRPS = 39.0;
+            public static final double bumpRPS = 50.0;
 
             public static final double closeDeg = 10.0;
             public static final double closeSideDeg = 10.0;
@@ -286,6 +287,7 @@ public class Constants {
             public static final double rightWingDeg = 26.4;
             public static final double depotLeftDeg = 30.4;
             public static final double depotRightDeg = 28.1;
+            public static final double bumpDeg = 28.0;
 
             public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
             public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
@@ -300,7 +302,7 @@ public class Constants {
                     Degrees.of(depotLeftDeg));
             public static final preset depotRight = new preset(RotationsPerSecond.of(depotRightRPS),
                     Degrees.of(depotRightDeg));
-
+            public static final preset bump = new preset(RotationsPerSecond.of(bumpRPS), Degrees.of(bumpDeg));
         }
 
         public class HoodMotorConfigs {

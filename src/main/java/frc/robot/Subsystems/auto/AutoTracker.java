@@ -12,6 +12,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -105,6 +106,16 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
+    public void addShootPath(String pathName, preset preset, Time delay) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            followSnapShoot(path, preset, delay);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     // public void addShootPathCenter(String pathName) {
     //     try {
     //         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
@@ -190,8 +201,22 @@ public class AutoTracker extends SequentialCommandGroup {
         Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
-        Command delayedShoot = Commands.waitSeconds(0.5)
-                .andThen(subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
+        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
+        addCommands(
+                followPath
+                        .alongWith(shootPreset)
+                        .andThen(
+                                Commands.run(
+                                        () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .withTimeout(.5))
+                        .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
+                
+    }
+    public void followSnapShoot(PathPlannerPath path, preset point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
+
+        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
 
         addCommands(
                 followPath
@@ -199,7 +224,7 @@ public class AutoTracker extends SequentialCommandGroup {
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .withTimeout(1))
+                                        .withTimeout(.5))
                         .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
                 
     }
@@ -212,19 +237,10 @@ public class AutoTracker extends SequentialCommandGroup {
         addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
     }
 
-    public void addOverBumpLeft(String name) {
+    public void addOverBump(String name) {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
             overBump(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addOverBumpRight(String name) {
-        try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            overBump(path.mirrorPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
