@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import frc.robot.Constants.ShooterConstants.Presets;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -118,7 +119,7 @@ public record subsystems(
         DogLog.timestamp("PrimeHubClose");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getClose()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.close));
         return cmds.withTimeout(1);
     }
 
@@ -126,7 +127,7 @@ public record subsystems(
         DogLog.timestamp("PrimeHubCloseSide");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getCloseSide()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 
@@ -134,7 +135,7 @@ public record subsystems(
         DogLog.timestamp("PrimeHubFar");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getFar()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.inFrontOfClimb));
         return cmds.withTimeout(1);
     }
 
@@ -142,7 +143,7 @@ public record subsystems(
         DogLog.timestamp("PrimeHubLeft");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getLeft()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 
@@ -150,7 +151,7 @@ public record subsystems(
         DogLog.timestamp("PrimeHubRight");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         // cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> AutoConstants.PresetShootingPoints.getRight()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 

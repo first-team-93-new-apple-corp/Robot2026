@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ShooterConstants.Presets;
 import frc.robot.util.subsystems;
 
 public class AutoDirector {
@@ -174,21 +175,21 @@ public class AutoDirector {
 
     public Auto PreloadClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return new Auto("Score Preload Only Close", tracker);
     }
 
     public Auto PreloadCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getDepotLeft());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Score Preload Only Close Left", tracker);
     }
 
     public Auto PreloadCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Score Preload Only Close Right", tracker);
     }
@@ -196,7 +197,7 @@ public class AutoDirector {
     public Auto DepotScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return new Auto("Depot Shoot Center", tracker);
     }
@@ -204,7 +205,7 @@ public class AutoDirector {
     public Auto DepotScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Depot Shoot Center Left", tracker);
     }
@@ -212,7 +213,7 @@ public class AutoDirector {
     public Auto DepotScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Depot Score Center Right", tracker);
     }
@@ -220,7 +221,7 @@ public class AutoDirector {
     public Auto OutpostScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return new Auto("Outpost Score Center", tracker);
     }
@@ -228,7 +229,7 @@ public class AutoDirector {
     public Auto OutpostScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Outpost Score Center Left", tracker);
     }
@@ -236,7 +237,7 @@ public class AutoDirector {
     public Auto OutpostScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Outpost Score Center Right", tracker);
     }
@@ -248,7 +249,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return new Auto("Left Side Intake Left Half Center Score Close", tracker);
     }
@@ -260,7 +261,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Left Side Intake Center Score Close Left", tracker);
     }
@@ -273,7 +274,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Left Side Intake Center Score Close Right", tracker);
     }
@@ -286,7 +287,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close", tracker);
     }
@@ -298,7 +299,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close Left", tracker);
     }
@@ -311,7 +312,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBumpLeft("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return new Auto("Right Side Intake Center Score Close Right", tracker);
     }

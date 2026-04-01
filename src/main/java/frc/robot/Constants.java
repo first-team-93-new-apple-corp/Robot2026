@@ -262,37 +262,45 @@ public class Constants {
             public static final double PrimeEfficiencyClose = 1.43; // Need to tune
             public static final double ShooterHeight = 0.6;
             public static final double RangeThreshold = 3;
-            public record preset(AngularVelocity velocity, Angle hoodAngle) {
+
+            
+        }
+        public record preset(AngularVelocity velocity, Angle hoodAngle) {
                 public preset(AngularVelocity velocity) {
-                    this(velocity, Degrees.of(20));          
-                }   
+                    this(velocity, Degrees.of(20));
+                }
             }
-            public class Presets {
-                public static final double closeRPS = 32.6;
-                public static final double closeSideRPS = 41.9;
-                public static final double inFrontOfClimbRPS = 57.2;
-                public static final double leftWingRPS = 37.3;
-                public static final double rightWingRPS = 29.8;
-                public static final double depotLeftRPS = 41.6;
-                public static final double depotRightRPS = 39.0;
+        public class Presets {
+            public static final double closeRPS = 32.6;
+            public static final double closeSideRPS = 41.9;
+            public static final double inFrontOfClimbRPS = 57.2;
+            public static final double leftWingRPS = 37.3;
+            public static final double rightWingRPS = 29.8;
+            public static final double depotLeftRPS = 41.6;
+            public static final double depotRightRPS = 39.0;
 
-                public static final double closeDeg = 10.0;
-                public static final double closeSideDeg = 10.0;
-                public static final double inFrontOfClimbDeg = 25.0;
-                public static final double leftWingDeg = 26.4;
-                public static final double rightWingDeg = 26.4;
-                public static final double depotLeftDeg = 30.4;
-                public static final double depotRightDeg = 28.1;
+            public static final double closeDeg = 10.0;
+            public static final double closeSideDeg = 10.0;
+            public static final double inFrontOfClimbDeg = 25.0;
+            public static final double leftWingDeg = 26.4;
+            public static final double rightWingDeg = 26.4;
+            public static final double depotLeftDeg = 30.4;
+            public static final double depotRightDeg = 28.1;
 
-                public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
-                public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS), Degrees.of(closeSideDeg));
-                public static final preset inFrontOfClimb = new preset(RotationsPerSecond.of(inFrontOfClimbRPS), Degrees.of(inFrontOfClimbDeg));
-                public static final preset leftWing = new preset(RotationsPerSecond.of(leftWingRPS), Degrees.of(leftWingDeg));
-                public static final preset rightWing = new preset(RotationsPerSecond.of(rightWingRPS), Degrees.of(rightWingDeg));
-                public static final preset depotLeft = new preset(RotationsPerSecond.of(depotLeftRPS), Degrees.of(depotLeftDeg));
-                public static final preset depotRight = new preset(RotationsPerSecond.of(depotRightRPS), Degrees.of(depotRightDeg));
+            public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
+            public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
+                    Degrees.of(closeSideDeg));
+            public static final preset inFrontOfClimb = new preset(RotationsPerSecond.of(inFrontOfClimbRPS),
+                    Degrees.of(inFrontOfClimbDeg));
+            public static final preset leftWing = new preset(RotationsPerSecond.of(leftWingRPS),
+                    Degrees.of(leftWingDeg));
+            public static final preset rightWing = new preset(RotationsPerSecond.of(rightWingRPS),
+                    Degrees.of(rightWingDeg));
+            public static final preset depotLeft = new preset(RotationsPerSecond.of(depotLeftRPS),
+                    Degrees.of(depotLeftDeg));
+            public static final preset depotRight = new preset(RotationsPerSecond.of(depotRightRPS),
+                    Degrees.of(depotRightDeg));
 
-            }
         }
 
         public class HoodMotorConfigs {

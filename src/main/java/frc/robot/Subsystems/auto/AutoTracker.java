@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Subsystems.auto.AutoConstants.PresetShootingPoint;
+import frc.robot.Constants.ShooterConstants.preset;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -24,7 +24,6 @@ public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
-        // points.put(AutoConstants.PresetShootingPoints.getCloseSide(), subsystems.PrimeHubCloseSide());
         
     }
 
@@ -97,7 +96,7 @@ public class AutoTracker extends SequentialCommandGroup {
     }
     
     
-    public void addShootPath(String pathName, PresetShootingPoint preset) {
+    public void addShootPath(String pathName, preset preset) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             followSnapShoot(path, preset);
@@ -187,7 +186,7 @@ public class AutoTracker extends SequentialCommandGroup {
                                         .withTimeout(2)));
     }
 
-    public void followSnapShoot(PathPlannerPath path, PresetShootingPoint point) {
+    public void followSnapShoot(PathPlannerPath path, preset point) {
         Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
