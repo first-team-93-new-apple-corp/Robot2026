@@ -3,7 +3,8 @@ package frc.robot.Subsystems.auto;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -23,9 +24,12 @@ import frc.robot.util.subsystems;
 
 public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
+    private final List<Pose2d> previewPoses = new ArrayList<>();
+    private final List<Pose2d> previewWaypoints = new ArrayList<>();
+
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
-        
+        previewWaypoints.add(startPose);
     }
 
     public AutoTracker(subsystems subsystems) {
@@ -58,11 +62,13 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addIntakePath(String pathName) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            rememberPreview(path);
             Intake(path);
         } catch (Exception e) {
             // e.printStackTrace();
             try {
                 PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+                rememberPreview(path);
                 Intake(path);
             } catch (Exception a) {
             //    a.printStackTrace();
@@ -79,6 +85,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addIntakeChoreo(String name) {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+            rememberPreview(path);
             Intake(path);
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,6 +107,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addShootPath(String pathName, preset preset) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            rememberPreview(path);
             followSnapShoot(path, preset);
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,6 +117,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addShootPath(String pathName, preset preset, Time delay) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+            rememberPreview(path);
             followSnapShoot(path, preset, delay);
         } catch (Exception e) {
             e.printStackTrace();
@@ -240,6 +249,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void addOverBump(String name) {
         try {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
+            rememberPreview(path);
             overBump(path);
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,6 +271,31 @@ public class AutoTracker extends SequentialCommandGroup {
     public ShootingData getShootingData() {
         return subsystems.shooter().getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
                 getDriveSpeedY());
+    }
+
+    private void rememberPreview(PathPlannerPath path) {
+        List<Pose2d> pathPoses = path.getPathPoses();
+        if (pathPoses.isEmpty()) {
+            return;
+        }
+
+        if (previewPoses.isEmpty()) {
+            previewWaypoints.clear();
+            previewWaypoints.add(pathPoses.get(0));
+        } else if (!previewPoses.get(previewPoses.size() - 1).equals(pathPoses.get(0))) {
+            previewWaypoints.add(pathPoses.get(0));
+        }
+
+        previewPoses.addAll(pathPoses);
+        previewWaypoints.add(pathPoses.get(pathPoses.size() - 1));
+    }
+
+    public List<Pose2d> getPreviewPoses() {
+        return List.copyOf(previewPoses);
+    }
+
+    public List<Pose2d> getPreviewWaypoints() {
+        return List.copyOf(previewWaypoints);
     }
 
     public void endAuto() {

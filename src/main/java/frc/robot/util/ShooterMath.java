@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
 
@@ -141,6 +142,10 @@ public class ShooterMath {
         // }
 
         return angleToHub;
+    }
+
+    public static void angleToAlign(CommandSwerveDrivetrain drivetrain){
+
     }
 
     public static double calculateDeterminantValue(double[][] matrix) {

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
@@ -62,7 +63,7 @@ public class RobotContainer {
 
     // subsytems var, contains all subsytems, less to implemnt into classes
     public subsystems subsystems = new subsystems(drivetrain, visionSubsystem, shooter, intake, manipulation, DistributionHubsystem, driver);
-    private AutoDirector auto = new AutoDirector(subsystems);
+    private AutoDirector auto = new AutoDirector(subsystems, networkTables);
 
     public RobotContainer() {
         RobotController.setBrownoutVoltage(Volts.of(6.5));
@@ -146,6 +147,10 @@ public class RobotContainer {
 
         RobotModeTriggers.autonomous().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
         RobotModeTriggers.teleop().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
+        RobotModeTriggers.disabled()
+                .and(()->auto.hasSelectedAutoPreviewChanged())
+                .onTrue(Commands.runOnce(auto::updateSelectedAutoPreview).ignoringDisable(true));
+        RobotModeTriggers.teleop().onTrue(Commands.runOnce(auto::removePreview));
         
         driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                 .andThen(Commands.print("Reset Pose due to Button Press")));
