@@ -268,6 +268,7 @@ public class AutoDirector {
     public Auto OutpostScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return trackedAuto("Outpost Score Center", tracker);
@@ -276,6 +277,7 @@ public class AutoDirector {
     public Auto OutpostScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return trackedAuto("Outpost Score Center Left", tracker);
@@ -284,6 +286,7 @@ public class AutoDirector {
     public Auto OutpostScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return trackedAuto("Outpost Score Center Right", tracker);
