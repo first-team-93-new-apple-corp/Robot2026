@@ -130,7 +130,7 @@ public class AutoDirector {
     }
 
     public void removePreview(){
-        networkTables.quest.updateAutoPreview(null, null, null);
+        networkTables.quest.clearAutoPreview();
     }
 
     public void addAutos() {
@@ -324,7 +324,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return trackedAuto("Left Side Intake Center Score Close Right", tracker);
     }
@@ -347,7 +347,7 @@ public class AutoDirector {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBump("RightOverbump");
-        tracker.addIntakePath("L_Center_Intake");
+        tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBump("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
