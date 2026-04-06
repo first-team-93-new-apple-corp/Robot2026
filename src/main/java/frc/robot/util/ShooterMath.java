@@ -288,7 +288,8 @@ public class ShooterMath {
 
     public static AngularVelocity speedToRPM(double velocity, double efficiency) {
         // Make sure to change efficiecy tuning to efficiency
-        return RotationsPerSecond.of(((velocity * RobotContainer.Efficiency_Tuning) / (Math.PI * Units
+        
+        return RotationsPerSecond.of(((velocity * efficiency) / (Math.PI * Units
                 .inchesToMeters(Constants.ShooterConstants.ShooterMotorConfigs.flyWheelDiameter.magnitude()))));
     }
 

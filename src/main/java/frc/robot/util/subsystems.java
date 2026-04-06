@@ -3,6 +3,7 @@ package frc.robot.util;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import frc.robot.RobotContainer;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -87,7 +88,7 @@ public record subsystems(
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> getShootingDataFallback().shooterVelocity()));
+                () -> getShootingDataFallback().shooterVelocity().times(RobotContainer.Efficiency_Tuning)));
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity().times(efficiencyCalculate())));

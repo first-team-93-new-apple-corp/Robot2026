@@ -175,7 +175,7 @@ public class RobotContainer {
                 (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
             subsystems.getShootingDataFallback().distance().in(Meters)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
-        SmartDashboard.putNumberArray("Target Fallback Math", test2 );
+        SmartDashboard.putNumber("Target Fallback Math", test2[1]*RobotContainer.Efficiency_Tuning);
         Efficiency_Tuning = SmartDashboard.getNumber("Tuning",1);
 
     }
