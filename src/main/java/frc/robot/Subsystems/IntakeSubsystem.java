@@ -30,7 +30,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private TalonFX intakeRollerMotor;
     private TalonFX intakePivotMotor;
 
-    private CANcoder pivotEncoder;
+    // private CANcoder pivotEncoder;
 
     private TalonFXConfiguration intakePivotConfig;
     private TalonFXConfiguration intakeRollerConfig;
@@ -50,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intakeRollerMotor = new TalonFX(CAN.intakeRoller);
         intakePivotMotor = new TalonFX(CAN.intakePivot);
-        pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
+        // pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
@@ -88,9 +88,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
 
-        intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
-        intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        intakePivotConfig.Feedback.RotorToSensorRatio = 27;
+        // intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
+        intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        intakePivotConfig.Feedback.RotorToSensorRatio = 1;
+        intakePivotConfig.Feedback.SensorToMechanismRatio = 27;
         intakePivotConfig.Feedback.FeedbackRotorOffset = 0;
 
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);
@@ -125,12 +126,13 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
-    public Angle getPivotPoseRaw() {
-        return pivotEncoder.getAbsolutePosition().getValue();
-    }
+    // public Angle getPivotPoseRaw() {
+    //     return pivotEncoder.getAbsolutePosition().getValue();
+    // }
+
 
     public Angle getPivotPose() {
-        return getPivotPoseRaw();
+        return intakePivotMotor.getPosition().getValue();
     }
 
     public void setPivotPosition(Angle position) {
@@ -240,7 +242,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command setIntakeZero() {
-            return runOnce(() -> pivotEncoder.setPosition(0)).ignoringDisable(true);
+            return runOnce(() -> intakePivotMotor.setPosition(0)).ignoringDisable(true);
         }
 
         public Command logging() {
