@@ -266,20 +266,35 @@ public class Constants {
             public static final double RangeThreshold = 3;  
 
             public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1))), 
-                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1))), 
-                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),ShooterMath.speedToRPM(6.44,1))),
-                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),ShooterMath.speedToRPM(6.80,1))),
-                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),ShooterMath.speedToRPM(7.16,1))),
-                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),ShooterMath.speedToRPM(7.50,1))), // Allows to shoot from tench
-                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),ShooterMath.speedToRPM(7.83,1))),
-                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),ShooterMath.speedToRPM(8.15,1))),
-                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.46,1))),
-                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.6,1))),
-                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),ShooterMath.speedToRPM(9.04,1))),
-                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.32,1))),
-                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1))),
-                Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(20.0))), 
+                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(20.0))), 
+                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(20.0))), // Allows to shoot from tench
+                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0)))
+
+                // Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),ShooterMath.speedToRPM(5.69,1))), 
+                // Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),ShooterMath.speedToRPM(6.06,1))), 
+                // Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),ShooterMath.speedToRPM(6.44,1))),
+                // Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),ShooterMath.speedToRPM(6.80,1))),
+                // Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),ShooterMath.speedToRPM(7.16,1))),
+                // Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),ShooterMath.speedToRPM(7.50,1))), // Allows to shoot from tench
+                // Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),ShooterMath.speedToRPM(7.83,1))),
+                // Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),ShooterMath.speedToRPM(8.15,1))),
+                // Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.46,1))),
+                // Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),ShooterMath.speedToRPM(8.6,1))),
+                // Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),ShooterMath.speedToRPM(9.04,1))),
+                // Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.32,1))),
+                // Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1))),
+                // Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
 
             );
            

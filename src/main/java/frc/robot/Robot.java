@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
-        SmartDashboard.putNumber("Tuning", 2);
+        SmartDashboard.putNumber("Tuning", RobotContainer.RPM_Tuning);
     }
 
     @Override

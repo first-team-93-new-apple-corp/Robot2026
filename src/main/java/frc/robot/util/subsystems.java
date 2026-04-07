@@ -87,8 +87,10 @@ public record subsystems(
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity()));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+        //         () -> getShootingDataFallback().shooterVelocity().times(RobotContainer.Efficiency_Tuning)));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> getShootingDataFallback().shooterVelocity().times(RobotContainer.Efficiency_Tuning)));
+                () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity().times(efficiencyCalculate())));
