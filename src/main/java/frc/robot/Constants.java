@@ -271,23 +271,23 @@ public class Constants {
                 }
             }
         public class Presets {
-            public static final double closeRPS = 32.6;
-            public static final double closeSideRPS = 41.9;
-            public static final double inFrontOfClimbRPS = 57.2;
-            public static final double leftWingRPS = 37.3;
-            public static final double rightWingRPS = 29.8;
-            public static final double depotLeftRPS = 41.6;
-            public static final double depotRightRPS = 39.0;
-            public static final double bumpRPS = 50.0;
+            private static final double closeRPS = 32.6;
+            private static final double closeSideRPS = 41.9;
+            private static final double inFrontOfClimbRPS = 57.2;
+            private static final double leftWingRPS = 37.3;
+            private static final double rightWingRPS = 29.8;
+            private static final double depotLeftRPS = 41.6;
+            private static final double depotRightRPS = 39.0;
+            private static final double bumpRPS = 50.0;
 
-            public static final double closeDeg = 10.0;
-            public static final double closeSideDeg = 10.0;
-            public static final double inFrontOfClimbDeg = 25.0;
-            public static final double leftWingDeg = 26.4;
-            public static final double rightWingDeg = 26.4;
-            public static final double depotLeftDeg = 30.4;
-            public static final double depotRightDeg = 28.1;
-            public static final double bumpDeg = 28.0;
+            private static final double closeDeg = 10.0;
+            private static final double closeSideDeg = 10.0;
+            private static final double inFrontOfClimbDeg = 25.0;
+            private static final double leftWingDeg = 26.4;
+            private static final double rightWingDeg = 26.4;
+            private static final double depotLeftDeg = 30.4;
+            private static final double depotRightDeg = 28.1;
+            private static final double bumpDeg = 28.0;
 
             public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
             public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
