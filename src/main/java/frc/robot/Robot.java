@@ -5,15 +5,18 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Milliseconds;
-import com.ctre.phoenix6.HootAutoReplay;
+
 import com.ctre.phoenix6.Utils;
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TimesliceRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.HubTracker;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -21,14 +24,19 @@ public class Robot extends TimedRobot {
     private final RobotContainer m_robotContainer;
 
     /* log and replay timestamp and joystick data */
-    private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
-            .withTimestampReplay()
-            .withJoystickReplay();
+    // private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
+    //         .withTimestampReplay()
+    //         .withJoystickReplay();
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        addPeriodic(() -> m_robotContainer.visionPeriodic(), Milliseconds.of(20), Milliseconds.of(5));
+
+        addPeriodic(()->piPeriodic(), Milliseconds.of(250));
+        addPeriodic(()->logging(), Milliseconds.of(50));
+        addPeriodic(()-> smartDashboard(), Milliseconds.of(100));
+
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
+        
         if (Utils.isSimulation()) {
             DriverStation.silenceJoystickConnectionWarning(true);
         }
@@ -36,9 +44,30 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        m_robotContainer.telePeriodic();
-        m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
+        questPeriodic();
+        SmartDashboard.putNumber("Phase Counter", HubTracker.allianceActiveCountdownSeconds().isPresent() ? HubTracker.allianceActiveCountdownSeconds().get() : -1);
+    }
+
+    public void piPeriodic(){
+        m_robotContainer.subsystems.vision().piPeriodic();
+    }
+
+    public void questPeriodic(){
+        m_robotContainer.subsystems.vision().questPeriodic();
+    }
+
+    public void smartDashboard(){
+        m_robotContainer.subsystems.vision().smartDash();
+        m_robotContainer.subsystems.intake().smartDash();
+        m_robotContainer.subsystems.shooter().smartDash();
+        m_robotContainer.subsystems.pds().smartDash();
+    }
+
+    public void logging(){
+        m_robotContainer.subsystems.intake().log();
+        m_robotContainer.subsystems.shooter().log();
+        m_robotContainer.subsystems.manipulation().log();
     }
 
     @Override

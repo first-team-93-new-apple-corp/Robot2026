@@ -32,7 +32,9 @@ public class ManipulationSubsystem {
         kickerMotor.getConfigurator().apply(motorConfig);
         bottomRollerMotor.getConfigurator().apply(motorConfig);
         sideRollerMotor.getConfigurator().apply(motorConfig);
+    }
 
+    public void log() {
         Logger.log(kickerMotor);
         Logger.log(bottomRollerMotor);
         Logger.log(sideRollerMotor);
@@ -93,6 +95,9 @@ public class ManipulationSubsystem {
             Command cmd1 = Commands.runOnce(() -> sideRollerMotor.set(-1));
             Command cmd2 = Commands.runOnce(() -> sideRollerMotor.set(0.2));
             return cmd1.withTimeout(2).andThen(cmd2.withTimeout(0.2)).repeatedly();
+        }
+        public Command logging() {
+            return Commands.run(() -> log());
         }
     }
 }

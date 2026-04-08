@@ -30,7 +30,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private TalonFX intakeRollerMotor;
     private TalonFX intakePivotMotor;
 
-    private CANcoder pivotEncoder;
+    // private CANcoder pivotEncoder;
 
     private TalonFXConfiguration intakePivotConfig;
     private TalonFXConfiguration intakeRollerConfig;
@@ -50,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intakeRollerMotor = new TalonFX(CAN.intakeRoller);
         intakePivotMotor = new TalonFX(CAN.intakePivot);
-        pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
+        // pivotEncoder = new CANcoder(CAN.intakePivotEncoder);
 
         // ** Intake Pivot Config
         intakePivotConfig = new TalonFXConfiguration();
@@ -82,15 +82,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // Motion Magic Configs
         intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 6;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 7;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 3;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 4;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
 
-        intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
-        intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        intakePivotConfig.Feedback.RotorToSensorRatio = 27;
+        // intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
+        intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        intakePivotConfig.Feedback.RotorToSensorRatio = 1;
+        intakePivotConfig.Feedback.SensorToMechanismRatio = 27;
         intakePivotConfig.Feedback.FeedbackRotorOffset = 0;
 
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);
@@ -101,6 +102,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeRollerConfig = new TalonFXConfiguration();
         intakeRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         intakeRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        intakeRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        intakeRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakePivotConfig.CurrentLimits.SupplyCurrentLimit = 50;
+
         intakeRollerMotor.getConfigurator().apply(intakeRollerConfig);
 
         SmartDashboard.putData("Brake IntakePivot", commands.brakePivotMotor(true));
@@ -121,12 +126,13 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
-    public Angle getPivotPoseRaw() {
-        return pivotEncoder.getAbsolutePosition().getValue();
-    }
+    // public Angle getPivotPoseRaw() {
+    //     return pivotEncoder.getAbsolutePosition().getValue();
+    // }
+
 
     public Angle getPivotPose() {
-        return getPivotPoseRaw();
+        return intakePivotMotor.getPosition().getValue();
     }
 
     public void setPivotPosition(Angle position) {
@@ -143,13 +149,22 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
+    public void smartDash() {
+        SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
+        // SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
+        // SmartDashboard.putNumber("IntakePivotCurrentStator",
+        // intakePivotMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("IntakePivotCurrentSupply",
+        // intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+
+    }
+
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
-        SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
-        SmartDashboard.putNumber("IntakePivotCurrentStator", intakePivotMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("IntakePivotCurrentSupply", intakePivotMotor.getSupplyCurrent().getValueAsDouble());
+        smartDash();
+    }
 
+    public void log() {
         Logger.log(intakePivotMotor);
         Logger.log(intakeRollerMotor);
     }
@@ -196,7 +211,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.8;
+            double delay = 0.7;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
@@ -205,7 +220,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.8;
+            double delay = 0.7;
 
             Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
                     .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
@@ -226,10 +241,16 @@ public class IntakeSubsystem extends SubsystemBase {
             }).ignoringDisable(true);
         }
 
-        public Command setIntakeZero (){
-            return runOnce(() -> {
-                    pivotEncoder.setPosition(0);
-            }).ignoringDisable(true);
+        public Command setIntakeZero() {
+            return runOnce(() -> intakePivotMotor.setPosition(0)).ignoringDisable(true);
+        }
+
+        public Command logging() {
+            return Commands.run(() -> log());
+        }
+
+        public Command smartDashboard() {
+            return Commands.run(() -> smartDash());
         }
     }
 

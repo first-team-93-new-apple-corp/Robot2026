@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
@@ -151,6 +152,10 @@ public class ShooterMath {
         return angleToHub;
     }
 
+    public static void angleToAlign(CommandSwerveDrivetrain drivetrain){
+
+    }
+
     public static double calculateDeterminantValue(double[][] matrix) {
         double a = matrix[0][0];
         double b = matrix[0][1];
@@ -200,7 +205,6 @@ public class ShooterMath {
         }
         return matrix;
     }
-
     public static double[] calcShootingDataWhileMoving(double robotX, double robotZ, double shooter_velocity,
             double originalPitch, double angleToHub) {
         double vcosThetaPrime = Math

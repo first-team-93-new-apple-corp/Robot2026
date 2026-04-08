@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import java.util.List;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -203,6 +205,25 @@ public class NTSubsystem {
 
 		public void addTrajectory(Trajectory traj) {
 			m_field.getRobotObject().setTrajectory(traj);
+		}
+
+		public void updateAutoPreview(String autoName, List<Pose2d> previewPoses, List<Pose2d> keyPoses) {
+			SmartDashboard.putString("Auto Preview", autoName);
+			m_field.getObject("AutoPreview").setPoses(previewPoses);
+			m_field.getObject("AutoPreviewSteps").setPoses(keyPoses);
+
+			if (previewPoses.isEmpty()) {
+				m_field.getObject("AutoPreviewStart").setPose(new Pose2d());
+				m_field.getObject("AutoPreviewEnd").setPose(new Pose2d());
+				return;
+			}
+
+			m_field.getObject("AutoPreviewStart").setPose(previewPoses.get(0));
+			m_field.getObject("AutoPreviewEnd").setPose(previewPoses.get(previewPoses.size() - 1));
+		}
+
+		public void clearAutoPreview() {
+			updateAutoPreview("None", List.of(), List.of());
 		}
 	}
 }

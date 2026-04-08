@@ -74,6 +74,16 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
+    public Trigger manUpIntake() {
+        return Xbox.start();
+    }
+
+    @Override
+    public Trigger manDownIntake() {
+        return Xbox.back();
+    }
+
+    @Override
     public Trigger middleIntake() {
         return Xbox.start();
     }
@@ -97,7 +107,7 @@ public class XboxDrive implements ControllerSchemeIO {
     public Trigger robotRel() {
         return new Trigger(() -> false);
     }
-    
+
     @Override
     public double halfRotate() {
         return InputTheta() * 0.5;
@@ -115,12 +125,11 @@ public class XboxDrive implements ControllerSchemeIO {
 
     @Override
     public Trigger PrimeRight() {
-        return new Trigger(()->false);
+        return new Trigger(() -> false);
     }
 
     @Override
-    public Trigger 
-    PrimeClose() {
+    public Trigger PrimeClose() {
         return Xbox.povUp();
     }
 
@@ -135,7 +144,7 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger testingButton(){
+    public Trigger testingButton() {
         return Xbox.start();
     }
 
@@ -145,21 +154,22 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger manHood(){
+    public Trigger manHood() {
         return Xbox.rightTrigger(0.01);
     }
+
     @Override
-    public Trigger manShoot(){
+    public Trigger manShoot() {
         return Xbox.leftTrigger(0.01);
     }
 
     @Override
-    public double rightTrigger(){
+    public double rightTrigger() {
         return Xbox.getRightTriggerAxis();
     }
 
     @Override
-    public double leftTrigger(){
+    public double leftTrigger() {
         return Xbox.getLeftTriggerAxis();
     }
 
@@ -168,5 +178,33 @@ public class XboxDrive implements ControllerSchemeIO {
         return Xbox.povRight();
     }
 
+    @Override
+    public Trigger SysIdForwardQ() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Right);
+    }
 
+    @Override
+    public Trigger SysIdBackwordQ() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Right);
+    }
+
+    @Override
+    public Trigger SysIdForwardD() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Middle);
+    }
+
+    @Override
+    public Trigger SysIdBackwardD() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Middle);
+    }
+
+    @Override
+    public Trigger SysIdStart() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Top_Left);
+    }
+
+    @Override
+    public Trigger SysIdEnd() {
+        return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Left);
+    }
 }
