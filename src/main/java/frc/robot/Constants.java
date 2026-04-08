@@ -266,10 +266,10 @@ public class Constants {
             public static final double RangeThreshold = 3;  
 
             public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(20.0))), 
-                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(20.0))), 
-                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(32.0))), 
+                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(35.0))), 
+                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(37.0))),
+                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(44.0))),
                 Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(20.0))),
                 Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(20.0))), // Allows to shoot from tench
                 Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),RotationsPerSecond.of(20.0))),
@@ -297,7 +297,7 @@ public class Constants {
                 // Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),ShooterMath.speedToRPM(9.60,1)))
 
             );
-           
+            
             public static final Map<Integer,Ranges> labels = Map.ofEntries( // Labeling each segment
                 Map.entry(0, Ranges.Range1to1pt5),
                 Map.entry(1, Ranges.Range1pt5to2),
