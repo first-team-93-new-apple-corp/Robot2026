@@ -169,6 +169,7 @@ public class AutoDirector {
         Autos.add(LeftDoubleDip());
         Autos.add(LeftToRightFull());
         Autos.add(RightToLeftFull());
+        Autos.add(LeftCenterLeftHalfScoreBump());
         //^^^^^^^^
 
 
@@ -329,6 +330,19 @@ public class AutoDirector {
         return trackedAuto("Left Side Intake Center Score Close Right", tracker);
     }
 
+     public Auto LeftCenterLeftHalfScoreBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("Left Side Intake Center Score Bump", tracker);
+    }
+
 
     public Auto RightCenterRightHalfScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
@@ -381,9 +395,9 @@ public class AutoDirector {
         tracker.addIntakePath("R_Center_Intake_2");
         tracker.addOverBump("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Right", Presets.bump, Seconds.of(8));
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
-        return trackedAuto("Right Side Double Dip Score Close Right", tracker);
+        return trackedAuto("Right Side Double Dip Score", tracker);
     }
 
     public Auto LeftDoubleDip(){
@@ -393,14 +407,14 @@ public class AutoDirector {
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake_2");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", Presets.bump, Seconds.of(8));
+        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
-        return trackedAuto("Left Side Double Dip Score Close Left", tracker);
+        return trackedAuto("Left Side Double Dip Score", tracker);
     }
 
     public Auto LeftToRightFull(){

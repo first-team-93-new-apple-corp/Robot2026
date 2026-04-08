@@ -278,7 +278,7 @@ public class Constants {
             private static final double rightWingRPS = 29.8;
             private static final double depotLeftRPS = 41.6;
             private static final double depotRightRPS = 39.0;
-            private static final double bumpRPS = 50.0;
+            private static final double bumpRPS = 35.0;
 
             private static final double closeDeg = 10.0;
             private static final double closeSideDeg = 10.0;
