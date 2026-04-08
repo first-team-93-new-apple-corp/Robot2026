@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -24,6 +25,7 @@ import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.util.Elastic;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 import dev.doglog.*;
 
@@ -107,10 +109,10 @@ public class RobotContainer {
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());
 
-        driver.Prime().whileTrue(subsystems.Prime().repeatedly());
+        driver.Prime().whileTrue(subsystems.Prime());
         driver.Prime().onFalse(subsystems.PrimeFalse());
 
-        driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
+                driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
                 driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
                 driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
@@ -175,15 +177,21 @@ public class RobotContainer {
         return auto.autoChooser.getSelected().command();
     }
 
-    public void visionPeriodic() {
-        visionSubsystem.visionPeriodic();
-    }
+    
 
     public void telePeriodic() {
         double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };
+        double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
+                subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
+                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
+            subsystems.getShootingDataFallback().distance().in(Meters)};
         SmartDashboard.putNumberArray("Target Shooting Math", test);
+        SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
+        SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
+        RPM_Tuning = SmartDashboard.getNumber("Tuning",20);
+
     }
 
         public Command seed() {
@@ -192,13 +200,13 @@ public class RobotContainer {
                 });
         }
 
-        // private double getDrivePoseX() {
-        // return drivetrain.getState().Pose.getX();
-        // }
+        private double getDrivePoseX() {
+        return drivetrain.getState().Pose.getX();
+        }
 
-        // private double getDrivePoseY() {
-        // return drivetrain.getState().Pose.getY();
-        // }
+        private double getDrivePoseY() {
+        return drivetrain.getState().Pose.getY();
+        }
 
         // private double getDriveSpeedX() {
         // return drivetrain.getState().Speeds.vxMetersPerSecond;
@@ -213,4 +221,7 @@ public class RobotContainer {
         // getDriveSpeedX(),
         // getDriveSpeedY());
         // }
+        public ShootingData getShootingDataFallback() {
+                return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
+        }
 }

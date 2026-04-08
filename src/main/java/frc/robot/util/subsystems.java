@@ -98,9 +98,9 @@ public record subsystems(
         DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands((intake.commands.idle()));
-        cmds.addCommands(drivetrain.applyRequest(
-                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
-                        .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        // cmds.addCommands(drivetrain.applyRequest(
+        //         () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
+        //                 .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
         // cmds.addCommands(shooter().commands.velocityAndHood(() ->
         // getShootingData().shooterAngle(), () ->
         // getShootingData().shooterVelocity()));
@@ -231,25 +231,32 @@ public record subsystems(
         return cmds;
     }
 
-    // private double getDrivePoseX() {
-    // return drivetrain.getState().Pose.getX();
-    // }
+    private double getDrivePoseX() {
+    return drivetrain.getState().Pose.getX();
+    }
 
-    // private double getDrivePoseY() {
-    // return drivetrain.getState().Pose.getY();
-    // }
+    private double getDrivePoseY() {
+    return drivetrain.getState().Pose.getY();
+    }
 
-    // private double getDriveSpeedX() {
-    // return drivetrain.getState().Speeds.vxMetersPerSecond;
-    // }
+    private double getDriveSpeedX() {
+    return drivetrain.getState().Speeds.vxMetersPerSecond;
+    }
 
-    // private double getDriveSpeedY() {
-    // return drivetrain.getState().Speeds.vyMetersPerSecond;
-    // }
+    private double getDriveSpeedY() {
+    return drivetrain.getState().Speeds.vyMetersPerSecond;
+    }
 
     public ShootingData getShootingData() {
         return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
                 getDriveSpeedY());
+    }
+    public ShootingData getShootingDataFallback() {
+                return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
+        }
+
+    public Rotation2d getAngleToHub() {
+        return new Rotation2d(Radians.of(shooter.getAngleToHub()));
     }
 
 }
