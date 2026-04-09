@@ -292,7 +292,7 @@ public class AutoTracker extends SequentialCommandGroup {
         // TODO Never got to test this
         // addCommands(AutoBuilder.pathfindToPose(path.getStartingHolonomicPose().get(),
         // PathConstraints.unlimitedConstraints(12), MetersPerSecond.of(1)));
-        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12))
+        addCommands(AutoBuilder.pathfindThenFollowPath(path, PathConstraints.unlimitedConstraints(12.8))
                 .andThen(Commands.runOnce(() -> DogLog.timestamp("OVER BUMP " + path.name))));
         // addCommands(AutoBuilder.followPath(path));
         // addCommands(Commands.runOnce(() ->

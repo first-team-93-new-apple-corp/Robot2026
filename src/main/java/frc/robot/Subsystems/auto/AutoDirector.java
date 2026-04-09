@@ -408,7 +408,9 @@ public class AutoDirector {
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBump("Overbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addIntakePath("L_Center_Intake_2");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
