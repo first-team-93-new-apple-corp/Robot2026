@@ -273,7 +273,7 @@ public class Constants {
                 Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(35.0))), 
                 Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(37.0))),
                 Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(44.0))),
-                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(20.0))), // 65
                 Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(20.0))), // Allows to shoot from tench
                 Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),RotationsPerSecond.of(20.0))),
                 Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),RotationsPerSecond.of(20.0))),

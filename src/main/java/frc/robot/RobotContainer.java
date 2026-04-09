@@ -108,9 +108,9 @@ public class RobotContainer {
 
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());
-
-        driver.Prime().whileTrue(subsystems.Prime());
-        driver.Prime().onFalse(subsystems.PrimeFalse());
+             
+                driver.Prime().whileTrue(subsystems.Prime());
+                driver.Prime().onFalse(subsystems.PrimeFalse());
 
                 driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
@@ -179,7 +179,7 @@ public class RobotContainer {
 
     
 
-    public void telePeriodic() {
+    public  void telePeriodic() {
         double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
                 subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
                 (subsystems.getShootingData().shooterAngle()).in(Degrees) };

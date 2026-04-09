@@ -8,7 +8,9 @@ import frc.robot.Constants.ShooterConstants.Presets;
 import frc.robot.RobotContainer;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -97,20 +99,19 @@ public record subsystems(
     public Command Prime() {
         DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+
         cmds.addCommands((intake.commands.idle()));
+        
         // cmds.addCommands(drivetrain.applyRequest(
         //         () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
         //                 .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingData().shooterAngle(), () ->
-        // getShootingData().shooterVelocity()));
+        
         // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-        //         () -> getShootingDataFallback().shooterVelocity().times(RobotContainer.Efficiency_Tuning)));
+        //         () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingData().shooterAngle(), () ->
-        // getShootingData().shooterVelocity().times(efficiencyCalculate())));
+                () -> getShootingDataFallback().shooterVelocity()));
+
+       
         return cmds.withTimeout(1);
     }
 

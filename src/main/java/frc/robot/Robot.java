@@ -105,10 +105,12 @@ public class Robot extends TimedRobot {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
         SmartDashboard.putNumber("Tuning", RobotContainer.RPM_Tuning);
+        
     }
 
     @Override
     public void teleopPeriodic() {
+       m_robotContainer.telePeriodic();
     }
 
     @Override
