@@ -5,9 +5,12 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import frc.robot.Constants.ShooterConstants.Presets;
+import frc.robot.RobotContainer;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -96,13 +99,19 @@ public record subsystems(
     public Command Prime() {
         DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingData().shooterAngle(), () ->
-        // getShootingData().shooterVelocity()));
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingData().shooterAngle(), () ->
-        // getShootingData().shooterVelocity().times(efficiencyCalculate())));
+
+        cmds.addCommands((intake.commands.idle()));
+        
+        // cmds.addCommands(drivetrain.applyRequest(
+        //         () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
+        //                 .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+        //         () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+                () -> getShootingDataFallback().shooterVelocity()));
+
+       
         return cmds.withTimeout(1);
     }
 
@@ -110,8 +119,9 @@ public record subsystems(
         DogLog.timestamp("DriverPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(
-                () -> drivetrain().driveFacingAngle.withTargetDirection(getAngleToHub())
+                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        
         return cmds.withTimeout(1);
     }
 
@@ -223,27 +233,30 @@ public record subsystems(
         return cmds;
     }
 
-    // private double getDrivePoseX() {
-    // return drivetrain.getState().Pose.getX();
-    // }
+    private double getDrivePoseX() {
+    return drivetrain.getState().Pose.getX();
+    }
 
-    // private double getDrivePoseY() {
-    // return drivetrain.getState().Pose.getY();
-    // }
+    private double getDrivePoseY() {
+    return drivetrain.getState().Pose.getY();
+    }
 
-    // private double getDriveSpeedX() {
-    // return drivetrain.getState().Speeds.vxMetersPerSecond;
-    // }
+    private double getDriveSpeedX() {
+    return drivetrain.getState().Speeds.vxMetersPerSecond;
+    }
 
-    // private double getDriveSpeedY() {
-    // return drivetrain.getState().Speeds.vyMetersPerSecond;
-    // }
+    private double getDriveSpeedY() {
+    return drivetrain.getState().Speeds.vyMetersPerSecond;
+    }
 
-    // public ShootingData getShootingData() {
-    // return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(),
-    // getDriveSpeedX(),
-    // getDriveSpeedY());
-    // }
+    public ShootingData getShootingData() {
+        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+                getDriveSpeedY());
+    }
+    public ShootingData getShootingDataFallback() {
+                return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
+        }
+
     public Rotation2d getAngleToHub() {
         return new Rotation2d(Radians.of(shooter.getAngleToHub()));
     }

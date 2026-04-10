@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -24,13 +25,14 @@ import frc.robot.Subsystems.VisionSubsystem;
 import frc.robot.Subsystems.auto.AutoDirector;
 import frc.robot.util.Elastic;
 import frc.robot.util.NTSubsystem;
+import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 import dev.doglog.*;
 
 public class RobotContainer {
         private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-
+    public static double RPM_Tuning = 20.0;
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -106,9 +108,9 @@ public class RobotContainer {
 
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());
-
-                // driver.Prime().whileTrue(subsystems.Prime().repeatedly());
-                // driver.Prime().onFalse(subsystems.PrimeFalse());
+             
+                driver.Prime().whileTrue(subsystems.Prime().repeatedly());
+                driver.Prime().onFalse(subsystems.PrimeFalse());
 
                 driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
@@ -171,9 +173,26 @@ public class RobotContainer {
 
         }
 
-        public Command getAutonomousCommand() {
-                return auto.autoChooser.getSelected().command();
-        }
+    public Command getAutonomousCommand() {
+        return auto.autoChooser.getSelected().command();
+    }
+
+    
+
+    public  void telePeriodic() {
+        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
+                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
+                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
+        double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
+                subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
+                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
+            subsystems.getShootingDataFallback().distance().in(Meters)};
+        SmartDashboard.putNumberArray("Target Shooting Math", test);
+        SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
+        SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
+        RPM_Tuning = SmartDashboard.getNumber("Tuning",20);
+
+    }
 
         public Command seed() {
                 return Commands.runOnce(() -> {
@@ -181,13 +200,13 @@ public class RobotContainer {
                 });
         }
 
-        // private double getDrivePoseX() {
-        // return drivetrain.getState().Pose.getX();
-        // }
+        private double getDrivePoseX() {
+        return drivetrain.getState().Pose.getX();
+        }
 
-        // private double getDrivePoseY() {
-        // return drivetrain.getState().Pose.getY();
-        // }
+        private double getDrivePoseY() {
+        return drivetrain.getState().Pose.getY();
+        }
 
         // private double getDriveSpeedX() {
         // return drivetrain.getState().Speeds.vxMetersPerSecond;
@@ -202,4 +221,7 @@ public class RobotContainer {
         // getDriveSpeedX(),
         // getDriveSpeedY());
         // }
+        public ShootingData getShootingDataFallback() {
+                return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
+        }
 }
