@@ -109,7 +109,7 @@ public class RobotContainer {
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());
              
-                driver.Prime().whileTrue(subsystems.Prime());
+                driver.Prime().whileTrue(subsystems.Prime().repeatedly());
                 driver.Prime().onFalse(subsystems.PrimeFalse());
 
                 driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());

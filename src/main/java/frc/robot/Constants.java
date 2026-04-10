@@ -230,7 +230,7 @@ public class Constants {
 
     public class ShooterConstants {
         public class HeadingController {
-            public static final double kP = 20;
+            public static final double kP = 10;
             public static final double kI = 0;
             public static final double kD = 0.1;
         }

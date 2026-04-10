@@ -119,8 +119,9 @@ public record subsystems(
         DogLog.timestamp("DriverPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(drivetrain.applyRequest(
-                () -> drivetrain().driveFacingAngle.withTargetDirection(getAngleToHub())
+                () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
+        
         return cmds.withTimeout(1);
     }
 
