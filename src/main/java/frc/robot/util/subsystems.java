@@ -4,10 +4,13 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import frc.robot.Constants.ShooterConstants.Presets;
 import frc.robot.RobotContainer;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -118,6 +121,7 @@ public record subsystems(
     public Command DriverPrime() {
         DogLog.timestamp("DriverPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
+
         cmds.addCommands(drivetrain.applyRequest(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
@@ -248,10 +252,25 @@ public record subsystems(
     private double getDriveSpeedY() {
     return drivetrain.getState().Speeds.vyMetersPerSecond;
     }
+     private double getDriveSpeedX2() {
+                SwerveDriveState state = drivetrain.getState();
+                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
+                                state.Speeds.vyMetersPerSecond)
+                                .rotateBy(state.Pose.getRotation());
+                return fieldVelocity.getX();
+        }
+
+        private double getDriveSpeedY2() {
+                SwerveDriveState state = drivetrain.getState();
+                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
+                                state.Speeds.vyMetersPerSecond)
+                                .rotateBy(state.Pose.getRotation());
+                return fieldVelocity.getY();
+        }
 
     public ShootingData getShootingData() {
-        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
-                getDriveSpeedY());
+        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX2(),
+                getDriveSpeedY2());
     }
     public ShootingData getShootingDataFallback() {
                 return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());

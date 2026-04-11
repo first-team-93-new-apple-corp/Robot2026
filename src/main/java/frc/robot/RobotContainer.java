@@ -5,9 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -215,6 +219,22 @@ public class RobotContainer {
 
         private double getDriveSpeedY() {
         return drivetrain.getState().Speeds.vyMetersPerSecond;
+        }
+
+        private double getDriveSpeedX2() {
+                SwerveDriveState state = drivetrain.getState();
+                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
+                                state.Speeds.vyMetersPerSecond)
+                                .rotateBy(state.Pose.getRotation());
+                return fieldVelocity.getX();
+        }
+
+        private double getDriveSpeedY2() {
+                SwerveDriveState state = drivetrain.getState();
+                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
+                                state.Speeds.vyMetersPerSecond)
+                                .rotateBy(state.Pose.getRotation());
+                return fieldVelocity.getY();
         }
 
         // public ShootingData getShootingData() {
