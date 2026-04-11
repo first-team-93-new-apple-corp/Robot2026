@@ -190,6 +190,7 @@ public class RobotContainer {
         SmartDashboard.putNumberArray("Target Shooting Math", test);
         SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
         SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
+        SmartDashboard.putNumber("Speed", getDriveSpeedY());
         RPM_Tuning = SmartDashboard.getNumber("Tuning",20);
 
     }
@@ -208,13 +209,13 @@ public class RobotContainer {
         return drivetrain.getState().Pose.getY();
         }
 
-        // private double getDriveSpeedX() {
-        // return drivetrain.getState().Speeds.vxMetersPerSecond;
-        // }
+        private double getDriveSpeedX() {
+        return drivetrain.getState().Speeds.vxMetersPerSecond;
+        }
 
-        // private double getDriveSpeedY() {
-        // return drivetrain.getState().Speeds.vyMetersPerSecond;
-        // }
+        private double getDriveSpeedY() {
+        return drivetrain.getState().Speeds.vyMetersPerSecond;
+        }
 
         // public ShootingData getShootingData() {
         // return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(),

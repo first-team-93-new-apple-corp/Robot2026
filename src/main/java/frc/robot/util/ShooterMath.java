@@ -211,7 +211,7 @@ public class ShooterMath {
                 .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2));
         double thetaPrime = Math.atan2(shooter_velocity * Math.sin(originalPitch), vcosThetaPrime);
         double vPrime = vcosThetaPrime / Math.cos(thetaPrime);
-        double adjustment = angleToHub - Math.asin(
+        double adjustment = angleToHub + Math.asin(
                 robotZ / Math
                         .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
         return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
@@ -240,11 +240,18 @@ public class ShooterMath {
                 Meters.of(0)
             );
         }
+        // Rotation2d adjustedRotation = generateRotation2d(poseX, poseY).drivetrainAngle();
         return new ShootingData(
                 new Rotation2d(alignAngle), 
                 Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
                 AutoShoot.map.get(range).rps(),
                 Meters.of(distance));
+        
+        //  return new ShootingData(
+        //         adjustedRotation, 
+        //         Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
+        //         AutoShoot.map.get(range).rps(),
+        //         Meters.of(distance));
     }
 
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
@@ -282,11 +289,11 @@ public class ShooterMath {
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
 
         // Stationary shooting
-        return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm,
-                Meters.of(distance));
+        // return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm,
+        //         Meters.of(distance));
         // On the fly
-        // return new ShootingData(new Rotation2d(driveTrainAngleMoving),
-        // Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving);
+        return new ShootingData(new Rotation2d(driveTrainAngleMoving),
+        Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving,Meters.of(distance));
 
     }
 
