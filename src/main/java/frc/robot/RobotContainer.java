@@ -82,6 +82,7 @@ public class RobotContainer {
                 .withCaptureNt(false)
                 .withUseLogThread(true));
         DogLog.setEnabled(true);
+        SmartDashboard.putData("Reset CAN", drivetrain.resetCanBus());
     }
 
     private void configureBindings() {
