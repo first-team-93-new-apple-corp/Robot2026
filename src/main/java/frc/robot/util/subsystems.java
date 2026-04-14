@@ -112,11 +112,11 @@ public record subsystems(
         // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
         // .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
 
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingDataFallback().shooterAngle(),
-        // () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> getShootingDataFallback().shooterVelocity()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() ->
+        getShootingDataFallback().shooterAngle(),
+        () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+        //         () -> getShootingDataFallback().shooterVelocity()));
 
         return cmds.withTimeout(1);
     }
