@@ -294,8 +294,8 @@ public record subsystems(
     }
 
     public ShootingData getShootingData() {
-        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX2(),
-                getDriveSpeedY2());
+        return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),
+                getDriveSpeedY());
     }
 
     public ShootingData getShootingDataFallback() {
