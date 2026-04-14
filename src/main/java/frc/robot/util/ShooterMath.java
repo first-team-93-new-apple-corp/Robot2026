@@ -141,20 +141,11 @@ public class ShooterMath {
     public static double angleToAlign(double robotX, double hubX, double robotY, double hubY) {
         double angleToHub = 0;
         angleToHub = Math.atan2((hubY - robotY), (hubX - robotX));
-        // if (robotX > hubX) {
-        // angleToHub = Math.PI+Math.atan((hubY - robotY) / (hubX - robotX));
-        // } else {
-        // angleToHub = Math.atan((hubY - robotY) / (hubX - robotX)); // Angle our robot
-        // needs to face to be algined with the hub
-
-        // }
-
+    
         return angleToHub;
     }
 
-    public static void angleToAlign(CommandSwerveDrivetrain drivetrain){
-
-    }
+    
 
     public static double calculateDeterminantValue(double[][] matrix) {
         double a = matrix[0][0];
@@ -211,10 +202,18 @@ public class ShooterMath {
                 .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2));
         double thetaPrime = Math.atan2(shooter_velocity * Math.sin(originalPitch), vcosThetaPrime);
         double vPrime = vcosThetaPrime / Math.cos(thetaPrime);
-        double adjustment = angleToHub + Math.asin(
-                robotZ / Math
-                        .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
-        return new double[] { thetaPrime, vPrime, adjustment }; // pitch, velocity, adjustment
+        // This consideres velocity moving forward
+        // double adjustment = angleToHub - Math.asin(
+        //         robotZ / Math
+        //                 .sqrt(Math.pow(shooter_velocity * Math.cos(originalPitch) - robotX, 2) + Math.pow(robotZ, 2)));
+        double forward = shooter_velocity * Math.cos(originalPitch);
+        double side = robotZ;
+        if (Math.abs(forward) < 0.05) forward = Math.copySign(0.05, forward);
+
+        double adjustment = Math.atan2(side, forward);
+        SmartDashboard.putNumber("adjustment" , Radians.of(adjustment).in(Degrees));
+        Rotation2d finalAngle = Rotation2d.fromRadians(angleToHub).plus(new Rotation2d(adjustment));
+        return new double[] { thetaPrime, vPrime, finalAngle.getRadians() }; // pitch, velocity, adjustment
     }
 
     public static ShootingData fallBack(double poseX, double poseY) {
@@ -273,6 +272,7 @@ public class ShooterMath {
         if (Degrees.of(90).minus(Radians.of(shooter_angle)).lt(Degrees.of(25))) {
             shooter_velocity = ShooterMath.calculateV(1.134, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         }
+        
         double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
                 alignAngle);
 

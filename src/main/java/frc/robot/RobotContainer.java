@@ -34,9 +34,9 @@ import frc.robot.util.subsystems;
 import dev.doglog.*;
 
 public class RobotContainer {
-        private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        private double MaxSpeed = 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-    public static double RPM_Tuning = 20.0;
+        public static double RPM_Tuning = 20.0;
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -112,7 +112,7 @@ public class RobotContainer {
 
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());
-             
+
                 driver.Prime().whileTrue(subsystems.Prime().repeatedly());
                 driver.Prime().onFalse(subsystems.PrimeFalse());
 
@@ -156,7 +156,8 @@ public class RobotContainer {
                 driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
                 RobotModeTriggers.autonomous().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
-                RobotModeTriggers.autonomous().onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
+                RobotModeTriggers.autonomous()
+                                .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
                 RobotModeTriggers.teleop().onTrue(Commands.runOnce(() -> Elastic.selectTab(0)).ignoringDisable(true));
                 RobotModeTriggers.teleop().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
                 (new Trigger(() -> auto.hasSelectedAutoPreviewChanged()).and(RobotModeTriggers.disabled()))
@@ -177,27 +178,28 @@ public class RobotContainer {
 
         }
 
-    public Command getAutonomousCommand() {
-        return auto.autoChooser.getSelected().command();
-    }
+        public Command getAutonomousCommand() {
+                return auto.autoChooser.getSelected().command();
+        }
 
-    
+        public void telePeriodic() {
+                double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed,
+                                                                                               // angle
+                                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
+                                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
+                double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(), // drivetrain,
+                                                                                                        // speed, angle
+                                subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
+                                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
+                                subsystems.getShootingDataFallback().distance().in(Meters) };
+                SmartDashboard.putNumberArray("Target Shooting Math", test);
+                SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
+                SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
+                SmartDashboard.putNumber("Rotation",
+                                subsystems.drivetrain().getState().Pose.getRotation().getDegrees());
+                RPM_Tuning = SmartDashboard.getNumber("Tuning", 20);
 
-    public  void telePeriodic() {
-        double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed, angle
-                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
-                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
-        double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(),  //drivetrain, speed, angle
-                subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
-                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
-            subsystems.getShootingDataFallback().distance().in(Meters)};
-        SmartDashboard.putNumberArray("Target Shooting Math", test);
-        SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
-        SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
-        SmartDashboard.putNumber("Speed", getDriveSpeedY());
-        RPM_Tuning = SmartDashboard.getNumber("Tuning",20);
-
-    }
+        }
 
         public Command seed() {
                 return Commands.runOnce(() -> {
@@ -206,42 +208,27 @@ public class RobotContainer {
         }
 
         private double getDrivePoseX() {
-        return drivetrain.getState().Pose.getX();
+                return drivetrain.getState().Pose.getX();
         }
 
         private double getDrivePoseY() {
-        return drivetrain.getState().Pose.getY();
+                return drivetrain.getState().Pose.getY();
         }
 
         private double getDriveSpeedX() {
-        return drivetrain.getState().Speeds.vxMetersPerSecond;
+                return drivetrain.getState().Speeds.vxMetersPerSecond;
         }
 
         private double getDriveSpeedY() {
-        return drivetrain.getState().Speeds.vyMetersPerSecond;
+                return drivetrain.getState().Speeds.vyMetersPerSecond;
         }
 
-        private double getDriveSpeedX2() {
-                SwerveDriveState state = drivetrain.getState();
-                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
-                                state.Speeds.vyMetersPerSecond)
-                                .rotateBy(state.Pose.getRotation());
-                return fieldVelocity.getX();
+        public ShootingData getShootingData() {
+                return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(),
+                                getDriveSpeedX(),
+                                getDriveSpeedY());
         }
 
-        private double getDriveSpeedY2() {
-                SwerveDriveState state = drivetrain.getState();
-                Translation2d fieldVelocity = new Translation2d(state.Speeds.vxMetersPerSecond,
-                                state.Speeds.vyMetersPerSecond)
-                                .rotateBy(state.Pose.getRotation());
-                return fieldVelocity.getY();
-        }
-
-        // public ShootingData getShootingData() {
-        // return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(),
-        // getDriveSpeedX(),
-        // getDriveSpeedY());
-        // }
         public ShootingData getShootingDataFallback() {
                 return shooter.getShootingDataFallback(getDrivePoseX(), getDrivePoseY());
         }
