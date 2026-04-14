@@ -91,7 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
         intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         intakePivotConfig.Feedback.RotorToSensorRatio = 1;
-        intakePivotConfig.Feedback.SensorToMechanismRatio = 27;
+        intakePivotConfig.Feedback.SensorToMechanismRatio = 45;
         intakePivotConfig.Feedback.FeedbackRotorOffset = 0;
 
         intakePivotMotor.getConfigurator().apply(intakePivotConfig);

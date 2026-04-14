@@ -190,7 +190,7 @@ public class Constants {
         public static final double pivotUpSpeed = 0.2;
         public static final double pivotDownSpeed = -0.2;
         public static final Angle pivotUpPosition = Degrees.of(0);
-        public static final Angle pivotDownPosition = Degrees.of(135);
+        public static final Angle pivotDownPosition = Degrees.of(142);
         public static final Angle pivotMiddlePosition = Degrees.of(60);
         // public static final Angle encoderOffset = Rotations.of("Replace me with
         // encoderValue at 0 Degrees".length());
@@ -204,13 +204,13 @@ public class Constants {
         public static final int kickerMotorID = 18; // Top Rollers
 
         public class intake {
-            public static final double bottomRollerSpeed = 0.2;
+            public static final double bottomRollerSpeed = 0.0;
             public static final double sideRollerSpeed = -0.1;
             public static final double kickerSpeed = 0.0;
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 1;
+            public static final double bottomRollerSpeed = 0.5;
             public static final double sideRollerSpeed = -1;
             public static final double kickerSpeed = 1;
         }
