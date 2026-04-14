@@ -242,9 +242,9 @@ public class Constants {
             public static final boolean StatorLimitEnable = false;
             public static final boolean SupplyLimitEnable = false;
             public static final double kS = 0;
-            public static final double kV = 0.12;
-            public static final double kA = 0.01;
-            public static final double kP = 0.5;
+            public static final double kV = 0.125;
+            public static final double kA = 0.02;
+            public static final double kP = 0.8;
             public static final double kI = 0;
             public static final double kD = 0;
             public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
