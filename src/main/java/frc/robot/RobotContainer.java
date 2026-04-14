@@ -148,7 +148,7 @@ public class RobotContainer {
                 driver.Pass().onFalse(subsystems.PrimeFalse());
 
                 driver.manShoot().whileTrue(subsystems.shooter().commands
-                                .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(100))
+                                .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(130))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
                 driver.manHood().whileTrue(subsystems.shooter().commands
