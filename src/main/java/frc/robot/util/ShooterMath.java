@@ -213,7 +213,7 @@ public class ShooterMath {
         double adjustment = Math.atan2(side, forward);
         SmartDashboard.putNumber("adjustment" , Radians.of(adjustment).in(Degrees));
         Rotation2d finalAngle = Rotation2d.fromRadians(angleToHub).plus(new Rotation2d(adjustment));
-        return new double[] { thetaPrime, vPrime, finalAngle.getRadians() }; // pitch, velocity, adjustment
+        return new double[] { thetaPrime/shooter_velocity, vPrime, finalAngle.getRadians() }; // pitch, velocity, adjustment
     }
 
     public static ShootingData fallBack(double poseX, double poseY) {
@@ -246,11 +246,16 @@ public class ShooterMath {
                 AutoShoot.map.get(range).rps(),
                 Meters.of(distance));
         
-        //  return new ShootingData(
-        //         adjustedRotation, 
+
+        // Shoot on the move 
+        // ShootingData data = generateRotation2d(poseX, poseY, velX, velY);
+
+        // return new ShootingData(
+        //         new Rotation2d(alignAngle), 
         //         Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
-        //         AutoShoot.map.get(range).rps(),
+        //         AutoShoot.map.get(range).rps().times(data.shooterVelocity().magnitude()),
         //         Meters.of(distance));
+        
     }
 
     public static ShootingData generateRotation2d(double poseX, double poseY, double velX, double velY) {
