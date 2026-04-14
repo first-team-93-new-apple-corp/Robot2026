@@ -281,9 +281,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 && topRightShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1));
     }
 
-    public double getAngleToHub() {
-        return getAngleToHub();
-    }
+    
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
