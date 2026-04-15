@@ -156,7 +156,7 @@ public class RobotContainer {
                                 .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
                 driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
-                RobotModeTriggers.autonomous().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
+                // RobotModeTriggers.autonomous().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true));
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
                 RobotModeTriggers.teleop().onTrue(Commands.runOnce(() -> Elastic.selectTab(0)).ignoringDisable(true));
