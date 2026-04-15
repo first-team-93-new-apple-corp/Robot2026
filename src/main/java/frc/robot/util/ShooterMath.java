@@ -289,11 +289,11 @@ public class ShooterMath {
         Angle driveTrainAngleMoving = Radians.of(adjustmentMoving);
 
         // Stationary shooting
-        // return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm,
-        //         Meters.of(distance));
+        return new ShootingData(new Rotation2d(driveTrainAngle), Degrees.of(90).minus(Radians.of(shooter_angle)), rpm,
+                Meters.of(distance));
         // On the fly
-        return new ShootingData(new Rotation2d(driveTrainAngleMoving),
-        Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving,Meters.of(distance));
+        // return new ShootingData(new Rotation2d(driveTrainAngleMoving),
+        // Degrees.of(90).minus(Radians.of(angleMoving)), rpmMoving,Meters.of(distance));
 
     }
 

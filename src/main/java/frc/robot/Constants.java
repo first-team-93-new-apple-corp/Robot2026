@@ -40,7 +40,7 @@ public class Constants {
 
         public class HeadingController {
             public static final double kP = 10;
-            public static final double kI = 0.002;
+            public static final double kI = 0;
             public static final double kD = 0.1;
         }
     }
@@ -231,7 +231,7 @@ public class Constants {
     public class ShooterConstants {
         public class HeadingController {
             public static final double kP = 10;
-            public static final double kI = 0;
+            public static final double kI = 0.001;
             public static final double kD = 0.1;
         }
 
@@ -269,12 +269,12 @@ public class Constants {
             public static final double RangeThreshold = 3;
 
             public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(32.0))), 
-                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(35.0))), 
-                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(37.0))),
-                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(44.0))),
-                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(20.0))), // 65
-                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(20.0))), // Allows to shoot from tench
+                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(30.0))), //30
+                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(31.0))), //31
+                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(34.0))), //34
+                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(36.0))), // 36
+                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(42.0))), // 42
+                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(49.0))), // 49 Allows to shoot from tench
                 Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),RotationsPerSecond.of(20.0))),
                 Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),RotationsPerSecond.of(20.0))),
                 Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),RotationsPerSecond.of(20.0))),
@@ -350,7 +350,7 @@ public class Constants {
             private static final double rightWingRPS = 29.8;
             private static final double depotLeftRPS = 41.6;
             private static final double depotRightRPS = 39.0;
-            private static final double bumpRPS = 35.0;
+            private static final double bumpRPS = 32.0;
 
             private static final double closeDeg = 10.0;
             private static final double closeSideDeg = 10.0;
