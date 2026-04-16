@@ -176,23 +176,8 @@ public class RobotContainer {
         }
 
         public void telePeriodic() {
-                double[] test = { subsystems.getShootingData().drivetrainAngle().getDegrees(), // drivetrain, speed,
-                                                                                               // angle
-                                subsystems.getShootingData().shooterVelocity().in(RotationsPerSecond),
-                                (subsystems.getShootingData().shooterAngle()).in(Degrees) };
-                double[] test2 = { subsystems.getShootingDataFallback().drivetrainAngle().getDegrees(), // drivetrain,
-                                                                                                        // speed, angle
-                                subsystems.getShootingDataFallback().shooterVelocity().in(RotationsPerSecond),
-                                (subsystems.getShootingDataFallback().shooterAngle()).in(Degrees),
-                                subsystems.getShootingDataFallback().distance().in(Meters) };
-                SmartDashboard.putNumberArray("Target Shooting Math", test);
-                SmartDashboard.putNumber("Target Fallback Math", RobotContainer.RPM_Tuning);
-                SmartDashboard.putNumber("Distance", subsystems.getShootingDataFallback().distance().magnitude());
-                SmartDashboard.putNumber("Rotation",
-                                subsystems.drivetrain().getState().Pose.getRotation().getDegrees());
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
-                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
-                
+                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);           
         }
 
         public Command seed() {

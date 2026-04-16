@@ -89,28 +89,12 @@ public record subsystems(
         return cmds;
     }
 
-    // public Command Prime() {
-    // DogLog.timestamp("Prime");
-    // ParallelCommandGroup cmds = new ParallelCommandGroup();
-    // cmds.addCommands((intake.commands.idle()));
-    // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-    // getShootingData().shooterAngle(), () ->
-    // getShootingData().shooterVelocity()));
-    // // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-    // getShootingData().shooterAngle(), () ->
-    // getShootingData().shooterVelocity().times(efficiencyCalculate())));
-    // return cmds.withTimeout(1);
-    // }
+    
     public Command Prime() {
         DogLog.timestamp("Prime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
 
         cmds.addCommands((intake.commands.idle()));
-
-        // cmds.addCommands(drivetrain.applyRequest(
-        // () ->
-        // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
-        // .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
 
 
         // We need below for tuning 
@@ -175,42 +159,11 @@ public record subsystems(
         return cmds.withTimeout(1);
     }
 
-    // public double efficiencyCalculate() {
-    // double hubX = AutoConstants.Hub.getHub().getX();
-    // double hubY = AutoConstants.Hub.getHub().getY();
-    // double distance = Math.sqrt(Math.pow(hubX -
-    // drivetrain.getState().Pose.getX(), 2)
-    // + Math.pow(hubY - drivetrain.getState().Pose.getY(), 2));
-    // double a = 0.0444713;
-    // double b = -0.474115;
-    // double c = 1.90894;
-    // double d = -0.803343;
-    // return a * (Math.pow(distance, 3)) + b * (Math.pow(distance, 2)) + c *
-    // distance + d;
-    // }
-
-    // public Command AutoPrime() {
-    // DogLog.timestamp("AutoPrime");
-    // ParallelCommandGroup cmds = new ParallelCommandGroup();
-    // cmds.addCommands((intake.commands.idle()));
-    // cmds.addCommands(drivetrain.applyRequest(
-    // () ->
-    // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
-    // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-    // getShootingData().shooterAngle(),
-    // () -> getShootingData().shooterVelocity()));
-    // return cmds.withTimeout(2);
-    // }
+   
     public Command AutoPrime() {
         DogLog.timestamp("AutoPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
-        // cmds.addCommands(drivetrain.applyRequest(
-        // () ->
-        // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())));
-        // cmds.addCommands(shooter().commands.velocityAndHood(() ->
-        // getShootingData().shooterAngle(),
-        // () -> getShootingData().shooterVelocity()));
+        
         return cmds.withTimeout(2);
     }
 
