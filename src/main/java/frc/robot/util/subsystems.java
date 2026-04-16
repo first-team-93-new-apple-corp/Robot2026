@@ -112,8 +112,12 @@ public record subsystems(
         // drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
         // .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
 
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(RobotContainer.Angle_Tuning),
-        () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+
+        // We need below for tuning 
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(90).minus(Radians.of(RobotContainer.Angle_Tuning)),
+        // () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+
+        // Below is shooter math implmentation
         cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
                 () -> getShootingDataFallback().shooterVelocity()));
 
