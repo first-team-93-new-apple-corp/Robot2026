@@ -37,7 +37,7 @@ public class RobotContainer {
         private double MaxSpeed = 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
         public static double RPM_Tuning = 20.0;
-        public static double Angle_Tuning = Radians.of(1.256).in(Degrees);
+        public static double Angle_Tuning = 1.256;
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
                         .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -199,7 +199,7 @@ public class RobotContainer {
                 SmartDashboard.putNumber("Rotation",
                                 subsystems.drivetrain().getState().Pose.getRotation().getDegrees());
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
-                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", Radians.of(1.256).in(Degrees));
+                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
                 
         }
 

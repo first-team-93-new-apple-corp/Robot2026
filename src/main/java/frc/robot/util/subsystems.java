@@ -114,8 +114,8 @@ public record subsystems(
 
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(RobotContainer.Angle_Tuning),
         () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> getShootingDataFallback().shooterVelocity()));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+        //         () -> getShootingDataFallback().shooterVelocity()));
 
         return cmds.withTimeout(1);
     }
