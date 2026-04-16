@@ -3,17 +3,10 @@
  "version":3,
  "snapshot":{
   "waypoints":[
-<<<<<<< HEAD
     {"x":5.8, "y":5.5, "heading":-2.356194490192345, "intervals":14, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":7.685799598693848, "y":7.191980361938477, "heading":-1.9198621771937625, "intervals":50, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":7.685799598693848, "y":1.1890604496002195, "heading":-1.9198621771937625, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":5.8, "y":2.5, "heading":0.7853981633974483, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
-=======
-    {"x":6.0, "y":5.3, "heading":-2.356194490192345, "intervals":14, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":7.685799598693848, "y":7.191980361938477, "heading":-1.9198621771937625, "intervals":50, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":7.685799598693848, "y":1.1890604496002195, "heading":-1.9198621771937625, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":6.0, "y":2.7, "heading":0.7853981633974483, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
->>>>>>> f25a83bdfe717f21591b9f91954096a691c1eb52
   "constraints":[
     {"from":1, "to":2, "data":{"type":"MaxVelocity", "props":{"max":2.5}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":0.6821498870849609}}, "enabled":true},
@@ -22,17 +15,10 @@
  },
  "params":{
   "waypoints":[
-<<<<<<< HEAD
     {"x":{"exp":"LBF1.x", "val":5.8}, "y":{"exp":"LBF1.y", "val":5.5}, "heading":{"exp":"LBF1.heading", "val":-2.356194490192345}, "intervals":14, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"7.685799598693848 m", "val":7.685799598693848}, "y":{"exp":"7.191980361938477 m", "val":7.191980361938477}, "heading":{"exp":"-110 deg", "val":-1.9198621771937625}, "intervals":50, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"7.685799598693848 m", "val":7.685799598693848}, "y":{"exp":"1.1890604496002197 m", "val":1.1890604496002195}, "heading":{"exp":"-110 deg", "val":-1.9198621771937625}, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"RBF2.x", "val":5.8}, "y":{"exp":"RBF2.y", "val":2.5}, "heading":{"exp":"RBF2.heading", "val":0.7853981633974483}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
-=======
-    {"x":{"exp":"LBF1.x", "val":6.0}, "y":{"exp":"LBF1.y", "val":5.3}, "heading":{"exp":"LBF1.heading", "val":-2.356194490192345}, "intervals":14, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"7.685799598693848 m", "val":7.685799598693848}, "y":{"exp":"7.191980361938477 m", "val":7.191980361938477}, "heading":{"exp":"-110 deg", "val":-1.9198621771937625}, "intervals":50, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"7.685799598693848 m", "val":7.685799598693848}, "y":{"exp":"1.1890604496002197 m", "val":1.1890604496002195}, "heading":{"exp":"-110 deg", "val":-1.9198621771937625}, "intervals":17, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"RBF2.x", "val":6.0}, "y":{"exp":"RBF2.y", "val":2.7}, "heading":{"exp":"RBF2.heading", "val":0.7853981633974483}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
->>>>>>> f25a83bdfe717f21591b9f91954096a691c1eb52
   "constraints":[
     {"from":1, "to":2, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"2.5 m / s", "val":2.5}}}, "enabled":true},
     {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.6821498870849609 m", "val":0.6821498870849609}}}, "enabled":true},
