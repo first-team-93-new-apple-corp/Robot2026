@@ -168,14 +168,6 @@ public class RobotContainer {
                 driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                                 .andThen(Commands.print("Reset Pose due to Button Press")));
 
-                // driver.SysIdForwardQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                // driver.SysIdForwardD().whileTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                // driver.SysIdBackwordQ().whileTrue(subsystems.drivetrain().commands.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                // driver.SysIdBackwardD().whileTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-                // // driver.SysIdBackwardD().or(null)
-                // driver.SysIdStart().onTrue(Commands.runOnce(SignalLogger::start));
-                // driver.SysIdEnd().onTrue(Commands.runOnce(SignalLogger::stop));
-                // driver.SysIdCCW().onTrue(subsystems.drivetrain().commands.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
         }
 
