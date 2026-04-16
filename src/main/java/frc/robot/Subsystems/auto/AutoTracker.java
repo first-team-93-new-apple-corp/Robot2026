@@ -92,8 +92,7 @@ public class AutoTracker extends SequentialCommandGroup {
     public void Intake(PathPlannerPath path) {
         addCommands(subsystems.Intake());
         addCommands(AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints)
-                .andThen(Commands.runOnce(() -> DogLog.timestamp("INTAKE " + path.name))));
-        // addCommands(AutoBuilder.followPath(path));
+                .andThen(Commands.runOnce(() -> DogLog.timestamp("INTAKE " + path.name)))); 
     }
 
     public void addShootPath(String pathName, preset preset) {
