@@ -275,12 +275,12 @@ public class Constants {
                 Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(36.0))), // 36
                 Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(42.0))), // 42
                 Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(49.0))), // 49 Allows to shoot from tench
-                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(1.09),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(1.08),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(1.07),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(1.07),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0))),
+                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(60.0))),
+                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(.8),RotationsPerSecond.of(70.0))),
+                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(80.0))),
+                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(90.0))),
+                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),RotationsPerSecond.of(100.0))),
+                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(130.0))),
                 Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0))),
                 Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0)))
             );
@@ -334,7 +334,7 @@ public class Constants {
             private static final double rightWingRPS = 29.8;
             private static final double depotLeftRPS = 41.6;
             private static final double depotRightRPS = 39.0;
-            private static final double bumpRPS = 32.0;
+            private static final double bumpRPS = 34.0;
 
             private static final double closeDeg = 10.0;
             private static final double closeSideDeg = 10.0;

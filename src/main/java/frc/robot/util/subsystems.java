@@ -114,12 +114,12 @@ public record subsystems(
 
 
         // We need below for tuning 
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(RobotContainer.Angle_Tuning),
-        () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(90).minus(Radians.of(RobotContainer.Angle_Tuning)),
+        // () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
 
         // Below is shooter math implmentation
-        // cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-        //         () -> getShootingDataFallback().shooterVelocity()));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
+                () -> getShootingDataFallback().shooterVelocity()));
 
         return cmds.withTimeout(1);
     }
