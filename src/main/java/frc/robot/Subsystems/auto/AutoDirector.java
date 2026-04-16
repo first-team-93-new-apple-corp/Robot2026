@@ -481,14 +481,14 @@ public class AutoDirector {
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBump("Overbump");
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addIntakePath("L_Center_Intake_Behind_Hub");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
         return trackedAuto("L Double Center-Behind Hub", tracker);
     }
@@ -500,11 +500,11 @@ public class AutoDirector {
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addIntakePath("depotIntake");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath2("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
         return trackedAuto("L Double Center-Depot", tracker);
     }
