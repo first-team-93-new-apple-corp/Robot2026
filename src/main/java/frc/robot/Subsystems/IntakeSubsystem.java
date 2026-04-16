@@ -113,11 +113,6 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakePivotMotor.getPosition().getValue().isNear(lastSetpoint, Rotations.of(2));
     }
 
-    // public Angle getPivotPoseRaw() {
-    //     return pivotEncoder.getAbsolutePosition().getValue();
-    // }
-
-
     public Angle getPivotPose() {
         return intakePivotMotor.getPosition().getValue();
     }
@@ -138,12 +133,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void smartDash() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
-        // SmartDashboard.putNumber("IntakePivotSetpoint", lastSetpoint.in(Degrees));
-        // SmartDashboard.putNumber("IntakePivotCurrentStator",
-        // intakePivotMotor.getStatorCurrent().getValueAsDouble());
-        // SmartDashboard.putNumber("IntakePivotCurrentSupply",
-        // intakePivotMotor.getSupplyCurrent().getValueAsDouble());
-
     }
 
     @Override

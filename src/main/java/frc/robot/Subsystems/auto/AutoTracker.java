@@ -84,21 +84,6 @@ public class AutoTracker extends SequentialCommandGroup {
     }
 
     /**
-     * This is Deprecated use
-     * {@link #addIntakePath(String)}
-     */
-    @Deprecated
-    public void addIntakeChoreo(String name) {
-        try {
-            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(name);
-            rememberPreview(path);
-            Intake(path);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * 
      * @param path
      *             The arm deploys and intakes as the robot drives to the first
@@ -140,24 +125,6 @@ public class AutoTracker extends SequentialCommandGroup {
             e.printStackTrace();
         }
     }
-
-    // public void addShootPathCenter(String pathName) {
-    // try {
-    // PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    // followSnapShoot(path);
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
-
-    // public void addShootPathCenterSide(String pathName) {
-    // try {
-    // PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-    // followSnapShootSide(path);
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // }
-    // }
 
     public void shootWhilstGoingTo(Supplier<Pose2d> pose) {
         Command followPath = AutoBuilder.pathfindToPose(pose.get(), AutoConstants.constraints);
