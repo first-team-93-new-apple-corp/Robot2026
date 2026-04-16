@@ -1,0 +1,436 @@
+{
+  "Device": [
+    {
+      "name": "Motor Output",
+      "summary": "",
+      "description": "",
+      "ordinal": 0,
+      "configs": [
+        {
+          "name": "Inverted",
+          "summary": "Invert state of the device as seen from the front of the motor.",
+          "ordinal": 0,
+          "type": "InvertedValue",
+          "description": "",
+          "units": "",
+          "min_value": -1.7976931348623157E+308,
+          "max_value": 1.7976931348623157E+308,
+          "signal_id": 1901,
+          "signal_name": "Config_Inverted",
+          "default_value": 0,
+          "value": 1,
+          "param_value": "Clockwise_Positive",
+          "enum_values": [
+            {
+              "name": "CounterClockwise_Positive",
+              "comment": "Positive motor output results in counter-clockwise motion.",
+              "value": 0
+            },
+            {
+              "name": "Clockwise_Positive",
+              "comment": "Positive motor output results in clockwise motion.",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Current Limits",
+      "summary": "",
+      "description": "",
+      "ordinal": 0,
+      "configs": [
+        {
+          "name": "Stator Current Limit",
+          "summary": "The amount of current allowed in the motor (motoring and regen current).  Note this requires StatorCurrentLimitEnable to be true.\n\nFor torque current control, this is applied in addition to the PeakForwardTorqueCurrent and PeakReverseTorqueCurrent in TorqueCurrentConfigs.\n\nStator current is directly proportional to torque, so this limit can be used to restrict the torque output of the motor, such as preventing wheel slip for a drivetrain.  Additionally, stator current limits can prevent brownouts during acceleration; supply current will never exceed the stator current limit and is often significantly lower than stator current.\n\nA reasonable starting point for a stator current limit is 120 A, with values commonly ranging from 80-160 A. Mechanisms with a hard stop may need a smaller limit to reduce the torque applied when running into the hard stop.",
+          "ordinal": 0,
+          "type": "double",
+          "description": "",
+          "units": "A",
+          "min_value": 0,
+          "max_value": 800,
+          "signal_id": 1906,
+          "signal_name": "Config_StatorCurrentLimit",
+          "default_value": 120,
+          "value": 200,
+          "param_value": 200,
+          "enum_values": []
+        },
+        {
+          "name": "Stator Current Limit Enable",
+          "summary": "Enable motor stator current limiting.",
+          "ordinal": 0,
+          "type": "bool",
+          "description": "",
+          "units": "",
+          "min_value": -1.7976931348623157E+308,
+          "max_value": 1.7976931348623157E+308,
+          "signal_id": 1907,
+          "signal_name": "Config_StatorCurrLimitEn",
+          "default_value": 1,
+          "value": 0,
+          "param_value": false,
+          "enum_values": []
+        },
+        {
+          "name": "Supply Current Limit",
+          "summary": "The absolute maximum amount of supply current allowed.  Note this requires SupplyCurrentLimitEnable to be true.  Use SupplyCurrentLowerLimit and SupplyCurrentLowerTime to reduce the supply current limit after the time threshold is exceeded.\n\nSupply current is the current drawn from the battery, so this limit can be used to prevent breaker trips and improve battery longevity.  Additionally, in scenarios where the robot experiences brownouts despite configuring stator current limits, a supply current limit can further help avoid brownouts. However, it is important to note that such brownouts may be caused by a bad battery or poor power wiring.\n\nA reasonable starting point for a supply current limit is 70 A with a lower limit of 40 A after 1.0 second. Supply current limits commonly range from 20-80 A depending on the breaker used.",
+          "ordinal": 0,
+          "type": "double",
+          "description": "",
+          "units": "A",
+          "min_value": 0,
+          "max_value": 800,
+          "signal_id": 1908,
+          "signal_name": "Config_SupplyCurrentLimit",
+          "default_value": 70,
+          "value": 50,
+          "param_value": 50,
+          "enum_values": []
+        },
+        {
+          "name": "Supply Current Limit Enable",
+          "summary": "Enable motor supply current limiting.",
+          "ordinal": 0,
+          "type": "bool",
+          "description": "",
+          "units": "",
+          "min_value": -1.7976931348623157E+308,
+          "max_value": 1.7976931348623157E+308,
+          "signal_id": 1909,
+          "signal_name": "Config_SupplyCurrLimitEn",
+          "default_value": 1,
+          "value": 0,
+          "param_value": false,
+          "enum_values": []
+        }
+      ]
+    },
+    {
+      "name": "Slot 0",
+      "summary": "",
+      "description": "",
+      "ordinal": 0,
+      "configs": [
+        {
+          "name": "kP",
+          "summary": "Proportional gain.",
+          "ordinal": 0,
+          "type": "double",
+          "description": "The units for this gain is dependent on the control mode. Since this gain is multiplied by error in the input, the units should be defined as units of output per unit of input error. For example, when controlling velocity using a duty cycle closed loop, the units for the proportional gain will be duty cycle per rps of error, or 1/rps.",
+          "units": "",
+          "min_value": 0,
+          "max_value": 3.4E+38,
+          "signal_id": 1877,
+          "signal_name": "Slot0_kP",
+          "default_value": 0,
+          "value": 100,
+          "param_value": 100,
+          "enum_values": []
+        },
+        {
+          "name": "kI",
+          "summary": "Integral gain.",
+          "ordinal": 1,
+          "type": "double",
+          "description": "The units for this gain is dependent on the control mode. Since this gain is multiplied by error in the input integrated over time (in units of seconds), the units should be defined as units of output per unit of integrated input error. For example, when controlling velocity using a duty cycle closed loop, integrating velocity over time results in rps * s = rotations. Therefore, the units for the integral gain will be duty cycle per rotation of accumulated error, or 1/rot.",
+          "units": "",
+          "min_value": 0,
+          "max_value": 3.4E+38,
+          "signal_id": 1878,
+          "signal_name": "Slot0_kI",
+          "default_value": 0,
+          "value": 35,
+          "param_value": 35,
+          "enum_values": []
+        },
+        {
+          "name": "kS",
+          "summary": "Static feedforward gain.",
+          "ordinal": 3,
+          "type": "double",
+          "description": "This is added to the closed loop output. The unit for this constant is dependent on the control mode, typically fractional duty cycle, voltage, or torque current.\n\nThe sign is typically determined by reference velocity when using position, velocity, and Motion Magic\u00AE closed loop modes. However, when using position closed loop with zero velocity reference (no motion profiling), the application can instead use the position closed loop error by setting the Static Feedforward Sign configuration parameter.  When doing so, we recommend the minimal amount of kS, otherwise the motor output may dither when closed loop error is near zero.",
+          "units": "",
+          "min_value": -128,
+          "max_value": 127,
+          "signal_id": 1880,
+          "signal_name": "Slot0_kS",
+          "default_value": 0,
+          "value": 0.5,
+          "param_value": 0.5,
+          "enum_values": []
+        },
+        {
+          "name": "kV",
+          "summary": "Velocity feedforward gain.",
+          "ordinal": 4,
+          "type": "double",
+          "description": "The units for this gain is dependent on the control mode. Since this gain is multiplied by the requested velocity, the units should be defined as units of output per unit of requested input velocity. For example, when controlling velocity using a duty cycle closed loop, the units for the velocity feedfoward gain will be duty cycle per requested rps, or 1/rps.",
+          "units": "",
+          "min_value": 0,
+          "max_value": 3.4E+38,
+          "signal_id": 1881,
+          "signal_name": "Slot0_kV",
+          "default_value": 0,
+          "value": 0.30000001192092896,
+          "param_value": 0.30000001192092896,
+          "enum_values": []
+        },
+        {
+          "name": "kA",
+          "summary": "Acceleration feedforward gain.",
+          "ordinal": 5,
+          "type": "double",
+          "description": "The units for this gain is dependent on the control mode. Since this gain is multiplied by the requested acceleration, the units should be defined as units of output per unit of requested input acceleration. For example, when controlling velocity using a duty cycle closed loop, the units for the acceleration feedfoward gain will be duty cycle per requested rot per sec\u00B2, or 1/(rot per sec\u00B2).",
+          "units": "",
+          "min_value": 0,
+          "max_value": 3.4E+38,
+          "signal_id": 1882,
+          "signal_name": "Slot0_kA",
+          "default_value": 0,
+          "value": 0.30000001192092896,
+          "param_value": 0.30000001192092896,
+          "enum_values": []
+        }
+      ]
+    },
+    {
+      "name": "Feedback",
+      "summary": "",
+      "description": "",
+      "ordinal": 0,
+      "configs": [
+        {
+          "name": "Feedback Remote Sensor ID",
+          "summary": "Device ID of which remote device to use.  This is not used if the Sensor Source is the internal rotor sensor.",
+          "ordinal": 0,
+          "type": "int",
+          "description": "",
+          "units": "",
+          "min_value": 0,
+          "max_value": 62,
+          "signal_id": 1921,
+          "signal_name": "Config_FeedbackRemoteSensorID",
+          "default_value": 0,
+          "value": 16,
+          "param_value": 16,
+          "enum_values": []
+        },
+        {
+          "name": "Feedback Sensor Source",
+          "summary": "Choose what sensor source is reported via API and used by closed-loop and limit features.  The default is RotorSensor, which uses the internal rotor sensor in the Talon.\n\nChoose Remote* to use another sensor on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position and velocity whenever the remote sensor publishes its information on CAN bus, and the Talon internal rotor will not be used.\n\nChoose Fused* (requires Phoenix Pro) and Talon will fuse another sensor\u0027s information with the internal rotor, which provides the best possible position and velocity for accuracy and bandwidth (this also requires setting FeedbackRemoteSensorID).  This was developed for applications such as swerve-azimuth.\n\nChoose Sync* (requires Phoenix Pro) and Talon will synchronize its internal rotor position against another sensor, then continue to use the rotor sensor for closed loop control (this also requires setting FeedbackRemoteSensorID).  The Talon will report if its internal position differs significantly from the reported remote sensor position.  This was developed for mechanisms where there is a risk of the sensor failing in such a way that it reports a position that does not match the mechanism, such as the sensor mounting assembly breaking off.\n\nChoose RemotePigeon2Yaw, RemotePigeon2Pitch, and RemotePigeon2Roll to use another Pigeon2 on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position to match the selected value whenever Pigeon2 publishes its information on CAN bus. Note that the Talon position will be in rotations and not degrees.",
+          "ordinal": 0,
+          "type": "FeedbackSensorSourceValue",
+          "description": "Note: When the feedback source is changed to Fused* or Sync*, the Talon needs a period of time to fuse before sensor-based (soft-limit, closed loop, etc.) features are used. This period of time is determined by the update frequency of the remote sensor\u0027s Position signal.",
+          "units": "",
+          "min_value": -1.7976931348623157E+308,
+          "max_value": 1.7976931348623157E+308,
+          "signal_id": 1920,
+          "signal_name": "Config_FeedbackSensorSource",
+          "default_value": 0,
+          "value": 1,
+          "param_value": "RemoteCANcoder",
+          "enum_values": [
+            {
+              "name": "RotorSensor",
+              "comment": "Use the internal rotor sensor in the Talon.",
+              "value": 0
+            },
+            {
+              "name": "RemoteCANcoder",
+              "comment": "Use another CANcoder on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position and velocity whenever CANcoder publishes its information on CAN bus, and the Talon internal rotor will not be used.",
+              "value": 1
+            },
+            {
+              "name": "RemotePigeon2Yaw",
+              "comment": "Use another Pigeon2 on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position to match the Pigeon2 yaw whenever Pigeon2 publishes its information on CAN bus. Note that the Talon position will be in rotations and not degrees.",
+              "value": 2
+            },
+            {
+              "name": "RemotePigeon2Pitch",
+              "comment": "Use another Pigeon2 on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position to match the Pigeon2 pitch whenever Pigeon2 publishes its information on CAN bus. Note that the Talon position will be in rotations and not degrees.",
+              "value": 3
+            },
+            {
+              "name": "RemotePigeon2Roll",
+              "comment": "Use another Pigeon2 on the same CAN bus (this also requires setting FeedbackRemoteSensorID).  Talon will update its position to match the Pigeon2 roll whenever Pigeon2 publishes its information on CAN bus. Note that the Talon position will be in rotations and not degrees.",
+              "value": 4
+            },
+            {
+              "name": "FusedCANcoder",
+              "comment": "Requires Phoenix Pro; Talon will fuse another CANcoder\u0027s information with the internal rotor, which provides the best possible position and velocity for accuracy and bandwidth (this also requires setting FeedbackRemoteSensorID).  FusedCANcoder was developed for applications such as swerve-azimuth.",
+              "value": 5
+            },
+            {
+              "name": "SyncCANcoder",
+              "comment": "Requires Phoenix Pro; Talon will synchronize its internal rotor position against another CANcoder, then continue to use the rotor sensor for closed loop control (this also requires setting FeedbackRemoteSensorID).  The Talon will report if its internal position differs significantly from the reported CANcoder position.  SyncCANcoder was developed for mechanisms where there is a risk of the CANcoder failing in such a way that it reports a position that does not match the mechanism, such as the sensor mounting assembly breaking off.",
+              "value": 6
+            },
+            {
+              "name": "RemoteCANdiPWM1",
+              "comment": "Use a pulse-width encoder remotely attached to the Sensor Input 1 (S1IN) on the CTR Electronics\u0027 CANdi\u2122 (this also requires setting FeedbackRemoteSensorID). Talon will update its position and velocity whenever the CTR Electronics\u0027 CANdi\u2122 publishes its information on CAN bus, and the Talon internal rotor will not be used.",
+              "value": 9
+            },
+            {
+              "name": "RemoteCANdiPWM2",
+              "comment": "Use a pulse-width encoder remotely attached to the Sensor Input 2 (S2IN) on the CTR Electronics\u0027 CANdi\u2122 (this also requires setting FeedbackRemoteSensorID). Talon will update its position and velocity whenever the CTR Electronics\u0027 CANdi\u2122 publishes its information on CAN bus, and the Talon internal rotor will not be used.",
+              "value": 10
+            },
+            {
+              "name": "RemoteCANdiQuadrature",
+              "comment": "Use a quadrature encoder remotely attached to the two Sensor Inputs on the CTR Electronics\u0027 CANdi\u2122 (this also requires setting FeedbackRemoteSensorID). Talon will update its position and velocity whenever the CTR Electronics\u0027 CANdi\u2122 publishes its information on CAN bus, and the Talon internal rotor will not be used.",
+              "value": 11
+            },
+            {
+              "name": "FusedCANdiPWM1",
+              "comment": "Requires Phoenix Pro; Talon will fuse a pulse-width encoder remotely attached to the Sensor Input 1 (S1IN) on the CTR Electronics\u0027 CANdi\u2122, which provides the best possible position and velocity for accuracy and bandwidth (this also requires setting FeedbackRemoteSensorID).  FusedCANdi was developed for applications such as swerve-azimuth.",
+              "value": 12
+            },
+            {
+              "name": "FusedCANdiPWM2",
+              "comment": "Requires Phoenix Pro; Talon will fuse a pulse-width encoder remotely attached to the Sensor Input 2 (S2IN) on the CTR Electronics\u0027 CANdi\u2122, which provides the best possible position and velocity for accuracy and bandwidth (this also requires setting FeedbackRemoteSensorID).  FusedCANdi was developed for applications such as swerve-azimuth.",
+              "value": 13
+            },
+            {
+              "name": "FusedCANdiQuadrature",
+              "comment": "Requires Phoenix Pro; Talon will fuse a qaudrature encoder remotely attached to the two Sensor Inputs on the CTR Electronics\u0027 CANdi\u2122. This provides velocity and relative position measurements. This also requires setting FeedbackRemoteSensorID.",
+              "value": 14
+            },
+            {
+              "name": "SyncCANdiPWM1",
+              "comment": "Requires Phoenix Pro; Talon will synchronize its internal rotor position against the pulse-width encoder attached to Sensor Input 1 (S1IN), then continue to use the rotor sensor for closed loop control (this also requires setting FeedbackRemoteSensorID).  The Talon will report if its internal position differs significantly from the reported PWM position.  SyncCANdi was developed for mechanisms where there is a risk of the CTR Electronics\u0027 CANdi\u2122 failing in such a way that it reports a position that does not match the mechanism, such as the sensor mounting assembly breaking off.",
+              "value": 15
+            },
+            {
+              "name": "SyncCANdiPWM2",
+              "comment": "Requires Phoenix Pro; Talon will synchronize its internal rotor position against the pulse-width encoder attached to Sensor Input 1 (S1IN), then continue to use the rotor sensor for closed loop control (this also requires setting FeedbackRemoteSensorID).  The Talon will report if its internal position differs significantly from the reported PWM position.  SyncCANdi was developed for mechanisms where there is a risk of the CTR Electronics\u0027 CANdi\u2122 failing in such a way that it reports a position that does not match the mechanism, such as the sensor mounting assembly breaking off.",
+              "value": 16
+            }
+          ]
+        },
+        {
+          "name": "Rotor To Sensor Ratio",
+          "summary": "The ratio of motor rotor rotations to remote sensor rotations, where a ratio greater than 1 is a reduction.\n\nThe Talon FX is capable of fusing a remote CANcoder with its rotor sensor to produce a high-bandwidth sensor source.  This feature requires specifying the ratio between the motor rotor and the remote sensor.\n\nIf this is set to zero, the device will reset back to one.",
+          "ordinal": 0,
+          "type": "double",
+          "description": "",
+          "units": "scalar",
+          "min_value": -1000,
+          "max_value": 1000,
+          "signal_id": 1919,
+          "signal_name": "Config_RotorToSensorRatio",
+          "default_value": 1,
+          "value": 2,
+          "param_value": 2,
+          "enum_values": []
+        },
+        {
+          "name": "Sensor To Mechanism Ratio",
+          "summary": "The ratio of sensor rotations to the mechanism\u0027s output, where a ratio greater than 1 is a reduction.\n\nThis is equivalent to the mechanism\u0027s gear ratio if the sensor is located on the input of a gearbox.  If sensor is on the output of a gearbox, then this is typically set to 1.\n\nWe recommend against using this config to perform onboard unit conversions.  Instead, unit conversions should be performed in robot code using the units library.\n\nIf this is set to zero, the device will reset back to one.",
+          "ordinal": 0,
+          "type": "double",
+          "description": "",
+          "units": "scalar",
+          "min_value": -1000,
+          "max_value": 1000,
+          "signal_id": 1918,
+          "signal_name": "Config_SensorToMechanismRatio",
+          "default_value": 1,
+          "value": 13.5,
+          "param_value": 13.5,
+          "enum_values": []
+        }
+      ]
+    },
+    {
+      "name": "Motion Magic",
+      "summary": "",
+      "description": "",
+      "ordinal": 0,
+      "configs": [
+        {
+          "name": "Motion Magic Cruise Velocity",
+          "summary": "This is the maximum velocity Motion Magic\u00AE based control modes are allowed to use.  Motion Magic\u00AE Velocity control modes do not use this config.\n\nWhen using Motion Magic\u00AE Expo control modes, setting this to 0 will allow the profile to run to the max possible velocity based on Expo_kV.",
+          "ordinal": -5,
+          "type": "double",
+          "description": "",
+          "units": "rot per sec",
+          "min_value": 0,
+          "max_value": 9999,
+          "signal_id": 1944,
+          "signal_name": "Config_MotionMagicCruiseVelocity",
+          "default_value": 0,
+          "value": 20,
+          "param_value": 20,
+          "enum_values": []
+        },
+        {
+          "name": "Motion Magic Acceleration",
+          "summary": "This is the target acceleration Motion Magic\u00AE based control modes are allowed to use.  Motion Magic\u00AE Expo control modes do not use this config.",
+          "ordinal": -4,
+          "type": "double",
+          "description": "",
+          "units": "rot per sec\u00B2",
+          "min_value": 0,
+          "max_value": 9999,
+          "signal_id": 1945,
+          "signal_name": "Config_MotionMagicAcceleration",
+          "default_value": 0,
+          "value": 250,
+          "param_value": 250,
+          "enum_values": []
+        },
+        {
+          "name": "Motion Magic Jerk",
+          "summary": "This is the target jerk (acceleration derivative) Motion Magic\u00AE based control modes are allowed to use.  Motion Magic\u00AE Expo control modes do not use this config.  This allows Motion Magic\u00AE to generate S-Curve profiles.\n\nJerk is optional; if this is set to zero, then Motion Magic\u00AE will not apply a Jerk limit.",
+          "ordinal": -3,
+          "type": "double",
+          "description": "",
+          "units": "rot per sec\u00B3",
+          "min_value": 0,
+          "max_value": 9999,
+          "signal_id": 1946,
+          "signal_name": "Config_MotionMagicJerk",
+          "default_value": 0,
+          "value": 500,
+          "param_value": 500,
+          "enum_values": []
+        },
+        {
+          "name": "Motion Magic Expo_kV",
+          "summary": "This is the target kV used only by Motion Magic\u00AE Expo control modes. Unlike the kV slot gain, this is always in units of V/rps.\n\nThis represents the amount of voltage necessary to hold a velocity. In terms of the Motion Magic\u00AE Expo profile, a higher kV results in a slower maximum velocity.",
+          "ordinal": -2,
+          "type": "double",
+          "description": "",
+          "units": "V/rps",
+          "min_value": 0.001,
+          "max_value": 100,
+          "signal_id": 1947,
+          "signal_name": "Config_MotionMagicExpo_kV",
+          "default_value": 0.12,
+          "value": 0.009999999776482582,
+          "param_value": 0.009999999776482582,
+          "enum_values": []
+        },
+        {
+          "name": "Motion Magic Expo_kA",
+          "summary": "This is the target kA used only by Motion Magic\u00AE Expo control modes. Unlike the kA slot gain, this is always in units of V/rps\u00B2.\n\nThis represents the amount of voltage necessary to achieve an acceleration. In terms of the Motion Magic\u00AE Expo profile, a higher kA results in a slower acceleration.",
+          "ordinal": -1,
+          "type": "double",
+          "description": "",
+          "units": "V/rps\u00B2",
+          "min_value": 1E-05,
+          "max_value": 100,
+          "signal_id": 1948,
+          "signal_name": "Config_MotionMagicExpo_kA",
+          "default_value": 0.1,
+          "value": 0.009999999776482582,
+          "param_value": 0.009999999776482582,
+          "enum_values": []
+        }
+      ]
+    }
+  ],
+  "JsonVersion": 2
+}

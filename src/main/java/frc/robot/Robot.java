@@ -11,8 +11,12 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TimesliceRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.HubTracker;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -27,16 +31,9 @@ public class Robot extends TimedRobot {
     public Robot() {
         m_robotContainer = new RobotContainer();
 
-        // addPeriodic(() -> _robotContainer.subsystems.quesmtNav().commands.quest(), Milliseconds.of(20));
-        // addPeriodic(() -> m_robotContainer.subsystems.questNav().commands.pi(), Milliseconds.of(100));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        // addPeriodic(() -> m_robotContainer.subsystems.shooter().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.smartDashboard(), Milliseconds.of(250), Milliseconds.of(5));
-        // addPeriodic(() -> m_robotContainer.subsystems.intake().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
-
-        // addPeriodic(() -> m_robotContainer.subsystems.manipulation().commands.logging(), Milliseconds.of(250), Milliseconds.of(10));
+        addPeriodic(()->piPeriodic(), Milliseconds.of(250));
+        addPeriodic(()->logging(), Milliseconds.of(50));
+        addPeriodic(()-> smartDashboard(), Milliseconds.of(100));
 
         CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
         
@@ -47,12 +44,30 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        // m_timeAndJoystickReplay.update();
         CommandScheduler.getInstance().run();
-        // m_robotContainer.subsystems.intake().commands.smartDashboard();
-        // m_robotContainer.subsystems.shooter().commands.smartDashboard();
-        // m_robotContainer.subsystems.questNav().commands.quest();
-        // m_robotContainer.subsystems.questNav().commands.pi();
+        questPeriodic();
+        SmartDashboard.putNumber("Phase Counter", HubTracker.allianceActiveCountdownSeconds().isPresent() ? HubTracker.allianceActiveCountdownSeconds().get() : -1);
+    }
+
+    public void piPeriodic(){
+        m_robotContainer.subsystems.vision().piPeriodic();
+    }
+
+    public void questPeriodic(){
+        m_robotContainer.subsystems.vision().questPeriodic();
+    }
+
+    public void smartDashboard(){
+        m_robotContainer.subsystems.vision().smartDash();
+        m_robotContainer.subsystems.intake().smartDash();
+        m_robotContainer.subsystems.shooter().smartDash();
+        m_robotContainer.subsystems.pds().smartDash();
+    }
+
+    public void logging(){
+        m_robotContainer.subsystems.intake().log();
+        m_robotContainer.subsystems.shooter().log();
+        m_robotContainer.subsystems.manipulation().log();
     }
 
     @Override
@@ -89,10 +104,14 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+        SmartDashboard.putNumber("Tuning Speed", RobotContainer.RPM_Tuning);
+        SmartDashboard.putNumber("Tuning Angle", RobotContainer.Angle_Tuning);
+        
     }
 
     @Override
     public void teleopPeriodic() {
+       m_robotContainer.telePeriodic();
     }
 
     @Override

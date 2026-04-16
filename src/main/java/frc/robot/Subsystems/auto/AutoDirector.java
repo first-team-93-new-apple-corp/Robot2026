@@ -1,5 +1,7 @@
 package frc.robot.Subsystems.auto;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ShooterConstants.Presets;
+import frc.robot.util.NTSubsystem;
 import frc.robot.util.subsystems;
 
 public class AutoDirector {
@@ -32,14 +36,17 @@ public class AutoDirector {
     public final SendableChooser<Auto> autoChooser = new SendableChooser<>();
     public final List<Auto> Autos = new ArrayList<>();
     private final subsystems autoSubsystems;
+    private final NTSubsystem networkTables;
     private static RobotConfig config = null;
+    private String previewedAutoName = "";
 
     // Auto
     private SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
-    public AutoDirector(subsystems autoSubsystems) {
+    public AutoDirector(subsystems autoSubsystems, NTSubsystem networkTables) {
         this.autoSubsystems = autoSubsystems;
+        this.networkTables = networkTables;
         try {
             config = RobotConfig.fromGUISettings();
         } catch (Exception e) {
@@ -80,12 +87,17 @@ public class AutoDirector {
 
     public void resetAutoPose(Pose2d pose) {
         autoSubsystems.drivetrain().resetPose(pose);
-        autoSubsystems.questNav().commands.setRobotPose(new Pose3d(pose));
+        autoSubsystems.vision().commands.setRobotPose(new Pose3d(pose));
     }
 
-    public record Auto(String name, Command command, Pose2d initPose) {
+    public record Auto(String name, Command command, Pose2d initPose, List<Pose2d> previewPoses,
+            List<Pose2d> previewWaypoints) {
+        public Auto(String name, Command command, Pose2d initPose) {
+            this(name, command, initPose, List.of(), List.of());
+        }
+
         public Auto(String name, Command command) {
-            this(name, command, new Pose2d());
+            this(name, command, new Pose2d(), List.of(), List.of());
         }
     }
 
@@ -93,35 +105,69 @@ public class AutoDirector {
         return autoChooser.getSelected();
     }
 
+    public boolean hasSelectedAutoPreviewChanged() {
+        Auto selectedAuto = selection();
+        String selectedName = selectedAuto == null ? "" : selectedAuto.name;
+        return !selectedName.equals(previewedAutoName);
+    }
+
+    public void updateSelectedAutoPreview() {
+        Auto selectedAuto = selection();
+        if (selectedAuto == null) {
+            if (!previewedAutoName.isEmpty()) {
+                networkTables.quest.clearAutoPreview();
+                previewedAutoName = "";
+            }
+            return;
+        }
+
+        if (selectedAuto.name.equals(previewedAutoName)) {
+            return;
+        }
+
+        networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses, selectedAuto.previewWaypoints);
+        previewedAutoName = selectedAuto.name;
+    }
+
+    public void removePreview(){
+        networkTables.quest.clearAutoPreview();
+    }
+
     public void addAutos() {
         autoChooser.setDefaultOption(Default().name, Default());
-        // try {
-        //     Autos.add(TuningAuto());
-        //     Autos.add(TuningAuto2());
-        //     Autos.add(TuningAuto3());
-        // } catch (Exception e) {
-        //     // TODO: handle exception
-        // }
+
         Autos.add(DoNothing());
-        // *** vvv Confident
         Autos.add(PreloadClose());
         Autos.add(PreloadCloseLeft());
         Autos.add(PreloadCloseRight());
+        Autos.add(PreloadLeftBump());
+        Autos.add(PreloadRightBump());
         Autos.add(DepotScoreClose());
         Autos.add(DepotScoreCloseLeft());
         Autos.add(DepotScoreCloseRight());
-        // *** ^^^ Confident
-        // *** vvv Never tested
+        Autos.add(DepotScoreLeftBump());
+        Autos.add(DepotScoreRightBump());
         Autos.add(OutpostScoreClose());
-        // *** ^^^ never tested
-        // *** vvvvv maybe?!?!? might not finish in time
+        Autos.add(OutpostScoreCloseLeft());
+        Autos.add(OutpostScoreCloseRight());
+        Autos.add(OutpostScoreLeftBump());
+        Autos.add(OutpostScoreRightBump());
         Autos.add(LeftCenterLeftHalfScoreClose());
         Autos.add(LeftCenterLeftHalfScoreCloseLeft());
         Autos.add(LeftCenterLeftHalfScoreCloseRight());
+        Autos.add(LeftCenterLeftHalfScoreBump());
         Autos.add(RightCenterRightHalfScoreClose());
         Autos.add(RightCenterRightHalfScoreCloseLeft());
         Autos.add(RightCenterRightHalfScoreCloseRight());
-        // *** ^^^^^  maybe?!?!? might not finish in time
+        Autos.add(RightCenterRightHalfScoreBump());
+        Autos.add(RightDoubleDip());
+        Autos.add(RightCenterThenOutpost());
+        Autos.add(LeftDoubleDip());
+        Autos.add(LeftCenterThenDepot());
+        Autos.add(LeftToRightFull());
+        Autos.add(RightToLeftFull());
+        Autos.add(LeftCenterLeftHalfScoreBump());
+
 
 
 
@@ -174,145 +220,321 @@ public class AutoDirector {
 
     public Auto PreloadClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
-        return new Auto("Score Preload Only Close", tracker);
+        return trackedAuto("Pre Close", tracker);
     }
 
     public Auto PreloadCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getDepotLeft());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Score Preload Only Close Left", tracker);
+        return trackedAuto("Pre Close Left", tracker);
     }
 
     public Auto PreloadCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Score Preload Only Close Right", tracker);
+        return trackedAuto("Pre Close Right", tracker);
+    }
+
+    public Auto PreloadLeftBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("Pre L Bump", tracker);
+    }
+
+    public Auto PreloadRightBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addShootPath("Right Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("Pre R Bump", tracker);
     }
 
     public Auto DepotScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
-        return new Auto("Depot Shoot Center", tracker);
+        return trackedAuto("D Close", tracker);
     }
 
     public Auto DepotScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Depot Shoot Center Left", tracker);
+        return trackedAuto("D Close Left", tracker);
     }
 
     public Auto DepotScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Depot Score Center Right", tracker);
+        return trackedAuto("D Close Right", tracker);
+    }
+
+    public Auto DepotScoreRightBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addIntakePath("depotIntake");
+        tracker.addShootPath("Right Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("D Right Bump", tracker);
+    }
+    public Auto DepotScoreLeftBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addIntakePath("depotIntake");
+        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("D Left Bump", tracker);
     }
 
     public Auto OutpostScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
-        return new Auto("Outpost Score Center", tracker);
+        return trackedAuto("O Close", tracker);
     }
 
     public Auto OutpostScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Outpost Score Center Left", tracker);
+        return trackedAuto("O Close Left", tracker);
     }
 
     public Auto OutpostScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addIntakePath("depotIntake");
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Outpost Score Center Right", tracker);
+        return trackedAuto("O Close Right", tracker);
+    }
+
+    public Auto OutpostScoreRightBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
+        tracker.addShootPath("Right Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("O Right Bump", tracker);
+    }
+
+    public Auto OutpostScoreLeftBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(5));
+        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("O Left Bump", tracker);
     }
 
     public Auto LeftCenterLeftHalfScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addOverBumpLeft("Overbump");
+        tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("BackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
-        return new Auto("Left Side Intake Left Half Center Score Close", tracker);
+        return trackedAuto("L Center Left CloseV2", tracker);
     }
 
     public Auto LeftCenterLeftHalfScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addOverBumpLeft("Overbump");
+        tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("BackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Left Side Intake Center Score Close Left", tracker);
+        return trackedAuto("L Center Close Left", tracker);
     }
 
     public Auto LeftCenterLeftHalfScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
-        tracker.addOverBumpLeft("Overbump");
+        tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("BackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Left Side Intake Center Score Close Right", tracker);
+        return trackedAuto("L Center Close Right", tracker);
+    }
+
+     public Auto LeftCenterLeftHalfScoreBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.endAuto();
+        return trackedAuto("L Center Bump", tracker);
     }
 
 
     public Auto RightCenterRightHalfScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addOverBumpLeft("RightOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("RightBackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center", AutoConstants.PresetShootingPoints.getClose());
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
-        return new Auto("Right Side Intake Center Score Close", tracker);
+        return trackedAuto("R Center Close", tracker);
     }
 
     public Auto RightCenterRightHalfScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
-        tracker.addOverBumpLeft("RightOverbump");
-        tracker.addIntakePath("L_Center_Intake");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("RightBackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Left", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Right Side Intake Center Score Close Left", tracker);
+        return trackedAuto("R Center Left Close", tracker);
     }
 
     public Auto RightCenterRightHalfScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
-        tracker.addOverBumpLeft("RightOverbump");
+        tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addOverBumpLeft("RightBackOverbump");
-        // tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Right", AutoConstants.PresetShootingPoints.getCloseSide());
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
-        return new Auto("Right Side Intake Center Score Close Right", tracker);
+        return trackedAuto("R Center Right Close", tracker);
+    }
+
+    public Auto RightCenterRightHalfScoreBump() {
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
+        // tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
+        tracker.endAuto();
+        return trackedAuto("R Center Bump", tracker);
+    }
+
+    public Auto RightDoubleDip(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake_Behind_Hub");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("R Double Center-Behind Hub", tracker);
+    }
+
+    public Auto RightCenterThenOutpost(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("outpostIntake");
+        tracker.addCommands(Commands.waitSeconds(4));
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("R Double Center-Outpost", tracker);
+    }
+
+    public Auto LeftDoubleDip(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("L_Center_Intake_Behind_Hub");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("L Double Center-Behind Hub", tracker);
+    }
+
+    public Auto LeftCenterThenDepot(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("depotIntake");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("L Double Center-Depot", tracker);
+    }
+
+    public Auto LeftToRightFull(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_R_Full");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(8));
+        tracker.endAuto();
+        tracker.endAuto();
+        return trackedAuto("L To R Full Center", tracker);
+    }
+
+    public Auto RightToLeftFull(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_L_Full");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addOverBump("BackOverbump");
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(8));
+        tracker.endAuto();
+        return trackedAuto("R To L Full Center", tracker);
+    }
+
+    private Auto trackedAuto(String name, AutoTracker tracker) {
+        return new Auto(name, tracker, new Pose2d(), tracker.getPreviewPoses(), tracker.getPreviewWaypoints());
     }
 }

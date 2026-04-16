@@ -17,7 +17,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
-import frc.robot.Subsystems.auto.AutoConstants.PresetShootingPoint;
+import frc.robot.Constants.ShooterConstants.preset;
 import frc.robot.util.Logger;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
@@ -208,7 +208,10 @@ public class ShooterSubsystem extends SubsystemBase {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
         return data;
     }
-
+    public ShootingData getShootingDataFallback(double poseX, double poseY) {
+        data = ShooterMath.fallBack(poseX, poseY);
+        return data;
+    }
     public ShootingData getShootingData() {
         return data;
     }
@@ -278,9 +281,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 && topRightShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1));
     }
 
-    public double getAngleToHub() {
-        return getAngleToHub();
-    }
+    
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
@@ -363,7 +364,7 @@ public class ShooterSubsystem extends SubsystemBase {
             return anglecmd.alongWith(shoot).withTimeout(Milliseconds.of(100));
         }
 
-        public Command velocityAndHoodNoOffset(Supplier<PresetShootingPoint> point) {
+        public Command velocityAndHoodNoOffset(Supplier<preset> point) {
             var angle = Commands.sequence(
                     Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())).withTimeout(0.15));
             var shoot = Commands.sequence(
@@ -371,7 +372,7 @@ public class ShooterSubsystem extends SubsystemBase {
             return angle.alongWith(shoot).withTimeout(Milliseconds.of(100));
         }
 
-        public Command velocityAndHood(Supplier<PresetShootingPoint> point) {
+        public Command velocityAndHood(Supplier<preset> point) {
             var angle = Commands.sequence(
                     Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())).withTimeout(0.15));
             var shoot = Commands.sequence(
