@@ -98,18 +98,11 @@ public class RobotContainer {
                                                                 .withVelocityY(driver.DriveUp())
                                                                 .withRotationalRate(driver.DriveTheta())));
 
-                // final var idle = new SwerveRequest.Idle();
-                // RobotModeTriggers.disabled().whileTrue(
-                // drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+
 
                 driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
-                // driver.brake().whileTrue(drivetrain
-                // .applyRequest(() -> point.withModuleDirection(new
-                // Rotation2d(-driver.InputUp(), -driver.InputLeft()))));
 
-                // Reset the field-centric heading on left bumper press.
                 driver.seed().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-                // drivetrain.registerTelemetry(logger::telemeterize);
 
                 driver.Shoot().whileTrue(subsystems.shoot());
                 driver.Shoot().onFalse(subsystems.shootFalse());

@@ -45,7 +45,6 @@ public record subsystems(
         var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands(cmd1.andThen(intake.commands.intake()));
         cmds.addCommands(manipulation.commands.intakeCommand());
-        // cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
         return cmds;
     }
 
@@ -54,7 +53,6 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.intake());
         cmds.addCommands(manipulation.commands.intakeCommand());
-        // cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
         return cmds;
     }
 
@@ -63,7 +61,6 @@ public record subsystems(
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
-        // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
     }
 
@@ -75,7 +72,6 @@ public record subsystems(
     public Command pass() {
         DogLog.timestamp("pass");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
         return cmds.withTimeout(0.5);
     }
@@ -83,9 +79,7 @@ public record subsystems(
     public Command shootFalse() {
         DogLog.timestamp("shootFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands(intake.commands.idle());
         cmds.addCommands(manipulation.commands.idleCommand());
-        // cmds.addCommands(shooter.commands.stopShooter());
         return cmds;
     }
 
@@ -122,7 +116,6 @@ public record subsystems(
     public Command PrimeHubClose() {
         DogLog.timestamp("PrimeHubClose");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.close));
         return cmds.withTimeout(1);
     }
@@ -130,7 +123,6 @@ public record subsystems(
     public Command PrimeHubCloseSide() {
         DogLog.timestamp("PrimeHubCloseSide");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
@@ -138,7 +130,6 @@ public record subsystems(
     public Command PrimeHubFar() {
         DogLog.timestamp("PrimeHubFar");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.inFrontOfClimb));
         return cmds.withTimeout(1);
     }
@@ -146,7 +137,6 @@ public record subsystems(
     public Command PrimeHubLeft() {
         DogLog.timestamp("PrimeHubLeft");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
@@ -154,7 +144,6 @@ public record subsystems(
     public Command PrimeHubRight() {
         DogLog.timestamp("PrimeHubRight");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
@@ -170,7 +159,6 @@ public record subsystems(
     public Command PrimeFalse() {
         DogLog.timestamp("PrimeFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(shooter.commands.stopShooter());
         cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
@@ -179,7 +167,6 @@ public record subsystems(
     public Command Outake() {
         DogLog.timestamp("Outake");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands((intake.commands.outtake()));
         cmds.addCommands(manipulation.commands.outtakeCommand());
         cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
@@ -189,7 +176,6 @@ public record subsystems(
     public Command OutakeFalse() {
         DogLog.timestamp("OutakeFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        // var cmd1 = intake.commands.autoPivotDown();
         cmds.addCommands((intake.commands.idle()));
         cmds.addCommands(manipulation.commands.idleCommand());
         cmds.addCommands(shooter.commands.stopShooter());

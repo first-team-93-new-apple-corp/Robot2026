@@ -75,7 +75,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
 
-        // intakePivotConfig.Feedback.FeedbackRemoteSensorID = CAN.intakePivotEncoder;
         intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         intakePivotConfig.Feedback.RotorToSensorRatio = 1;
         intakePivotConfig.Feedback.SensorToMechanismRatio = 45;
