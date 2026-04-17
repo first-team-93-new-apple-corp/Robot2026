@@ -163,6 +163,7 @@ public class AutoDirector {
         Autos.add(RightDoubleDip());
         Autos.add(RightCenterThenOutpost());
         Autos.add(LeftDoubleDip());
+        Autos.add(LeftDoubleDip2());
         Autos.add(LeftCenterThenDepot());
         Autos.add(LeftToRightFull());
         Autos.add(RightToLeftFull());
@@ -491,6 +492,25 @@ public class AutoDirector {
         tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
         return trackedAuto("L Double Center-Behind Hub", tracker);
+    }
+
+    public Auto LeftDoubleDip2(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("L_Center_Intake_2");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("L Double Center", tracker);
     }
 
     public Auto LeftCenterThenDepot(){
