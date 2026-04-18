@@ -416,7 +416,7 @@ public class AutoDirector {
      public Auto LeftCenterLeftHalfScoreBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
-        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.depotRight));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
