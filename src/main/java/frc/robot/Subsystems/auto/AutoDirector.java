@@ -117,13 +117,14 @@ public class AutoDirector {
             if (!previewedAutoName.isEmpty()) {
                 networkTables.quest.clearAutoPreview();
                 previewedAutoName = "";
+                return;
             }
             return;
         }
 
-        if (selectedAuto.name.equals(previewedAutoName)) {
-            return;
-        }
+        // if (selectedAuto.name.equals(previewedAutoName)) {
+        //     return;
+        // }
 
         networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses, selectedAuto.previewWaypoints);
         previewedAutoName = selectedAuto.name;
@@ -383,7 +384,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBump("BackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Left Bump Shoot", Presets.bump);
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(14));
         tracker.endAuto();
         return trackedAuto("L Center Bump", tracker);
     }
@@ -436,7 +437,7 @@ public class AutoDirector {
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addOverBump("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
-        tracker.addShootPath("Shoot Center Right", Presets.closeSide);
+        tracker.addShootPath("Right Bump Shoot", Presets.bump);
         tracker.endAuto();
         return trackedAuto("R Center Bump", tracker);
     }

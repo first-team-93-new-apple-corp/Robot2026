@@ -328,7 +328,7 @@ public class Constants {
             }
         public class Presets {
             private static final double closeRPS = 31;
-            private static final double closeSideRPS = 41.9;
+            private static final double closeSideRPS = 33;
             private static final double inFrontOfClimbRPS = 42;
             private static final double leftWingRPS = 37.3;
             private static final double rightWingRPS = 29.8;
