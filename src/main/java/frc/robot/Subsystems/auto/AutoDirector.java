@@ -223,6 +223,8 @@ public class AutoDirector {
 
     public Auto PreloadClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
         return trackedAuto("Pre Close", tracker);
@@ -230,6 +232,8 @@ public class AutoDirector {
 
     public Auto PreloadCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
         return trackedAuto("Pre Close Left", tracker);
@@ -237,6 +241,8 @@ public class AutoDirector {
 
     public Auto PreloadCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
         return trackedAuto("Pre Close Right", tracker);
@@ -244,6 +250,8 @@ public class AutoDirector {
 
     public Auto PreloadLeftBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addShootPath("Left Bump Shoot", Presets.bump);
         tracker.endAuto();
         return trackedAuto("Pre L Bump", tracker);
@@ -251,6 +259,8 @@ public class AutoDirector {
 
     public Auto PreloadRightBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addShootPath("Right Bump Shoot", Presets.bump);
         tracker.endAuto();
         return trackedAuto("Pre R Bump", tracker);
@@ -258,6 +268,8 @@ public class AutoDirector {
 
     public Auto DepotScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Shoot Center", Presets.close);
         tracker.endAuto();
@@ -266,6 +278,8 @@ public class AutoDirector {
 
     public Auto DepotScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Shoot Center Left", Presets.closeSide);
         tracker.endAuto();
@@ -274,6 +288,8 @@ public class AutoDirector {
 
     public Auto DepotScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Shoot Center Right", Presets.closeSide);
         tracker.endAuto();
@@ -282,6 +298,8 @@ public class AutoDirector {
 
     public Auto DepotScoreRightBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Right Bump Shoot", Presets.bump);
         tracker.endAuto();
@@ -289,6 +307,8 @@ public class AutoDirector {
     }
     public Auto DepotScoreLeftBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("depotIntake");
         tracker.addShootPath("Left Bump Shoot", Presets.bump);
         tracker.endAuto();
@@ -297,6 +317,8 @@ public class AutoDirector {
 
     public Auto OutpostScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("outpostIntake");
         tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center", Presets.close);
@@ -306,6 +328,8 @@ public class AutoDirector {
 
     public Auto OutpostScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("outpostIntake");
         tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center Left", Presets.closeSide);
@@ -315,6 +339,8 @@ public class AutoDirector {
 
     public Auto OutpostScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("outpostIntake");
         tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Shoot Center Right", Presets.closeSide);
@@ -324,6 +350,8 @@ public class AutoDirector {
 
     public Auto OutpostScoreRightBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("outpostIntake");
         tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Right Bump Shoot", Presets.bump);
@@ -332,7 +360,10 @@ public class AutoDirector {
     }
 
     public Auto OutpostScoreLeftBump() {
+        
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addIntakePath("outpostIntake");
         tracker.addCommands(Commands.waitSeconds(5));
         tracker.addShootPath("Left Bump Shoot", Presets.bump);
@@ -342,6 +373,8 @@ public class AutoDirector {
 
     public Auto LeftCenterLeftHalfScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -354,6 +387,8 @@ public class AutoDirector {
 
     public Auto LeftCenterLeftHalfScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -367,6 +402,7 @@ public class AutoDirector {
     public Auto LeftCenterLeftHalfScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -380,6 +416,7 @@ public class AutoDirector {
      public Auto LeftCenterLeftHalfScoreBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -394,6 +431,7 @@ public class AutoDirector {
     public Auto RightCenterRightHalfScoreClose() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -407,6 +445,7 @@ public class AutoDirector {
     public Auto RightCenterRightHalfScoreCloseLeft() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -420,6 +459,7 @@ public class AutoDirector {
     public Auto RightCenterRightHalfScoreCloseRight() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -433,6 +473,7 @@ public class AutoDirector {
     public Auto RightCenterRightHalfScoreBump() {
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         // tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -446,6 +487,7 @@ public class AutoDirector {
     public Auto RightDoubleDip(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         tracker.addOverBump("RightBackOverbump");
@@ -465,6 +507,7 @@ public class AutoDirector {
     public Auto RightDoubleDip2(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         tracker.addOverBump("RightBackOverbump");
@@ -484,6 +527,7 @@ public class AutoDirector {
     public Auto RightCenterThenOutpost(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_Center_Intake");
         tracker.addOverBump("RightBackOverbump");
@@ -501,6 +545,7 @@ public class AutoDirector {
     public Auto LeftDoubleDip(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
@@ -520,6 +565,7 @@ public class AutoDirector {
     public Auto LeftDoubleDip2(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
@@ -539,6 +585,7 @@ public class AutoDirector {
     public Auto LeftCenterThenDepot(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_Center_Intake");
         tracker.addOverBump("BackOverbump");
@@ -555,6 +602,7 @@ public class AutoDirector {
     public Auto LeftToRightFull(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("Overbump");
         tracker.addIntakePath("L_R_Full");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
@@ -568,6 +616,7 @@ public class AutoDirector {
     public Auto RightToLeftFull(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addCommands(autoSubsystems.shooter().commands.velocityAndHood(()->Presets.bump));
         tracker.addOverBump("RightOverbump");
         tracker.addIntakePath("R_L_Full");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
