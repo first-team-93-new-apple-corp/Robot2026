@@ -162,6 +162,7 @@ public class AutoDirector {
         Autos.add(RightCenterRightHalfScoreCloseRight());
         Autos.add(RightCenterRightHalfScoreBump());
         Autos.add(RightDoubleDip());
+        Autos.add(RightDoubleDip2());
         Autos.add(RightCenterThenOutpost());
         Autos.add(LeftDoubleDip());
         Autos.add(LeftDoubleDip2());
@@ -450,13 +451,34 @@ public class AutoDirector {
         tracker.addOverBump("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addOverBump("RightOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
         tracker.addIntakePath("R_Center_Intake_Behind_Hub");
         tracker.addOverBump("RightBackOverbump");
         tracker.addCommands(autoSubsystems.intake().commands.stop());
         tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
         tracker.endAuto();
         return trackedAuto("R Double Center-Behind Hub", tracker);
+    }
+
+    public Auto RightDoubleDip2(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("R_Center_Intake_22");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("R Double Center-Center", tracker);
     }
 
     public Auto RightCenterThenOutpost(){
