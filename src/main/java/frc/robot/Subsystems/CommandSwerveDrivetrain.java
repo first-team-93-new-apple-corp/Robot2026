@@ -57,12 +57,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     // Pose Correction Stuffs
-    private final PIDController xController = new PIDController(3.0, 0, 0);
-    private final PIDController yController = new PIDController(3.0, 0, 0);
+    private final PIDController xController = new PIDController(9.5, 0.01, 0.001);
+    private final PIDController yController = new PIDController(4.5, 0.01, 0.001);
 
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
-            4.0,
-            0,
+            5.0,
+            0.1,
             0,
             new TrapezoidProfile.Constraints(Constants.Swerve.MaxSpeed, 5));
 

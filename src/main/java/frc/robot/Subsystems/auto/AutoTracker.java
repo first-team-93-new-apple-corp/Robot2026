@@ -199,7 +199,7 @@ public class AutoTracker extends SequentialCommandGroup {
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .withTimeout(.5))
+                                        .withTimeout(1))
                         .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
 
     }
