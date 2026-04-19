@@ -235,10 +235,10 @@ public class AutoTracker extends SequentialCommandGroup {
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
                                         .alongWith(shootPresetRev)
-                                        .withTimeout(.5)));
-        addCommands(delayedShoot.andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
-                        // .andThen(delayedShoot.alongWith(Commands.waitSeconds(1))).andThen(shootPreset.andThen(delayedShoot))
-                        // .andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
+                                        .withTimeout(.5))
+        // addCommands(delayedShoot.andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
+                        .andThen(delayedShoot.withTimeout(1).andThen(shootPreset.andThen(delayedShoot))
+                        .andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name)))));
 
     }
     public void snapShoot(PathPlannerPath path, preset point, Time delay) {
