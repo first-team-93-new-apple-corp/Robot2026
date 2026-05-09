@@ -72,7 +72,8 @@ public record subsystems(
     public Command pass() {
         DogLog.timestamp("pass");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
+        // cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
+        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(25), () -> RotationsPerSecond.of(100)));
         return cmds.withTimeout(0.5);
     }
 
