@@ -336,14 +336,23 @@ public class Constants {
             private static final double depotRightRPS = 39.0;
             private static final double bumpRPS = 34.0;
 
+            // private static final double closeDeg = 10.0;
+            // private static final double closeSideDeg = 10.0;
+            // private static final double inFrontOfClimbDeg = 25.0;
+            // private static final double leftWingDeg = 26.4;
+            // private static final double rightWingDeg = 26.4;
+            // private static final double depotLeftDeg = 30.4;
+            // private static final double depotRightDeg = 28.1;
+            // private static final double bumpDeg = 28.0;
+
             private static final double closeDeg = 10.0;
             private static final double closeSideDeg = 10.0;
-            private static final double inFrontOfClimbDeg = 25.0;
-            private static final double leftWingDeg = 26.4;
-            private static final double rightWingDeg = 26.4;
-            private static final double depotLeftDeg = 30.4;
-            private static final double depotRightDeg = 28.1;
-            private static final double bumpDeg = 28.0;
+            private static final double inFrontOfClimbDeg = 10.0;
+            private static final double leftWingDeg = 10.0;
+            private static final double rightWingDeg = 10.0;
+            private static final double depotLeftDeg = 10.0;
+            private static final double depotRightDeg = 10.0;
+            private static final double bumpDeg = 10.0;
 
             public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
             public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
