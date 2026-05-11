@@ -199,7 +199,7 @@ public class AutoTracker extends SequentialCommandGroup {
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
-                                        .withTimeout(.5))
+                                        .withTimeout(1))
                         .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
 
     }
@@ -220,7 +220,27 @@ public class AutoTracker extends SequentialCommandGroup {
                         .andThen(delayedShoot).andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
 
     }
+    public void followSnapShoot2(PathPlannerPath path, preset point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+        Command shootPresetRev = subsystems.shooter().commands.velocityAndHood(point::hoodAngle,
+                () -> point.velocity().times(1.25));
+        Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
+        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
+
+        addCommands(
+                followPath
+                        .alongWith(shootPreset)
+                        .andThen(
+                                Commands.run(
+                                        () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
+                                        .alongWith(shootPresetRev)
+                                        .withTimeout(.5))
+        // addCommands(delayedShoot.andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name))));
+                        .andThen(delayedShoot.withTimeout(1).andThen(shootPreset.andThen(delayedShoot))
+                        .andThen(Commands.runOnce(() -> DogLog.timestamp("SHOOT " + path.name)))));
+
+    }
     public void snapShoot(PathPlannerPath path, preset point, Time delay) {
         Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
         Command snap = AutoBuilder.pathfindToPose(AutoConstants.getLastPoseInPath(path), AutoConstants.constraints)

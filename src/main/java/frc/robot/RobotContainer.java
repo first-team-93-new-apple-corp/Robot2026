@@ -71,6 +71,8 @@ public class RobotContainer {
                         DistributionHubsystem, driver);
         private AutoDirector auto = new AutoDirector(subsystems, networkTables);
 
+        private Trigger autoPreview = new Trigger(() -> auto.hasSelectedAutoPreviewChanged());
+
         public RobotContainer() {
                 RobotController.setBrownoutVoltage(Volts.of(6.5));
                 configureBindings();
@@ -81,6 +83,10 @@ public class RobotContainer {
                                 .withCaptureNt(false)
                                 .withUseLogThread(true));
                 DogLog.setEnabled(true);
+        }
+
+        private Trigger autoPreviewTrigger() {
+                return new Trigger(auto::hasSelectedAutoPreviewChanged);
         }
 
         private void configureBindings() {
@@ -94,8 +100,6 @@ public class RobotContainer {
                                                 .applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                                                 .withVelocityY(driver.DriveUp())
                                                                 .withRotationalRate(driver.DriveTheta())));
-
-
 
                 driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -149,13 +153,15 @@ public class RobotContainer {
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
                 RobotModeTriggers.teleop().onTrue(Commands.runOnce(() -> Elastic.selectTab(0)).ignoringDisable(true));
-                (new Trigger(() -> auto.hasSelectedAutoPreviewChanged()).and(RobotModeTriggers.disabled()))
-                                .onTrue(Commands.runOnce(auto::updateSelectedAutoPreview).ignoringDisable(true));
+                autoPreview.and(RobotModeTriggers.disabled())
+                                .onTrue(Commands.runOnce(auto::removePreview).ignoringDisable(true)
+                                                .andThen(Commands.runOnce(auto::updateSelectedAutoPreview)
+                                                                .ignoringDisable(true)
+                                                                .andThen(Commands.print("Auto Preview"))));
                 RobotModeTriggers.teleop().onTrue(Commands.runOnce(auto::removePreview));
 
                 driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                                 .andThen(Commands.print("Reset Pose due to Button Press")));
-
 
         }
 
@@ -165,7 +171,7 @@ public class RobotContainer {
 
         public void telePeriodic() {
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
-                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);           
+                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
         }
 
         public Command seed() {

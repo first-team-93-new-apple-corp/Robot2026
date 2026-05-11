@@ -41,6 +41,7 @@ public class NTSubsystem {
 		SmartDashboard.putData("Field", m_field);
 		m_field.setRobotPose(new Pose2d());
 		m_field.getObject("Quest").setPose(new Pose2d());
+		SmartDashboard.putString("Auto Preview", "booting");
 	}
 
 	public class ntSwerve {

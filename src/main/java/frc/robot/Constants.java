@@ -210,8 +210,8 @@ public class Constants {
         }
 
         public class shoot {
-            public static final double bottomRollerSpeed = 0.5;
-            public static final double sideRollerSpeed = -1;
+            public static final double bottomRollerSpeed = 0.4;
+            public static final double sideRollerSpeed = -0.4;
             public static final double kickerSpeed = 1;
         }
 
@@ -328,7 +328,7 @@ public class Constants {
             }
         public class Presets {
             private static final double closeRPS = 31;
-            private static final double closeSideRPS = 41.9;
+            private static final double closeSideRPS = 33;
             private static final double inFrontOfClimbRPS = 42;
             private static final double leftWingRPS = 37.3;
             private static final double rightWingRPS = 29.8;
@@ -336,14 +336,23 @@ public class Constants {
             private static final double depotRightRPS = 39.0;
             private static final double bumpRPS = 34.0;
 
+            // private static final double closeDeg = 10.0;
+            // private static final double closeSideDeg = 10.0;
+            // private static final double inFrontOfClimbDeg = 25.0;
+            // private static final double leftWingDeg = 26.4;
+            // private static final double rightWingDeg = 26.4;
+            // private static final double depotLeftDeg = 30.4;
+            // private static final double depotRightDeg = 28.1;
+            // private static final double bumpDeg = 28.0;
+
             private static final double closeDeg = 10.0;
             private static final double closeSideDeg = 10.0;
-            private static final double inFrontOfClimbDeg = 25.0;
-            private static final double leftWingDeg = 26.4;
-            private static final double rightWingDeg = 26.4;
-            private static final double depotLeftDeg = 30.4;
-            private static final double depotRightDeg = 28.1;
-            private static final double bumpDeg = 28.0;
+            private static final double inFrontOfClimbDeg = 10.0;
+            private static final double leftWingDeg = 10.0;
+            private static final double rightWingDeg = 10.0;
+            private static final double depotLeftDeg = 10.0;
+            private static final double depotRightDeg = 10.0;
+            private static final double bumpDeg = 10.0;
 
             public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
             public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
