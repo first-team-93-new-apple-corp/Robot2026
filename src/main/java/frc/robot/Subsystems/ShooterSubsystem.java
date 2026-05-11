@@ -334,7 +334,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         public Command stopShooter() {
-            return Commands.runOnce(() -> setShooterControl(new VoltageOut(5.0)));
+            return Commands.runOnce(() -> setShooterControl(new VoltageOut(2.0)));
         }
 
         // public Command stopHood() {

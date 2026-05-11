@@ -85,9 +85,9 @@ public class RobotContainer {
 
         private void configureBindings() {
                 drivetrain.setDefaultCommand(
-                                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
-                                                .withVelocityY(driver.DriveUp())
-                                                .withRotationalRate(driver.DriveTheta())));
+                                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()*0.5)
+                                                .withVelocityY(driver.DriveUp()*0.5)
+                                                .withRotationalRate(driver.DriveTheta()*0.5)));
 
                 driver.robotRel()
                                 .whileTrue(drivetrain
@@ -139,7 +139,7 @@ public class RobotContainer {
                 driver.Pass().onFalse(subsystems.PrimeFalse());
 
                 driver.manShoot().whileTrue(subsystems.shooter().commands
-                                .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(130))
+                                .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(50))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
                 driver.manHood().whileTrue(subsystems.shooter().commands
