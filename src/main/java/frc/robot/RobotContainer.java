@@ -91,6 +91,7 @@ public class RobotContainer {
         }
 
         private void configureBindings() {
+                SmartDashboard.putNumber("DEMO Throttle", 0.2);
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
                                                 .withVelocityY(driver.DriveUp())
