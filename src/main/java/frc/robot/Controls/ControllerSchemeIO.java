@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.TunerConstants;
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.Supplier;
+
 public interface ControllerSchemeIO {
     // public CommandJoystick LeftStick = new CommandJoystick(0);
     // public CommandJoystick RightStick = new CommandJoystick(1);
@@ -45,6 +47,8 @@ public interface ControllerSchemeIO {
     public default double halfRotate() {
         return DriveTheta() * 0.5;
     }
+
+    public double throttle(Supplier<Double> d);
 
     public Trigger halfSpeeds(); // Halfs all speed
 
