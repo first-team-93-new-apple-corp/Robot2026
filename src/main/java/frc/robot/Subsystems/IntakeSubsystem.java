@@ -132,6 +132,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void smartDash() {
         SmartDashboard.putNumber("IntakePivotPosition", intakePivotMotor.getPosition().getValue().in(Degrees));
+        SmartDashboard.putNumber("Intake Temp.", intakeRollerMotor.getDeviceTemp().getValue().in(Celsius));
+        SmartDashboard.putBoolean("Intake Temp Warning", intakeRollerMotor.getDeviceTemp().getValue().in(Celsius) > 75);
     }
 
     @Override
