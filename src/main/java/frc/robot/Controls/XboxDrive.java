@@ -1,5 +1,7 @@
 package frc.robot.Controls;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -206,5 +208,10 @@ public class XboxDrive implements ControllerSchemeIO {
     @Override
     public Trigger SysIdEnd() {
         return RightStick.button(Constants.Thrustmaster.Right_Buttons.Bottom_Left);
+    }
+
+    @Override
+    public double throttle(Supplier<Double> d) {
+        return 0.2;
     }
 }

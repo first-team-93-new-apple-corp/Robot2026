@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Controls.ControllerSchemeIO;
+import frc.robot.Controls.DemoDrive;
 import frc.robot.Controls.TwoStickDriveXboxOp;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -49,7 +50,7 @@ public class RobotContainer {
 
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
-        private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+        private final ControllerSchemeIO driver = new DemoDrive(0, 1, 2);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -90,10 +91,11 @@ public class RobotContainer {
         }
 
         private void configureBindings() {
+                SmartDashboard.putNumber("DEMO Throttle", 0.2);
                 drivetrain.setDefaultCommand(
-                                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft()*0.5)
-                                                .withVelocityY(driver.DriveUp()*0.5)
-                                                .withRotationalRate(driver.DriveTheta()*0.5)));
+                                drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
+                                                .withVelocityY(driver.DriveUp())
+                                                .withRotationalRate(driver.DriveTheta())));
 
                 driver.robotRel()
                                 .whileTrue(drivetrain
@@ -172,6 +174,7 @@ public class RobotContainer {
         public void telePeriodic() {
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
                 Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
+                driver.throttle(()->SmartDashboard.getNumber("Demo Throttle", 0.2));
         }
 
         public Command seed() {
