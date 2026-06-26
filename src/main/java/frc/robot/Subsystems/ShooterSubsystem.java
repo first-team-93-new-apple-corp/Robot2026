@@ -97,41 +97,41 @@ public class ShooterSubsystem extends SubsystemBase {
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
 
-        hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
+        // hoodMotor = new TalonFX(Constants.CAN.hoodMotor);
 
-        hoodConfig = new TalonFXConfiguration();
+        // hoodConfig = new TalonFXConfiguration();
 
-        hoodConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
-        hoodConfig.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
-        hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
-        hoodConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
+        // hoodConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
+        // hoodConfig.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
+        // hoodConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
+        // hoodConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
 
-        hoodSlot0Configs = new Slot0Configs();
+        // hoodSlot0Configs = new Slot0Configs();
 
-        hoodSlot0Configs.kP = HoodMotorConfigs.kP;
-        hoodSlot0Configs.kI = HoodMotorConfigs.kI;
-        hoodSlot0Configs.kD = HoodMotorConfigs.kD;
-        hoodSlot0Configs.kS = HoodMotorConfigs.kS;
-        hoodSlot0Configs.kA = HoodMotorConfigs.kA;
-        hoodSlot0Configs.kV = HoodMotorConfigs.kV;
+        // hoodSlot0Configs.kP = HoodMotorConfigs.kP;
+        // hoodSlot0Configs.kI = HoodMotorConfigs.kI;
+        // hoodSlot0Configs.kD = HoodMotorConfigs.kD;
+        // hoodSlot0Configs.kS = HoodMotorConfigs.kS;
+        // hoodSlot0Configs.kA = HoodMotorConfigs.kA;
+        // hoodSlot0Configs.kV = HoodMotorConfigs.kV;
 
-        hoodConfig.Slot0 = hoodSlot0Configs;
+        // hoodConfig.Slot0 = hoodSlot0Configs;
 
-        hoodConfig.Feedback.FeedbackRemoteSensorID = CAN.hoodEncoder;
-        hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        hoodConfig.Feedback.RotorToSensorRatio = 2;
-        hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
-        // hoodConfig.Feedback.FeedbackRotorOffset = -0.117;
+        // hoodConfig.Feedback.FeedbackRemoteSensorID = CAN.hoodEncoder;
+        // hoodConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        // hoodConfig.Feedback.RotorToSensorRatio = 2;
+        // hoodConfig.Feedback.SensorToMechanismRatio = (360 / 20) * 0.75;
+        // // hoodConfig.Feedback.FeedbackRotorOffset = -0.117;
 
-        hoodConfig.MotionMagic.MotionMagicAcceleration = 250;
-        hoodConfig.MotionMagic.MotionMagicJerk = 500;
-        hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
-        hoodConfig.MotionMagic.MotionMagicExpo_kV = 0.01;
-        hoodConfig.MotionMagic.MotionMagicExpo_kA = 0.01;
+        // hoodConfig.MotionMagic.MotionMagicAcceleration = 250;
+        // hoodConfig.MotionMagic.MotionMagicJerk = 500;
+        // hoodConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
+        // hoodConfig.MotionMagic.MotionMagicExpo_kV = 0.01;
+        // hoodConfig.MotionMagic.MotionMagicExpo_kA = 0.01;
 
-        hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        // hoodConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        hoodMotor.getConfigurator().apply(hoodConfig);
+        // hoodMotor.getConfigurator().apply(hoodConfig);
 
         lastSetpoint = Rotations.of(0);
         lastShooterSetpoint = RotationsPerSecond.of(0);
@@ -173,8 +173,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // DriverStation.reportWarning("Shooter S" +
         // Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
 
-        SmartDashboard.putNumber("Hood Position",
-                hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
+        // SmartDashboard.putNumber("Hood Position",
+        //         hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
         // SmartDashboard.putNumber("Raw Hood",
         // hoodMotor.getPosition().getValue().in(Degrees));
 
@@ -190,7 +190,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void log() {
-        Logger.log(hoodMotor);
+        // Logger.log(hoodMotor);
         Logger.log(topLeftShooter);
         Logger.log(topRightShooter);
     }
@@ -200,9 +200,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
     // }
 
-    public boolean getHoodLimit() {
-        return hoodLimitSwitch.get();
-    }
+    // public boolean getHoodLimit() {
+    //     return hoodLimitSwitch.get();
+    // }
 
     public ShootingData getShootingData(double poseX, double poseY, double velX, double velY) {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
@@ -238,43 +238,43 @@ public class ShooterSubsystem extends SubsystemBase {
         setRightShooterVelocity(rightVelocity);
     }
 
-    public Angle getHoodPositionNoOffset() {
-        return hoodMotor.getPosition().getValue();
-    }
+    // public Angle getHoodPositionNoOffset() {
+    //     return hoodMotor.getPosition().getValue();
+    // }
 
-    public Angle getHoodPosition() {
-        return hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle);
-    }
+    // public Angle getHoodPosition() {
+    //     return hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle);
+    // }
 
     public void setShooterControl(ControlRequest signal) {
         topLeftShooter.setControl(signal);
         topRightShooter.setControl(signal);
     }
 
-    public void setHoodPosition(Angle position) {
-        if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
-            position = HoodMotorConfigs.minAngleNoOffset;
-        } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
-            position = HoodMotorConfigs.maxAngleNoOffset;
-        }
-        lastSetpoint = position;
-        hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
-    }
+    // public void setHoodPosition(Angle position) {
+    //     if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
+    //         position = HoodMotorConfigs.minAngleNoOffset;
+    //     } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
+    //         position = HoodMotorConfigs.maxAngleNoOffset;
+    //     }
+    //     lastSetpoint = position;
+    //     hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
+    // }
 
-    public void setHoodPositionWithOffset(Angle position) {
-        position = position.minus(HoodMotorConfigs.offsetAngle);
-        if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
-            position = HoodMotorConfigs.minAngleNoOffset;
-        } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
-            position = HoodMotorConfigs.maxAngleNoOffset;
-        }
-        lastSetpoint = position;
-        hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
-    }
+    // public void setHoodPositionWithOffset(Angle position) {
+    //     position = position.minus(HoodMotorConfigs.offsetAngle);
+    //     if (position.lt(HoodMotorConfigs.minAngleNoOffset)) {
+    //         position = HoodMotorConfigs.minAngleNoOffset;
+    //     } else if (position.gt(HoodMotorConfigs.maxAngleNoOffset)) {
+    //         position = HoodMotorConfigs.maxAngleNoOffset;
+    //     }
+    //     lastSetpoint = position;
+    //     hoodMotor.setControl(m_volRequest.withPosition(position).withSlot(0));
+    // }
 
-    public boolean hoodAtSetpoint(Angle setpoint) {
-        return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Degrees.of(1));
-    }
+    // public boolean hoodAtSetpoint(Angle setpoint) {
+    //     return hoodMotor.getPosition().getValue().isNear(lastSetpoint, Degrees.of(1));
+    // }
 
     public boolean shooterAtSetpoint(AngularVelocity velocity) {
         return topLeftShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1))
@@ -310,28 +310,28 @@ public class ShooterSubsystem extends SubsystemBase {
                             .withTimeout(0.15));
         }
 
-        public Command autoAngleNoOffset(Angle calculatedAngle) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this).withTimeout(0.15));
-        }
+        // public Command autoAngleNoOffset(Angle calculatedAngle) {
+        //     return Commands.sequence(
+        //             Commands.runOnce(() -> setHoodPosition(calculatedAngle), ShooterSubsystem.this).withTimeout(0.15));
+        // }
 
-        public Command autoAngle(Angle calculatedAngle) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this)
-                            .withTimeout(0.15));
-        }
+        // public Command autoAngle(Angle calculatedAngle) {
+        //     return Commands.sequence(
+        //             Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle), ShooterSubsystem.this)
+        //                     .withTimeout(0.15));
+        // }
 
-        public Command autoAngleNoOffset(Supplier<Angle> calculatedAngle) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(calculatedAngle.get()), ShooterSubsystem.this)
-                            .withTimeout(0.15));
-        }
+        // public Command autoAngleNoOffset(Supplier<Angle> calculatedAngle) {
+        //     return Commands.sequence(
+        //             Commands.runOnce(() -> setHoodPosition(calculatedAngle.get()), ShooterSubsystem.this)
+        //                     .withTimeout(0.15));
+        // }
 
-        public Command autoAngle(Supplier<Angle> calculatedAngle) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle.get()), ShooterSubsystem.this)
-                            .withTimeout(0.15));
-        }
+        // public Command autoAngle(Supplier<Angle> calculatedAngle) {
+        //     return Commands.sequence(
+        //             Commands.runOnce(() -> setHoodPositionWithOffset(calculatedAngle.get()), ShooterSubsystem.this)
+        //                     .withTimeout(0.15));
+        // }
 
         public Command stopShooter() {
             return Commands.runOnce(() -> setShooterControl(new VoltageOut(2.0)));
@@ -342,42 +342,42 @@ public class ShooterSubsystem extends SubsystemBase {
         // hoodMotor.setControl(m_volRequest.withPosition(getHoodPositionNoOffset())));
         // }
 
-        public Command testingHood() {
-            return Commands.runOnce(() -> setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));
-        }
+        // public Command testingHood() {
+        //     return Commands.runOnce(() -> setHoodPosition(Degrees.of(onTheFlyHoodDegrees)));
+        // }
 
         public Command testingShooter() {
             return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
         }
 
         public Command velocityAndHoodNoOffset(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
-            var anglecmd = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(angle.get())));
+            // var anglecmd = Commands.sequence(
+            //         Commands.runOnce(() -> setHoodPosition(angle.get())));
             var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
-            return anglecmd.alongWith(shoot).withTimeout(Milliseconds.of(100));
+            return shoot.withTimeout(Milliseconds.of(100));
         }
 
         public Command velocityAndHood(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
-            var anglecmd = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(angle.get())));
+            // var anglecmd = Commands.sequence(
+            //         Commands.runOnce(() -> setHoodPositionWithOffset(angle.get())));
             var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
-            return anglecmd.alongWith(shoot).withTimeout(Milliseconds.of(100));
+            return (shoot).withTimeout(Milliseconds.of(100));
         }
 
         public Command velocityAndHoodNoOffset(Supplier<preset> point) {
-            var angle = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())).withTimeout(0.15));
+            // var angle = Commands.sequence(
+            //         Commands.runOnce(() -> setHoodPosition(point.get().hoodAngle())).withTimeout(0.15));
             var shoot = Commands.sequence(
                     Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
-            return angle.alongWith(shoot).withTimeout(Milliseconds.of(100));
+            return (shoot).withTimeout(Milliseconds.of(100));
         }
 
         public Command velocityAndHood(Supplier<preset> point) {
-            var angle = Commands.sequence(
-                    Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())).withTimeout(0.15));
+            // var angle = Commands.sequence(
+            //         Commands.runOnce(() -> setHoodPositionWithOffset(point.get().hoodAngle())).withTimeout(0.15));
             var shoot = Commands.sequence(
                     Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
-            return angle.alongWith(shoot).withTimeout(Milliseconds.of(100));
+            return (shoot).withTimeout(Milliseconds.of(100));
         }
 
         public Command logging() {

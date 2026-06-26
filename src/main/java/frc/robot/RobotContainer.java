@@ -19,8 +19,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Controls.ControllerSchemeIO;
-import frc.robot.Controls.DemoDrive;
+// import frc.robot.Controls.DemoDrive;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.XboxDrive;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -50,7 +51,7 @@ public class RobotContainer {
 
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
-        private final ControllerSchemeIO driver = new DemoDrive(0, 1, 2);
+        private final ControllerSchemeIO driver = new XboxDrive(0, 1, 2);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -148,9 +149,9 @@ public class RobotContainer {
                                 .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(50))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
-                driver.manHood().whileTrue(subsystems.shooter().commands
-                                .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
-                driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
+                // driver.manHood().whileTrue(subsystems.shooter().commands
+                //                 .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
+                // driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));

@@ -161,7 +161,7 @@ public record subsystems(
         DogLog.timestamp("PrimeFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter.commands.stopShooter());
-        cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
+        // cmds.addCommands(shooter.commands.autoAngleNoOffset(Degrees.of(0)));
         return cmds;
     }
 
