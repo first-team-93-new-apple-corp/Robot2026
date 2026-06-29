@@ -142,9 +142,6 @@ public class RobotContainer {
                                 .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(130))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
-                driver.manHood().whileTrue(subsystems.shooter().commands
-                                .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
-                driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
 
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
