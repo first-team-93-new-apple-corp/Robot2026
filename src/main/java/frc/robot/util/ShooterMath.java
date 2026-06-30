@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants.AutoShoot;
-import frc.robot.Constants.ShooterConstants.AutoShoot.Ranges;
 
 public class ShooterMath {
 
@@ -204,10 +203,10 @@ public class ShooterMath {
         if (distance < 1) {
             distance = 1;
         }
-        int funny_math_idx = (int) Math.floor(distance * 2 - 2);
+        int funny_math_idx = (int) Math.floor((distance - 1) * 4);
 
-        Ranges range = AutoShoot.labels.get(funny_math_idx < 0 ? 0 : funny_math_idx);
-        if (range == null) {
+        int range = funny_math_idx < 0 ? 0 : funny_math_idx;
+        if (range >= AutoShoot.rpsByRangeIndex.length) {
             return new ShootingData(
                     new Rotation2d(0),
                     // Radians.of(0),
@@ -218,7 +217,7 @@ public class ShooterMath {
         return new ShootingData(
                 new Rotation2d(alignAngle),
                 // Degrees.of(90).minus(AutoShoot.map.get(range).shootingAngle()),
-                AutoShoot.map.get(range).rps(),
+                AutoShoot.rpsByRangeIndex[range],
                 Meters.of(distance));
     }
 
@@ -242,8 +241,8 @@ public class ShooterMath {
             shooter_velocity = ShooterMath.calculateV(1.134, poseX, poseY, hubX, hubY, hubHeight, -9.8);
         }
 
-        double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
-                alignAngle);
+        // double[] shootingDataWhileMoving = calcShootingDataWhileMoving(velX, velY, shooter_velocity, shooter_angle,
+        //         alignAngle);
 
         // Stationary shooting
         return new ShootingData(new Rotation2d(driveTrainAngle),

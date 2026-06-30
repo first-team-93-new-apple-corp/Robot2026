@@ -4,8 +4,6 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Map;
-
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
@@ -265,56 +263,39 @@ public class Constants {
             public static final double ShooterHeight = 0.6;
             public static final double RangeThreshold = 3;
 
-            public static final Map<Ranges, ShootingMap> map = Map.ofEntries(
-                Map.entry(Ranges.Range1to1pt5, new ShootingMap(Radians.of(1.256),RotationsPerSecond.of(30.0))), //30
-                Map.entry(Ranges.Range1pt5to2, new ShootingMap(Radians.of(1.207),RotationsPerSecond.of(31.0))), //31
-                Map.entry(Ranges.Range2to2pt5, new ShootingMap(Radians.of(1.170),RotationsPerSecond.of(34.0))), //34
-                Map.entry(Ranges.Range2pt5to3, new ShootingMap(Radians.of(1.15),RotationsPerSecond.of(36.0))), // 36
-                Map.entry(Ranges.Range3to3pt5, new ShootingMap(Radians.of(1.12),RotationsPerSecond.of(42.0))), // 42
-                Map.entry(Ranges.Range3pt5to4, new ShootingMap(Radians.of(1.11),RotationsPerSecond.of(49.0))), // 49 Allows to shoot from tench
-                Map.entry(Ranges.Range4to4pt5, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(60.0))),
-                Map.entry(Ranges.Range4pt5to5, new ShootingMap(Radians.of(.8),RotationsPerSecond.of(70.0))),
-                Map.entry(Ranges.Range5to5pt5, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(80.0))),
-                Map.entry(Ranges.Range5pt5to6, new ShootingMap(Radians.of(0.8),RotationsPerSecond.of(90.0))),
-                Map.entry(Ranges.Range6to6pt5, new ShootingMap(Radians.of(1.06),RotationsPerSecond.of(100.0))),
-                Map.entry(Ranges.Range6pt5to7, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(130.0))),
-                Map.entry(Ranges.Range7to7pt5, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0))),
-                Map.entry(Ranges.Range7pt5to8, new ShootingMap(Radians.of(1.05),RotationsPerSecond.of(20.0)))
-            );
-            
-            public static final Map<Integer,Ranges> labels = Map.ofEntries( // Labeling each segment
-                Map.entry(0, Ranges.Range1to1pt5),
-                Map.entry(1, Ranges.Range1pt5to2),
-                Map.entry(2, Ranges.Range2to2pt5),
-                Map.entry(3, Ranges.Range2pt5to3),
-                Map.entry(4, Ranges.Range3to3pt5),
-                Map.entry(5, Ranges.Range3pt5to4), 
-                Map.entry(6, Ranges.Range4to4pt5),
-                Map.entry(7, Ranges.Range4pt5to5),
-                Map.entry(8, Ranges.Range5to5pt5),
-                Map.entry(9, Ranges.Range5pt5to6),
-                Map.entry(10, Ranges.Range6to6pt5),
-                Map.entry(11, Ranges.Range6pt5to7),
-                Map.entry(12, Ranges.Range7to7pt5),
-                Map.entry(13, Ranges.Range7pt5to8)
-            );
-            public enum Ranges {
-                // Each enum stores the numeric value previously used in the map (lower bound)
-                Range1to1pt5,
-                Range1pt5to2,
-                Range2to2pt5,
-                Range2pt5to3,
-                Range3to3pt5,
-                Range3pt5to4,
-                Range4to4pt5,
-                Range4pt5to5,
-                Range5to5pt5,
-                Range5pt5to6,
-                Range6to6pt5,
-                Range6pt5to7,
-                Range7to7pt5,
-                Range7pt5to8
-            }
+            /**
+             * Array of rotational speeds corresponding to different ranges.
+             * Starting at : 1m
+             * Ending at: 8m
+             * Every index: 0.25m
+             */
+
+            public static final AngularVelocity[] rpsByRangeIndex = {
+                RotationsPerSecond.of(30.0), // 1.0 - 1.25m
+                RotationsPerSecond.of(30.5), // 1.25 - 1.5m
+                RotationsPerSecond.of(31.0), // 1.5 - 1.75m
+                RotationsPerSecond.of(32.5), // 1.75 - 2.0m
+                RotationsPerSecond.of(34.0), // 2.25 - 2.5m
+                RotationsPerSecond.of(36.0), // 2.5 - 2.75m
+                RotationsPerSecond.of(39.0), // 2.75 - 3.0m
+                RotationsPerSecond.of(42.0), // 3.0 - 3.25m
+                RotationsPerSecond.of(45.5), // 3.25 - 3.5m
+                RotationsPerSecond.of(49.0), // 3.5 - 3.75m
+                RotationsPerSecond.of(54.5), // 3.75 - 4.0m
+                RotationsPerSecond.of(60.0), // 4.0 - 4.25m
+                RotationsPerSecond.of(65.0), // 4.25 - 4.5m
+                RotationsPerSecond.of(70.0), // 4.5 - 4.75m
+                RotationsPerSecond.of(75.0), // 4.75 - 5.0m
+                RotationsPerSecond.of(80.0), // 5.0 - 5.25m
+                RotationsPerSecond.of(85.0), // 5.25 - 5.5m
+                RotationsPerSecond.of(90.0), // 5.5 - 5.75m
+                RotationsPerSecond.of(95.0), // 5.75 - 6.0m
+                RotationsPerSecond.of(100.0), // 6.0 - 6.25m
+                RotationsPerSecond.of(115.0), // 6.25 - 6.5m
+                RotationsPerSecond.of(130.0), // 6.5 - 6.75m
+                RotationsPerSecond.of(20.0), // 7.0 - 7.25m
+                RotationsPerSecond.of(20.0) // 7.5 - 7.75m
+            };
 
             
         }
