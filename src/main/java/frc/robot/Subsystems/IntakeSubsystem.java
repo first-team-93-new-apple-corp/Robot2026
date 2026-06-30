@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -23,7 +22,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.util.Logger;
-import dev.doglog.*;
 
 public class IntakeSubsystem extends SubsystemBase {
 

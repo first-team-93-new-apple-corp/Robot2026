@@ -7,14 +7,12 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import frc.robot.Constants.ShooterConstants.Presets;
-import frc.robot.RobotContainer;
 import frc.robot.Controls.ControllerSchemeIO;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -96,8 +94,7 @@ public record subsystems(
         // () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
 
         // Below is shooter math implmentation
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> getShootingDataFallback().shooterAngle(),
-                () -> getShootingDataFallback().shooterVelocity()));
+        cmds.addCommands(shooter().commands.autoShoot(() -> getShootingDataFallback().shooterVelocity()));
 
         return cmds.withTimeout(1);
     }

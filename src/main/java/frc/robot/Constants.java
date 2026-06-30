@@ -1,12 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.units.measure.*;
-import frc.robot.util.ShooterMath;
-import frc.robot.util.ShootingMap;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.pathplanner.lib.path.PathConstraints;
