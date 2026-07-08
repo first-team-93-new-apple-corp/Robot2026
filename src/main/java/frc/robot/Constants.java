@@ -41,7 +41,6 @@ public class Constants {
     }
 
     public class CAN {
-        public static final int hoodLimitSwitch = 8;
         public static final int climber = 25;
         public static final int intakeRoller = 9;
         public static final int intakePivot = 10;
@@ -50,8 +49,6 @@ public class Constants {
         public static final int bottomLeftShooter = 13;
         public static final int topRightShooter = 14;
         public static final int bottomRightShooter = 15;
-        public static final int hoodEncoder = 16;
-        public static final int hoodMotor = 17;
         public static final int kicker = 18;
         public static final int manipRoller = 19;
         public static final int manipIndexer = 20;
@@ -299,11 +296,7 @@ public class Constants {
 
             
         }
-        public record preset(AngularVelocity velocity, Angle hoodAngle) {
-                public preset(AngularVelocity velocity) {
-                    this(velocity, Degrees.of(20));
-                }
-            }
+
         public class Presets {
             private static final double closeRPS = 31;
             private static final double closeSideRPS = 41.9;
@@ -314,49 +307,14 @@ public class Constants {
             private static final double depotRightRPS = 39.0;
             private static final double bumpRPS = 34.0;
 
-            private static final double closeDeg = 10.0;
-            private static final double closeSideDeg = 10.0;
-            private static final double inFrontOfClimbDeg = 25.0;
-            private static final double leftWingDeg = 26.4;
-            private static final double rightWingDeg = 26.4;
-            private static final double depotLeftDeg = 30.4;
-            private static final double depotRightDeg = 28.1;
-            private static final double bumpDeg = 28.0;
-
-            public static final preset close = new preset(RotationsPerSecond.of(closeRPS), Degrees.of(closeDeg));
-            public static final preset closeSide = new preset(RotationsPerSecond.of(closeSideRPS),
-                    Degrees.of(closeSideDeg));
-            public static final preset inFrontOfClimb = new preset(RotationsPerSecond.of(inFrontOfClimbRPS),
-                    Degrees.of(inFrontOfClimbDeg));
-            public static final preset leftWing = new preset(RotationsPerSecond.of(leftWingRPS),
-                    Degrees.of(leftWingDeg));
-            public static final preset rightWing = new preset(RotationsPerSecond.of(rightWingRPS),
-                    Degrees.of(rightWingDeg));
-            public static final preset depotLeft = new preset(RotationsPerSecond.of(depotLeftRPS),
-                    Degrees.of(depotLeftDeg));
-            public static final preset depotRight = new preset(RotationsPerSecond.of(depotRightRPS),
-                    Degrees.of(depotRightDeg));
-            public static final preset bump = new preset(RotationsPerSecond.of(bumpRPS), Degrees.of(bumpDeg));
-        }
-
-        public class HoodMotorConfigs {
-            public static final double StatorLimit = 60.0;
-            public static final double SupplyLimit = 40.0;
-            public static final boolean StatorLimitEnable = true;
-            public static final boolean SupplyLimitEnable = true;
-            public static final double kS = 0.35;
-            public static final double kV = 0.15;
-            public static final double kA = 0.15;
-            public static final double kP = 100;
-            public static final double kI = 35;
-            public static final double kD = 0;
-            public static final double gearRatio = 2.0; // Reduction
-            public static final Angle minAngle = Degrees.of(25);
-            public static final Angle maxAngle = Degrees.of(42);
-            public static final Angle minAngleNoOffset = Degrees.of(0);
-            public static final Angle maxAngleNoOffset = Degrees.of(15);
-            public static final Angle offsetAngle = Degrees.of(25);
-
+            public static AngularVelocity close = RotationsPerSecond.of(closeRPS);
+            public static AngularVelocity closeSide = RotationsPerSecond.of(closeSideRPS);
+            public static AngularVelocity inFrontOfClimb = RotationsPerSecond.of(inFrontOfClimbRPS);
+            public static AngularVelocity leftWing = RotationsPerSecond.of(leftWingRPS);
+            public static AngularVelocity rightWing = RotationsPerSecond.of(rightWingRPS);
+            public static AngularVelocity depotLeft = RotationsPerSecond.of(depotLeftRPS);
+            public static AngularVelocity depotRight = RotationsPerSecond.of(depotRightRPS);
+            public static AngularVelocity bump = RotationsPerSecond.of(bumpRPS);
         }
     }
 

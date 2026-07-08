@@ -1,17 +1,11 @@
 package frc.robot.util;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
-
 import frc.robot.Constants.ShooterConstants.Presets;
 import frc.robot.Controls.ControllerSchemeIO;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
@@ -19,7 +13,6 @@ import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
 import frc.robot.Subsystems.PowerDistributionSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
-import frc.robot.Subsystems.auto.AutoConstants;
 import frc.robot.Subsystems.ShooterSubsystem;
 import dev.doglog.*;
 
@@ -70,7 +63,7 @@ public record subsystems(
     public Command pass() {
         DogLog.timestamp("pass");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(42), () -> RotationsPerSecond.of(100)));
+        cmds.addCommands(shooter().commands.autoShoot(() -> RotationsPerSecond.of(100)));
         return cmds.withTimeout(0.5);
     }
 
@@ -90,8 +83,7 @@ public record subsystems(
 
 
         // We need below for tuning 
-        // cmds.addCommands(shooter().commands.velocityAndHood(() -> Degrees.of(90).minus(Radians.of(RobotContainer.Angle_Tuning)),
-        // () -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
+        // cmds.addCommands(shooter().commands.autoShoot(() -> RotationsPerSecond.of(RobotContainer.RPM_Tuning)));
 
         // Below is shooter math implmentation
         cmds.addCommands(shooter().commands.autoShoot(() -> getShootingDataFallback().shooterVelocity()));
@@ -113,35 +105,35 @@ public record subsystems(
     public Command PrimeHubClose() {
         DogLog.timestamp("PrimeHubClose");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.close));
+        cmds.addCommands(shooter().commands.autoShoot(() -> Presets.close));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubCloseSide() {
         DogLog.timestamp("PrimeHubCloseSide");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
+        cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubFar() {
         DogLog.timestamp("PrimeHubFar");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.inFrontOfClimb));
+        cmds.addCommands(shooter().commands.autoShoot(() -> Presets.inFrontOfClimb));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubLeft() {
         DogLog.timestamp("PrimeHubLeft");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
+        cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 
     public Command PrimeHubRight() {
         DogLog.timestamp("PrimeHubRight");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
-        cmds.addCommands(shooter().commands.velocityAndHood(() -> Presets.closeSide));
+        cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
         return cmds.withTimeout(1);
     }
 
@@ -194,42 +186,42 @@ public record subsystems(
         return drivetrain.getState().Speeds.vyMetersPerSecond;
     }
     // orthogonal  hub
-    private double getDriveSpeedY2() {
-        SwerveDriveState state = drivetrain.getState();
-        SmartDashboard.putString("State", state.Speeds.vxMetersPerSecond+ " " +  state.Speeds.vyMetersPerSecond);
+    // private double getDriveSpeedY2() {
+    //     SwerveDriveState state = drivetrain.getState();
+    //     SmartDashboard.putString("State", state.Speeds.vxMetersPerSecond+ " " +  state.Speeds.vyMetersPerSecond);
 
-        Translation2d fieldVelocity = new Translation2d(state.Speeds.vyMetersPerSecond,
-                state.Speeds.vxMetersPerSecond)
-                .rotateBy(state.Pose.getRotation().unaryMinus());
+    //     Translation2d fieldVelocity = new Translation2d(state.Speeds.vyMetersPerSecond,
+    //             state.Speeds.vxMetersPerSecond)
+    //             .rotateBy(state.Pose.getRotation().unaryMinus());
         
 
                 
-        Translation2d hubVelocity = fieldVelocity
-                .rotateBy(new Rotation2d(Radians.of(Math.PI/2).minus(angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()))).unaryMinus());
+    //     Translation2d hubVelocity = fieldVelocity
+    //             .rotateBy(new Rotation2d(Radians.of(Math.PI/2).minus(angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()))).unaryMinus());
         
-        return hubVelocity.getY();
+    //     return hubVelocity.getY();
 
-    }
+    // }
     // towards hub
-    private double getDriveSpeedX2() {
-        SwerveDriveState state = drivetrain.getState();
-        SmartDashboard.putString("State", state.Speeds.vxMetersPerSecond+ " " +  state.Speeds.vyMetersPerSecond);
+    // private double getDriveSpeedX2() {
+    //     SwerveDriveState state = drivetrain.getState();
+    //     SmartDashboard.putString("State", state.Speeds.vxMetersPerSecond+ " " +  state.Speeds.vyMetersPerSecond);
 
-        Translation2d fieldVelocity = new Translation2d(state.Speeds.vyMetersPerSecond,
-                state.Speeds.vxMetersPerSecond)
-                .rotateBy(state.Pose.getRotation().unaryMinus());
-        SmartDashboard.putNumber("Field Velocity (x)", fieldVelocity.getX());
-        SmartDashboard.putNumber("Field Velocity (y)", fieldVelocity.getY());
+    //     Translation2d fieldVelocity = new Translation2d(state.Speeds.vyMetersPerSecond,
+    //             state.Speeds.vxMetersPerSecond)
+    //             .rotateBy(state.Pose.getRotation().unaryMinus());
+    //     SmartDashboard.putNumber("Field Velocity (x)", fieldVelocity.getX());
+    //     SmartDashboard.putNumber("Field Velocity (y)", fieldVelocity.getY());
 
                 
-        Translation2d hubVelocity = fieldVelocity
-                .rotateBy(new Rotation2d(Radians.of(Math.PI/2).minus(angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()))).unaryMinus());
-        SmartDashboard.putNumber("Align angle",angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()).in(Degrees) );
-         SmartDashboard.putNumber("Hub Velocity (x)", hubVelocity.getX());
-        SmartDashboard.putNumber("Hub Velocity (y)", hubVelocity.getY());
-        return hubVelocity.getX();
+    //     Translation2d hubVelocity = fieldVelocity
+    //             .rotateBy(new Rotation2d(Radians.of(Math.PI/2).minus(angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()))).unaryMinus());
+    //     SmartDashboard.putNumber("Align angle",angleToAlign(state.Pose.getX(), AutoConstants.Hub.getHub().getX(),state.Pose.getY(),AutoConstants.Hub.getHub().getY()).in(Degrees) );
+    //      SmartDashboard.putNumber("Hub Velocity (x)", hubVelocity.getX());
+    //     SmartDashboard.putNumber("Hub Velocity (y)", hubVelocity.getY());
+    //     return hubVelocity.getX();
 
-    }
+    // }
 
     public ShootingData getShootingData() {
         return shooter.getShootingData(getDrivePoseX(), getDrivePoseY(), getDriveSpeedX(),

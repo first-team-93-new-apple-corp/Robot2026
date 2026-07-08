@@ -11,13 +11,10 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import frc.robot.Constants.CAN;
-import frc.robot.Constants.ShooterConstants.HoodMotorConfigs;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
-import frc.robot.Constants.ShooterConstants.preset;
 import frc.robot.util.Logger;
 import frc.robot.util.ShooterMath;
 import frc.robot.util.ShootingData;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,8 +28,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private TalonFX topLeftShooter;
     private TalonFX topRightShooter;
-
-    private TalonFX hoodMotor;
 
     private TalonFXConfiguration allShooterConfig;
 
@@ -83,7 +78,6 @@ public class ShooterSubsystem extends SubsystemBase {
         lastShooterSetpoint = RotationsPerSecond.of(0);
 
         // SmartDashboard.putNumber("setVelocity (RPS)", 0);
-        // SmartDashboard.putNumber("setHood (Degrees)", 0);
 
         // Initialize universal telemetry logger
         // uniLogger = new UniversalNTLogger("ShooterMirror");
@@ -91,16 +85,12 @@ public class ShooterSubsystem extends SubsystemBase {
         // // Register TalonFX motors and useful values
         // uniLogger.registerTalonFX("topLeft", topLeftShooter);
         // uniLogger.registerTalonFX("topRight", topRightShooter);
-        // uniLogger.registerDouble("hood/position", () ->
-        // hoodMotor.getPosition().getValue().in(Degrees));
         // uniLogger.registerDouble("avg/velocity", () -> getAvgVelocity());
         // uniLogger.registerDouble("setpoint/rps", () ->
         // SmartDashboard.getNumber("setVelocity (RPS)", 0));
-        // uniLogger.registerBoolean("hood/limit", () -> getHoodLimit());
 
         // // Cap signals per flush to avoid saturation
         // uniLogger.setMaxSignalsPerFlush(10);
-        // resetHood();
     }
 
     public double getAvgVelocity() {
@@ -116,13 +106,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // DriverStation.reportWarning("Shooter S" +
         // Microseconds.of(RobotController.getTime()).in(Milliseconds), false);
 
-        SmartDashboard.putNumber("Hood Position",
-                hoodMotor.getPosition().getValue().plus(HoodMotorConfigs.offsetAngle).in(Degrees));
-        // SmartDashboard.putNumber("Raw Hood",
-        // hoodMotor.getPosition().getValue().in(Degrees));
-
-        // SmartDashboard.putNumber("HoodSetpoint", lastSetpoint.in(Degrees));
-
         // SmartDashboard.putNumber("Velocity (avg)", getAvgVelocity());
         // SmartDashboard.putNumber("Velocity Feet/s (avg)", getAvgVelocityFeet());
 
@@ -133,14 +116,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void log() {
-        Logger.log(hoodMotor);
         Logger.log(topLeftShooter);
         Logger.log(topRightShooter);
     }
     // @Override
     // public void periodic() {
     // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
-    // onTheFlyHoodDegrees = SmartDashboard.getNumber("setHood (Degrees)", 0);
     // }
 
     public ShootingData getShootingData(double poseX, double poseY, double velX, double velY) {
@@ -223,28 +204,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         public Command testingShooter() {
             return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
-        }
-
-        public Command velocityAndHoodNoOffset(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
-            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
-            return shoot.withTimeout(Milliseconds.of(100));
-        }
-
-        public Command velocityAndHood(Supplier<Angle> angle, Supplier<AngularVelocity> velocity) {
-            var shoot = Commands.runOnce(() -> setMasterVelocity(velocity.get()));
-            return shoot.withTimeout(Milliseconds.of(100));
-        }
-
-        public Command velocityAndHoodNoOffset(Supplier<preset> point) {
-            var shoot = Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
-            return shoot.withTimeout(Milliseconds.of(100));
-        }
-
-        public Command velocityAndHood(Supplier<preset> point) {
-            var shoot = Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(point.get().velocity())));
-            return shoot.withTimeout(Milliseconds.of(100));
         }
 
         public Command logging() {

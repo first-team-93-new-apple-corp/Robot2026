@@ -13,12 +13,12 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.ShooterConstants.preset;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -26,8 +26,8 @@ public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
     private final List<Pose2d> previewPoses = new ArrayList<>();
     private final List<Pose2d> previewWaypoints = new ArrayList<>();
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.ApplyFieldSpeeds zeroSpeeds = new SwerveRequest.ApplyFieldSpeeds();
+    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.ApplyFieldSpeeds zeroSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
@@ -91,7 +91,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(Commands.runOnce(() -> DogLog.timestamp("INTAKE " + path.name)))); 
     }
 
-    public void addShootPath(String pathName, preset preset) {
+    public void addShootPath(String pathName, AngularVelocity preset) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
@@ -101,7 +101,7 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
-    public void addShootPath(String pathName, preset preset, Time delay) {
+    public void addShootPath(String pathName, AngularVelocity preset, Time delay) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
@@ -111,7 +111,7 @@ public class AutoTracker extends SequentialCommandGroup {
         }
     }
 
-    public void addShootPath2(String pathName, preset preset, Time delay) {
+    public void addShootPath2(String pathName, AngularVelocity preset, Time delay) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
@@ -184,8 +184,8 @@ public class AutoTracker extends SequentialCommandGroup {
                                         .withTimeout(2)));
     }
 
-    public void followSnapShoot(PathPlannerPath path, preset point) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void followSnapShoot(PathPlannerPath path, AngularVelocity point) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
@@ -200,8 +200,8 @@ public class AutoTracker extends SequentialCommandGroup {
 
     }
 
-    public void followSnapShoot(PathPlannerPath path, preset point, Time delay) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void followSnapShoot(PathPlannerPath path, AngularVelocity point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
@@ -217,8 +217,8 @@ public class AutoTracker extends SequentialCommandGroup {
 
     }
 
-    public void snapShoot(PathPlannerPath path, preset point, Time delay) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void snapShoot(PathPlannerPath path, AngularVelocity point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command snap = AutoBuilder.pathfindToPose(AutoConstants.getLastPoseInPath(path), AutoConstants.constraints)
                 .withTimeout(1).andThen(Commands.runOnce(()->subsystems.drivetrain().setControl(new SwerveRequest.SwerveDriveBrake())));
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
