@@ -4,12 +4,15 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
 import frc.robot.util.Logger;
@@ -74,6 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         topLeftShooter.getConfigurator().apply(allShooterConfig);
         topRightShooter.getConfigurator().apply(allShooterConfig);
+        topRightShooter.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
         lastShooterSetpoint = RotationsPerSecond.of(0);
 
@@ -119,6 +123,8 @@ public class ShooterSubsystem extends SubsystemBase {
         Logger.log(topLeftShooter);
         Logger.log(topRightShooter);
     }
+
+    // TODO Uncomment this for tuning
     // @Override
     // public void periodic() {
     // onTheFlyRPM = SmartDashboard.getNumber("setVelocity (RPS)", 0);
