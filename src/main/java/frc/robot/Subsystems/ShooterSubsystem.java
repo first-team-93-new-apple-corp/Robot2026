@@ -8,10 +8,13 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.ControlRequest;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.Constants.CAN;
 import frc.robot.Constants.ShooterConstants.ShooterMotorConfigs;
@@ -33,6 +36,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX topRightShooter;
 
     private TalonFXConfiguration allShooterConfig;
+    private TalonFXConfiguration follow;
 
     private Slot0Configs shooterSlot0Configs;
 
@@ -51,6 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
         topRightShooter = new TalonFX(CAN.topRightShooter);
 
         allShooterConfig = new TalonFXConfiguration();
+        follow = new TalonFXConfiguration();
 
         m_velRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
@@ -60,9 +65,9 @@ public class ShooterSubsystem extends SubsystemBase {
         allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
         allShooterConfig.Feedback.RotorToSensorRatio = 1;
         allShooterConfig.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
-        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.005;
-        allShooterConfig.MotionMagic.MotionMagicAcceleration = 50;
-        allShooterConfig.MotionMagic.MotionMagicJerk = 100;
+        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.05;
+        allShooterConfig.MotionMagic.MotionMagicAcceleration = 8;
+        allShooterConfig.MotionMagic.MotionMagicJerk = 20;
 
         shooterSlot0Configs = new Slot0Configs();
 
@@ -74,10 +79,20 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterSlot0Configs.kD = ShooterMotorConfigs.kD;
 
         allShooterConfig.Slot0 = shooterSlot0Configs;
+        allShooterConfig.MotorOutput.PeakReverseDutyCycle = 0.0;
+        allShooterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        allShooterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+        allShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        // allShooterConfig.
+
 
         topLeftShooter.getConfigurator().apply(allShooterConfig);
-        topRightShooter.getConfigurator().apply(allShooterConfig);
-        topRightShooter.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
+        
+        follow.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        topRightShooter.getConfigurator().apply(follow);
+
+        topRightShooter.setControl(new Follower(topRightShooter.getDeviceID(), MotorAlignmentValue.Opposed));
 
         lastShooterSetpoint = RotationsPerSecond.of(0);
 
@@ -155,13 +170,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setMasterVelocity(AngularVelocity velocity) {
+        // if (velocity.in(RotationsPerSecond) != lastShooterSetpoint.in(RotationsPerSecond)){
+        //     topLeftShooter.position
+        // }
         setLeftShooterVelocity(velocity);
         setRightShooterVelocity(velocity);
-    }
 
-    public void setMasterVelocity(AngularVelocity leftVelocity, AngularVelocity rightVelocity) {
-        setLeftShooterVelocity(leftVelocity);
-        setRightShooterVelocity(rightVelocity);
     }
 
     public void setShooterControl(ControlRequest signal) {
@@ -183,11 +197,11 @@ public class ShooterSubsystem extends SubsystemBase {
                             .withTimeout(0.15));
         }
 
-        public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
-            return Commands
-                    .sequence(Commands.runOnce(() -> setMasterVelocity(calculatedLeftVelocity, calculatedRightVelocity))
-                            .withTimeout(0.15));
-        }
+        // public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
+        //     return Commands
+        //             .sequence(Commands.runOnce(() -> setMasterVelocity(calculatedLeftVelocity, calculatedRightVelocity))
+        //                     .withTimeout(0.15));
+        // }
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedVelocity) {
             return Commands.sequence(
@@ -195,13 +209,13 @@ public class ShooterSubsystem extends SubsystemBase {
                             .withTimeout(0.15));
         }
 
-        public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity,
-                Supplier<AngularVelocity> calculatedRightVelocity) {
-            return Commands.sequence(
-                    Commands.runOnce(
-                            () -> setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get()))
-                            .withTimeout(0.15));
-        }
+        // public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity,
+        //         Supplier<AngularVelocity> calculatedRightVelocity) {
+        //     return Commands.sequence(
+        //             Commands.runOnce(
+        //                     () -> setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get()))
+        //                     .withTimeout(0.15));
+        // }
 
         public Command stopShooter() {
             return Commands.runOnce(() -> setShooterControl(new VoltageOut(5.0)));
