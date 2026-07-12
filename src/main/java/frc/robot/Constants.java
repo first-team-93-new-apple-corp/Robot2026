@@ -45,10 +45,8 @@ public class Constants {
         public static final int intakeRoller = 9;
         public static final int intakePivot = 10;
         public static final int intakePivotEncoder = 11;
-        public static final int topLeftShooter = 12;
-        public static final int bottomLeftShooter = 13;
-        public static final int topRightShooter = 14;
-        public static final int bottomRightShooter = 15;
+        public static final int leftShooter = 12;
+        public static final int rightShooter = 14;
         public static final int kicker = 18;
         public static final int manipRoller = 19;
         public static final int manipIndexer = 20;
@@ -239,8 +237,7 @@ public class Constants {
             public static final double kP = 0.15;
             public static final double kI = 0;
             public static final double kD = 0;
-            public static final AngularVelocity leftSpeed = RotationsPerSecond.of(30);
-            public static final AngularVelocity rightSpeed = RotationsPerSecond.of(30);
+            public static final AngularVelocity idleSpeed = RotationsPerSecond.of(30);
             public static final double ShootToFlyGearRatio = 24 / 18;
             public static final double EfficiencyMultiplierClose = 1.275; // 1 ish
             public static final double EfficiencyMultiplierClimb = 1.6; // 2.954

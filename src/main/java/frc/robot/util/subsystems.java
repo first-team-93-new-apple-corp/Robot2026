@@ -64,7 +64,7 @@ public record subsystems(
         DogLog.timestamp("pass");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> RotationsPerSecond.of(100)));
-        return cmds.withTimeout(0.5);
+        return cmds;
     }
 
     public Command shootFalse() {
@@ -88,7 +88,7 @@ public record subsystems(
         // Below is shooter math implmentation
         cmds.addCommands(shooter().commands.autoShoot(() -> getShootingDataFallback().shooterVelocity()));
 
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command DriverPrime() {
@@ -99,42 +99,42 @@ public record subsystems(
                 () -> drivetrain().driveFacingAngle.withTargetDirection(getShootingData().drivetrainAngle())
                         .withVelocityX(driver.DriveLeft()).withVelocityY(driver.DriveUp())));
 
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command PrimeHubClose() {
         DogLog.timestamp("PrimeHubClose");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.close));
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command PrimeHubCloseSide() {
         DogLog.timestamp("PrimeHubCloseSide");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command PrimeHubFar() {
         DogLog.timestamp("PrimeHubFar");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.inFrontOfClimb));
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command PrimeHubLeft() {
         DogLog.timestamp("PrimeHubLeft");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
     public Command PrimeHubRight() {
         DogLog.timestamp("PrimeHubRight");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.closeSide));
-        return cmds.withTimeout(1);
+        return cmds;
     }
 
    
@@ -142,7 +142,7 @@ public record subsystems(
         DogLog.timestamp("AutoPrime");
         ParallelCommandGroup cmds = new ParallelCommandGroup();
         
-        return cmds.withTimeout(2);
+        return cmds;
     }
 
     public Command PrimeFalse() {

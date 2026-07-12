@@ -32,13 +32,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShootingData data;
 
-    private TalonFX topLeftShooter;
-    private TalonFX topRightShooter;
+    /***
+     * Left Motor
+     */
+    private TalonFX masterMotor;
 
-    private TalonFXConfiguration allShooterConfig;
+    /***
+     * Right Motor
+     */
+    private TalonFX followerMotor;
+
+    private TalonFXConfiguration masterConf;
     private TalonFXConfiguration follow;
 
-    private Slot0Configs shooterSlot0Configs;
+    private Slot0Configs slot0;
 
     private AngularVelocity lastShooterSetpoint;
 
@@ -51,48 +58,47 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         commands = new ShooterCommands();
-        topLeftShooter = new TalonFX(CAN.topLeftShooter);
-        topRightShooter = new TalonFX(CAN.topRightShooter);
+        masterMotor = new TalonFX(CAN.leftShooter);
+        followerMotor = new TalonFX(CAN.rightShooter);
 
-        allShooterConfig = new TalonFXConfiguration();
+        masterConf = new TalonFXConfiguration();
         follow = new TalonFXConfiguration();
 
         m_velRequest = new MotionMagicVelocityVoltage(0).withSlot(0);
 
-        allShooterConfig.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
-        allShooterConfig.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
-        allShooterConfig.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
-        allShooterConfig.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
-        allShooterConfig.Feedback.RotorToSensorRatio = 1;
-        allShooterConfig.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
-        allShooterConfig.Feedback.VelocityFilterTimeConstant = 0.05;
-        allShooterConfig.MotionMagic.MotionMagicAcceleration = 8;
-        allShooterConfig.MotionMagic.MotionMagicJerk = 20;
+        masterConf.CurrentLimits.StatorCurrentLimitEnable = ShooterMotorConfigs.StatorLimitEnable;
+        masterConf.CurrentLimits.StatorCurrentLimit = ShooterMotorConfigs.StatorLimit;
+        masterConf.CurrentLimits.SupplyCurrentLimitEnable = ShooterMotorConfigs.SupplyLimitEnable;
+        masterConf.CurrentLimits.SupplyCurrentLimit = ShooterMotorConfigs.SupplyLimit;
+        masterConf.Feedback.RotorToSensorRatio = 1;
+        masterConf.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
+        masterConf.Feedback.VelocityFilterTimeConstant = 0.05;
+        masterConf.MotionMagic.MotionMagicAcceleration = 8;
+        masterConf.MotionMagic.MotionMagicJerk = 20;
 
-        shooterSlot0Configs = new Slot0Configs();
+        slot0 = new Slot0Configs();
 
-        shooterSlot0Configs.kS = ShooterMotorConfigs.kS;
-        shooterSlot0Configs.kV = ShooterMotorConfigs.kV;
-        shooterSlot0Configs.kA = ShooterMotorConfigs.kA;
-        shooterSlot0Configs.kP = ShooterMotorConfigs.kP;
-        shooterSlot0Configs.kI = ShooterMotorConfigs.kI;
-        shooterSlot0Configs.kD = ShooterMotorConfigs.kD;
+        slot0.kS = ShooterMotorConfigs.kS;
+        slot0.kV = ShooterMotorConfigs.kV;
+        slot0.kA = ShooterMotorConfigs.kA;
+        slot0.kP = ShooterMotorConfigs.kP;
+        slot0.kI = ShooterMotorConfigs.kI;
+        slot0.kD = ShooterMotorConfigs.kD;
 
-        allShooterConfig.Slot0 = shooterSlot0Configs;
-        allShooterConfig.MotorOutput.PeakReverseDutyCycle = 0.0;
-        allShooterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        allShooterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
-        allShooterConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        masterConf.Slot0 = slot0;
+        masterConf.MotorOutput.PeakReverseDutyCycle = 0.0;
+        masterConf.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        masterConf.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+        masterConf.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         // allShooterConfig.
 
+        masterMotor.getConfigurator().apply(masterConf);
 
-        topLeftShooter.getConfigurator().apply(allShooterConfig);
-        
         follow.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        topRightShooter.getConfigurator().apply(follow);
+        followerMotor.getConfigurator().apply(follow);
 
-        topRightShooter.setControl(new Follower(topRightShooter.getDeviceID(), MotorAlignmentValue.Opposed));
+        followerMotor.setControl(new Follower(masterMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
         lastShooterSetpoint = RotationsPerSecond.of(0);
 
@@ -113,8 +119,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public double getAvgVelocity() {
-        return (topLeftShooter.getVelocity().getValue().in(RotationsPerSecond)
-                + topRightShooter.getVelocity().getValue().in(RotationsPerSecond)) / 2;
+        return (masterMotor.getVelocity().getValue().in(RotationsPerSecond)
+                + followerMotor.getVelocity().getValue().in(RotationsPerSecond)) / 2;
     }
 
     public double getAvgVelocityFeet() {
@@ -135,8 +141,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void log() {
-        Logger.log(topLeftShooter);
-        Logger.log(topRightShooter);
+        Logger.log(masterMotor);
+        Logger.log(followerMotor);
     }
 
     // TODO Uncomment this for tuning
@@ -149,81 +155,51 @@ public class ShooterSubsystem extends SubsystemBase {
         data = ShooterMath.generateRotation2d(poseX, poseY, velX, velY);
         return data;
     }
+
     public ShootingData getShootingDataFallback(double poseX, double poseY) {
         data = ShooterMath.fallBack(poseX, poseY);
         return data;
     }
+
     public ShootingData getShootingData() {
         return data;
     }
 
-    public void setLeftShooterVelocity(AngularVelocity velocity) {
-        topLeftShooter.setControl(m_velRequest
-                .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
-        lastShooterSetpoint = velocity;
+ public void setShooterVelocity(AngularVelocity velocity) {
+    double targetRPS = velocity.in(RotationsPerSecond);
+    double currentRPS = masterMotor.getVelocity().getValue().in(RotationsPerSecond);
+    if (targetRPS < (currentRPS - 4.0) && targetRPS > 1.0) {
+        masterMotor.setControl(new VoltageOut(0.0));
+    } else {
+        masterMotor.setControl(m_velRequest.withVelocity(RotationsPerSecond.of(targetRPS)));
     }
-
-    public void setRightShooterVelocity(AngularVelocity velocity) {
-        topRightShooter.setControl(m_velRequest
-                .withVelocity(velocity.times(ShooterMotorConfigs.ShootToFlyGearRatio).in(RotationsPerSecond)));
-        lastShooterSetpoint = velocity;
-    }
-
-    public void setMasterVelocity(AngularVelocity velocity) {
-        // if (velocity.in(RotationsPerSecond) != lastShooterSetpoint.in(RotationsPerSecond)){
-        //     topLeftShooter.position
-        // }
-        setLeftShooterVelocity(velocity);
-        setRightShooterVelocity(velocity);
-
-    }
+    lastShooterSetpoint = velocity;
+}
 
     public void setShooterControl(ControlRequest signal) {
-        topLeftShooter.setControl(signal);
-        topRightShooter.setControl(signal);
+        masterMotor.setControl(signal);
     }
 
     public boolean shooterAtSetpoint(AngularVelocity velocity) {
-        return topLeftShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1))
-                && topRightShooter.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1));
+        return masterMotor.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1))
+                && followerMotor.getVelocity(false).isNear(velocity, RotationsPerSecond.of(1));
     }
-
-    
 
     public class ShooterCommands {
         public Command autoShoot(AngularVelocity calculatedVelocity) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity), ShooterSubsystem.this)
-                            .withTimeout(0.15));
+            return Commands.run(() -> setShooterVelocity(calculatedVelocity), ShooterSubsystem.this);
         }
-
-        // public Command autoShoot(AngularVelocity calculatedLeftVelocity, AngularVelocity calculatedRightVelocity) {
-        //     return Commands
-        //             .sequence(Commands.runOnce(() -> setMasterVelocity(calculatedLeftVelocity, calculatedRightVelocity))
-        //                     .withTimeout(0.15));
-        // }
 
         public Command autoShoot(Supplier<AngularVelocity> calculatedVelocity) {
-            return Commands.sequence(
-                    Commands.runOnce(() -> setMasterVelocity(calculatedVelocity.get()), ShooterSubsystem.this)
-                            .withTimeout(0.15));
+            return Commands.run(() -> setShooterVelocity(calculatedVelocity.get()), ShooterSubsystem.this);
         }
-
-        // public Command autoShoot(Supplier<AngularVelocity> calculatedLeftVelocity,
-        //         Supplier<AngularVelocity> calculatedRightVelocity) {
-        //     return Commands.sequence(
-        //             Commands.runOnce(
-        //                     () -> setMasterVelocity(calculatedLeftVelocity.get(), calculatedRightVelocity.get()))
-        //                     .withTimeout(0.15));
-        // }
 
         public Command stopShooter() {
-            return Commands.runOnce(() -> setShooterControl(new VoltageOut(5.0)));
+            return Commands.runOnce(() -> setShooterVelocity(ShooterMotorConfigs.idleSpeed));
         }
 
-
         public Command testingShooter() {
-            return Commands.runOnce(() -> setMasterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
+            return Commands.runOnce(() -> setShooterVelocity(RotationsPerSecond.of(onTheFlyRPM)));
         }
 
         public Command logging() {
