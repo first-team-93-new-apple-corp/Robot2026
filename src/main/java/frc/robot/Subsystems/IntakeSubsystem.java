@@ -66,12 +66,12 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 3;
-        intakePivotConfig.MotionMagic.MotionMagicJerk = 4;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 12;
+        intakePivotConfig.MotionMagic.MotionMagicJerk = 0;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 50;
+        intakePivotConfig.CurrentLimits.StatorCurrentLimit = 35;
 
         intakePivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         intakePivotConfig.Feedback.RotorToSensorRatio = 1;
@@ -184,21 +184,27 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double delay = 0.7;
-
-            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
-                    .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
-
+            double stepTimeout = 0.25;
+            Command sequence = Commands.sequence(
+                    autoPivotDown()
+                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotMiddlePosition)))
+                            .withTimeout(stepTimeout),
+                    autoPivotUp()
+                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotUpPosition)))
+                            .withTimeout(stepTimeout));
             return sequence.repeatedly().until(() -> !trigger.getAsBoolean());
         }
 
         public Command wigglePivot(Time time) {
-            double delay = 0.7;
-
-            Command sequence = autoPivotDown().alongWith(Commands.waitSeconds(delay))
-                    .andThen(autoPivotUp().alongWith(Commands.waitSeconds(delay)));
-
-            return sequence.repeatedly().withTimeout(time.in(Seconds));
+           double stepTimeout = 0.25;
+            Command sequence = Commands.sequence(
+                    autoPivotDown()
+                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotMiddlePosition)))
+                            .withTimeout(stepTimeout),
+                    autoPivotUp()
+                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotUpPosition)))
+                            .withTimeout(stepTimeout));
+            return sequence.repeatedly().withTimeout(time);
         }
 
         public Command brakePivotMotor(boolean brake) {
