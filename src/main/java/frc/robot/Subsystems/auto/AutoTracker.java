@@ -188,7 +188,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
-        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
+        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
         addCommands(
                 followPath
                         .alongWith(shootPreset)
