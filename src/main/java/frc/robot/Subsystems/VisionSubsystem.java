@@ -118,6 +118,22 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Has Pi Data?", hasPiPoseData);
     }
 
+    public boolean isQuestConnected() {
+        return quest.isConnected();
+    }
+
+    public boolean isQuestTracking() {
+        return quest.isTracking();
+    }
+
+    public boolean hasPoseInit() {
+        return hasPoseInit;
+    }
+
+    public boolean hasPiPoseData() {
+        return hasPiPoseData;
+    }
+
     public void piPeriodic() {
         if (Utils.isSimulation()) {
             visionSim.update(drivetrain.getState().Pose);

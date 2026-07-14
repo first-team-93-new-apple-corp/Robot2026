@@ -91,13 +91,13 @@ public class AutoDirector {
     }
 
     public record Auto(String name, Command command, Pose2d initPose, List<Pose2d> previewPoses,
-            List<Pose2d> previewWaypoints) {
+            List<Pose2d> previewWaypoints, List<String> pathErrors) {
         public Auto(String name, Command command, Pose2d initPose) {
-            this(name, command, initPose, List.of(), List.of());
+            this(name, command, initPose, List.of(), List.of(), List.of());
         }
 
         public Auto(String name, Command command) {
-            this(name, command, new Pose2d(), List.of(), List.of());
+            this(name, command, new Pose2d(), List.of(), List.of(), List.of());
         }
     }
 
@@ -125,12 +125,46 @@ public class AutoDirector {
             return;
         }
 
-        networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses, selectedAuto.previewWaypoints);
+        networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses,
+                selectedAuto.previewWaypoints);
         previewedAutoName = selectedAuto.name;
+        updatePreflightStatus();
     }
 
     public void removePreview(){
         networkTables.quest.clearAutoPreview();
+    }
+
+    public void updatePreflightStatus() {
+        Auto selectedAuto = selection();
+        boolean hasAuto = selectedAuto != null;
+        boolean isDoNothing = hasAuto && selectedAuto.name.equals("Do Nothing");
+        boolean pathsOk = hasAuto && selectedAuto.pathErrors.isEmpty();
+        boolean previewOk = hasAuto && (isDoNothing || !selectedAuto.previewPoses.isEmpty());
+        boolean questReady = autoSubsystems.vision().isQuestConnected()
+                && autoSubsystems.vision().isQuestTracking()
+                && autoSubsystems.vision().hasPoseInit();
+        boolean visionOk = questReady || autoSubsystems.vision().hasPiPoseData();
+        boolean ready = hasAuto && pathsOk && previewOk && visionOk;
+
+        SmartDashboard.putString("Preflight Auto", hasAuto ? selectedAuto.name : "None");
+        SmartDashboard.putBoolean("Preflight Auto Selected", hasAuto);
+        SmartDashboard.putBoolean("Preflight Paths OK", pathsOk);
+        SmartDashboard.putBoolean("Preflight Preview OK", previewOk);
+        SmartDashboard.putBoolean("Preflight Vision OK", visionOk);
+        SmartDashboard.putBoolean("Preflight Ready", ready);
+
+        if (!hasAuto) {
+            SmartDashboard.putString("Preflight Status", "No auto selected");
+        } else if (!pathsOk) {
+            SmartDashboard.putString("Preflight Status", selectedAuto.pathErrors.get(0));
+        } else if (!previewOk) {
+            SmartDashboard.putString("Preflight Status", "No preview poses for " + selectedAuto.name);
+        } else if (!visionOk) {
+            SmartDashboard.putString("Preflight Status", "Waiting for vision pose");
+        } else {
+            SmartDashboard.putString("Preflight Status", "Ready");
+        }
     }
 
     public void addAutos() {
@@ -535,6 +569,7 @@ public class AutoDirector {
     }
 
     private Auto trackedAuto(String name, AutoTracker tracker) {
-        return new Auto(name, tracker, new Pose2d(), tracker.getPreviewPoses(), tracker.getPreviewWaypoints());
+        return new Auto(name, tracker, new Pose2d(), tracker.getPreviewPoses(), tracker.getPreviewWaypoints(),
+                tracker.getPathErrors());
     }
 }

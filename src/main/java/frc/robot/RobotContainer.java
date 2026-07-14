@@ -82,6 +82,11 @@ public class RobotContainer {
 
         public void updateAutoPreview() {
                 auto.updateSelectedAutoPreview();
+                auto.updatePreflightStatus();
+        }
+
+        public void disabledPeriodic() {
+                auto.updatePreflightStatus();
         }
 
         private void configureBindings() {

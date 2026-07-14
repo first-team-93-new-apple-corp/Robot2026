@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,6 +27,7 @@ public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
     private final List<Pose2d> previewPoses = new ArrayList<>();
     private final List<Pose2d> previewWaypoints = new ArrayList<>();
+    private final List<String> pathErrors = new ArrayList<>();
     // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     // private final SwerveRequest.ApplyFieldSpeeds zeroSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
@@ -73,8 +75,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 rememberPreview(path);
                 Intake(path);
             } catch (Exception a) {
-                // a.printStackTrace();
-                DriverStation.reportError("[AutoTracker] Failed to load path: " + pathName, false);
+                reportPathError("intake", pathName, a);
             }
         }
     }
@@ -97,7 +98,7 @@ public class AutoTracker extends SequentialCommandGroup {
             rememberPreview(path);
             followSnapShoot(path, preset);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
@@ -107,7 +108,7 @@ public class AutoTracker extends SequentialCommandGroup {
             rememberPreview(path);
             followSnapShoot(path, preset, delay);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
@@ -117,7 +118,7 @@ public class AutoTracker extends SequentialCommandGroup {
             rememberPreview(path);
             snapShoot(path, preset, delay);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
@@ -242,8 +243,16 @@ public class AutoTracker extends SequentialCommandGroup {
             rememberPreview(path);
             overBump(path);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("over bump", name, e);
         }
+    }
+
+    private void reportPathError(String action, String pathName, Exception error) {
+        String message = "[AutoTracker] Failed to load " + action + " path: " + pathName + " ("
+                + error.getClass().getSimpleName() + ")";
+        pathErrors.add(message);
+        DriverStation.reportError(message, false);
+        SmartDashboard.putString("Auto Path Error", message);
     }
 
     private void overBump(PathPlannerPath path) {
@@ -290,6 +299,10 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public List<Pose2d> getPreviewWaypoints() {
         return List.copyOf(previewWaypoints);
+    }
+
+    public List<String> getPathErrors() {
+        return List.copyOf(pathErrors);
     }
 
     public void endAuto() {
