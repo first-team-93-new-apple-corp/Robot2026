@@ -80,6 +80,10 @@ public class RobotContainer {
                 DogLog.setEnabled(true);
         }
 
+        public void updateAutoPreview() {
+                auto.updateSelectedAutoPreview();
+        }
+
         private void configureBindings() {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
@@ -91,8 +95,6 @@ public class RobotContainer {
                                                 .applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                                                 .withVelocityY(driver.DriveUp())
                                                                 .withRotationalRate(driver.DriveTheta())));
-
-
 
                 driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -150,7 +152,6 @@ public class RobotContainer {
                 driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                                 .andThen(Commands.print("Reset Pose due to Button Press")));
 
-
         }
 
         public Command getAutonomousCommand() {
@@ -159,7 +160,7 @@ public class RobotContainer {
 
         public void telePeriodic() {
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
-                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);           
+                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
         }
 
         public Command seed() {
