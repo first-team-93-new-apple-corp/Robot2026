@@ -161,6 +161,15 @@ public record subsystems(
         return cmds;
     }
 
+    public Command SpecialOutake() {
+        DogLog.timestamp("SpecialOutake");
+        ParallelCommandGroup cmds = new ParallelCommandGroup();
+        // cmds.addCommands((intake.commands.outtake()));
+        cmds.addCommands(manipulation.commands.outtakeCommand());
+        // cmds.addCommands(shooter.commands.autoShoot(RotationsPerSecond.of(-0.5)));
+        return cmds;
+    }
+
     public Command OutakeFalse() {
         DogLog.timestamp("OutakeFalse");
         ParallelCommandGroup cmds = new ParallelCommandGroup();

@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.TwoStickDriveXboxOp2;
+import frc.robot.Controls.XboxDrive2;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -46,7 +48,9 @@ public class RobotContainer {
 
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
-        private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+        // private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+
+        private final XboxDrive2 driver = new TwoStickDriveXboxOp2(0, 1, 2);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -146,6 +150,14 @@ public class RobotContainer {
                                 .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(130))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
+
+                driver.outtakeFloorAndKickerOnly().onTrue(subsystems.SpecialOutake());
+                driver.outtakeFloorAndKickerOnly().onFalse(subsystems.IntakeFalse());
+
+                driver.WiggleAndKick().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleAndKick()));
+                driver.WiggleAndKick().whileTrue(subsystems.shoot());
+                driver.WiggleAndKick().onFalse(subsystems.IntakeFalse());
+                driver.WiggleIntake().onFalse(subsystems.manipulation().commands.idleCommand());
 
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
