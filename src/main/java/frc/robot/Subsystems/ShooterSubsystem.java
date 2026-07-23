@@ -73,7 +73,7 @@ public class ShooterSubsystem extends SubsystemBase {
         masterConf.Feedback.RotorToSensorRatio = 1;
         masterConf.Feedback.SensorToMechanismRatio = 18 / 24; // teeth
         masterConf.Feedback.VelocityFilterTimeConstant = 0.05;
-        masterConf.MotionMagic.MotionMagicAcceleration = 8;
+        masterConf.MotionMagic.MotionMagicAcceleration = 15;
         masterConf.MotionMagic.MotionMagicJerk = 20;
 
         slot0 = new Slot0Configs();

@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 8;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 6;
         intakePivotConfig.MotionMagic.MotionMagicAcceleration = 12;
         intakePivotConfig.MotionMagic.MotionMagicJerk = 0;
 
@@ -187,10 +187,8 @@ public class IntakeSubsystem extends SubsystemBase {
             double stepTimeout = 0.25;
             Command sequence = Commands.sequence(
                     autoPivotDown()
-                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotMiddlePosition)))
                             .withTimeout(stepTimeout),
                     autoPivotUp()
-                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotUpPosition)))
                             .withTimeout(stepTimeout));
             return sequence.repeatedly().until(() -> !trigger.getAsBoolean());
         }
