@@ -66,8 +66,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intakePivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Motion Magic Configs
-        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 6;
-        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 12;
+        intakePivotConfig.MotionMagic.MotionMagicCruiseVelocity = 4;
+        intakePivotConfig.MotionMagic.MotionMagicAcceleration = 5;
         intakePivotConfig.MotionMagic.MotionMagicJerk = 0;
 
         intakePivotConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -184,23 +184,20 @@ public class IntakeSubsystem extends SubsystemBase {
         }
 
         public Command wigglePivot(Trigger trigger) {
-            double stepTimeout = 0.25;
+            double stepTimeout = 0.5;
             Command sequence = Commands.sequence(
                     autoPivotDown()
-                            .withTimeout(stepTimeout),
-                    autoPivotUp()
-                            .withTimeout(stepTimeout));
+                            .alongWith(Commands.waitSeconds(stepTimeout)),
+                    autoPivotUp().alongWith(Commands.waitSeconds(stepTimeout)));
+
             return sequence.repeatedly().until(() -> !trigger.getAsBoolean());
         }
 
         public Command wigglePivot(Time time) {
-           double stepTimeout = 0.25;
+           double stepTimeout = 0.5;
             Command sequence = Commands.sequence(
-                    autoPivotDown()
-                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotMiddlePosition)))
-                            .withTimeout(stepTimeout),
-                    autoPivotUp()
-                            .andThen(Commands.waitUntil(() -> pivotAtSetpoint(IntakeConstants.pivotUpPosition)))
+                    autoPivotDown().alongWith(Commands.waitSeconds(stepTimeout)),
+                    autoPivotUp().alongWith(Commands.waitSeconds(stepTimeout))
                             .withTimeout(stepTimeout));
             return sequence.repeatedly().withTimeout(time);
         }

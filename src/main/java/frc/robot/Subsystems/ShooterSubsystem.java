@@ -168,7 +168,7 @@ public class ShooterSubsystem extends SubsystemBase {
  public void setShooterVelocity(AngularVelocity velocity) {
     double targetRPS = velocity.in(RotationsPerSecond);
     double currentRPS = masterMotor.getVelocity().getValue().in(RotationsPerSecond);
-    if (targetRPS < (currentRPS - 4.0) && targetRPS > 1.0) {
+    if (Math.abs(targetRPS-currentRPS) < 4.0 && targetRPS > 1.0) {
         masterMotor.setControl(new VoltageOut(0.0));
     } else {
         masterMotor.setControl(m_velRequest.withVelocity(RotationsPerSecond.of(targetRPS)));
