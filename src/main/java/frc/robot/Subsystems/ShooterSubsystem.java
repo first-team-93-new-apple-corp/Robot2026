@@ -89,6 +89,7 @@ public class ShooterSubsystem extends SubsystemBase {
         masterConf.MotorOutput.PeakReverseDutyCycle = 0.0;
         masterConf.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         masterConf.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+        masterConf.Voltage.PeakReverseVoltage = 0.0;
         masterConf.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         // allShooterConfig.
 
@@ -167,12 +168,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
  public void setShooterVelocity(AngularVelocity velocity) {
     double targetRPS = velocity.in(RotationsPerSecond);
-    double currentRPS = masterMotor.getVelocity().getValue().in(RotationsPerSecond);
-    if (Math.abs(targetRPS-currentRPS) < 4.0 && targetRPS > 1.0) {
-        masterMotor.setControl(new VoltageOut(5.0));
-    } else {
-        masterMotor.setControl(m_velRequest.withVelocity(RotationsPerSecond.of(targetRPS)));
-    }
+    // double currentRPS = masterMotor.getVelocity().getValue().in(RotationsPerSecond);
+    masterMotor.setControl(m_velRequest.withVelocity(RotationsPerSecond.of(targetRPS)));
     lastShooterSetpoint = velocity;
 }
 

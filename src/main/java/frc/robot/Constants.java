@@ -233,10 +233,10 @@ public class Constants {
             public static final boolean SupplyLimitEnable = false;
             public static final double kS = 0.05;
             public static final double kV = 0.125;
-            public static final double kA = 0.4;
+            public static final double kA = 0.005;
             public static final double kP = 0.05;
             public static final double kI = 0;
-            public static final double kD = 0;
+            public static final double kD = 0.005;
             public static final AngularVelocity idleSpeed = RotationsPerSecond.of(30);
             public static final double ShootToFlyGearRatio = 24 / 18;
             public static final double EfficiencyMultiplierClose = 1.275; // 1 ish
