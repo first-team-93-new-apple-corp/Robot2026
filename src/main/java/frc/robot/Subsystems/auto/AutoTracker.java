@@ -34,6 +34,8 @@ public class AutoTracker extends SequentialCommandGroup {
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
         previewWaypoints.add(startPose);
+        addCommands(subsystems.PrimeHubClose().withDeadline(Commands.waitSeconds(0.1)));
+
     }
 
     public AutoTracker(subsystems subsystems) {
@@ -128,7 +130,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .andThen(subsystems.PrimeHubClose())
+                        .andThen(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .andThen(delayedShoot));
     }
 
@@ -140,7 +142,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -154,7 +156,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot));
     }
 
@@ -164,7 +166,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .andThen(delayedShoot));
     }
 
@@ -176,7 +178,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -192,7 +194,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
         addCommands(
                 followPath
-                        .alongWith(shootPreset)
+                        .alongWith(shootPreset.withDeadline(Commands.waitSeconds(0.1)))
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
@@ -209,7 +211,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(shootPreset)
+                        .alongWith(shootPreset.withDeadline(Commands.waitSeconds(0.1)))
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
@@ -234,7 +236,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
 
-        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)).andThen(delayedShoot)));
     }
 
     public void addOverBump(String name) {

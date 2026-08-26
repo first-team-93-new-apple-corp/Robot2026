@@ -108,6 +108,9 @@ public record subsystems(
         cmds.addCommands(shooter().commands.autoShoot(() -> Presets.close));
         return cmds;
     }
+    
+
+
 
     public Command PrimeHubCloseSide() {
         DogLog.timestamp("PrimeHubCloseSide");
