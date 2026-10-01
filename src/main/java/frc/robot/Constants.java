@@ -4,7 +4,7 @@ import edu.wpi.first.units.measure.*;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.pathplanner.lib.path.PathConstraints;
+// import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -366,12 +366,12 @@ public class Constants {
 
     }
 
-    public class Auto {
-        public static final record AutoSector(Pose2d initPose, Pose2d finalPose) {
-        }
+    // public class Auto {
+    //     public static final record AutoSector(Pose2d initPose, Pose2d finalPose) {
+    //     }
 
-        public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0),
-                MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI),
-                RadiansPerSecondPerSecond.of(Math.PI / 2));
-    }
+    //     public static final PathConstraints pathConstraints = new PathConstraints(MetersPerSecond.of(1.0),
+    //             MetersPerSecondPerSecond.of(0.5), RadiansPerSecond.of(Math.PI),
+    //             RadiansPerSecondPerSecond.of(Math.PI / 2));
+    // }
 }
