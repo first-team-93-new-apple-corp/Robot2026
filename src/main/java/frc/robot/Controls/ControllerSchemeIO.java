@@ -80,8 +80,6 @@ public interface ControllerSchemeIO {
 
     public Trigger PrimeFar();
 
-    public Trigger manHood();
-
     public Trigger manShoot();
 
     public Trigger testingButton();

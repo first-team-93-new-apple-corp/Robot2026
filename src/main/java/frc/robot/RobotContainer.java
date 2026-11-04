@@ -6,12 +6,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Controls.ControllerSchemeIO;
 import frc.robot.Controls.TwoStickDriveXboxOp;
+import frc.robot.Controls.TwoStickDriveXboxOp2;
+import frc.robot.Controls.XboxDrive2;
 import frc.robot.Subsystems.CommandSwerveDrivetrain;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.ManipulationSubsystem;
@@ -49,7 +48,9 @@ public class RobotContainer {
 
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
-        private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+        // private final ControllerSchemeIO driver = new TwoStickDriveXboxOp(0, 1, 2);
+
+        private final XboxDrive2 driver = new TwoStickDriveXboxOp2(0, 1, 2);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -83,6 +84,15 @@ public class RobotContainer {
                 DogLog.setEnabled(true);
         }
 
+        public void updateAutoPreview() {
+                auto.updateSelectedAutoPreview();
+                auto.updatePreflightStatus();
+        }
+
+        public void disabledPeriodic() {
+                auto.updatePreflightStatus();
+        }
+
         private void configureBindings() {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> drive.withVelocityX(driver.DriveLeft())
@@ -94,8 +104,6 @@ public class RobotContainer {
                                                 .applyRequest(() -> robotCentricDrive.withVelocityX(driver.DriveLeft())
                                                                 .withVelocityY(driver.DriveUp())
                                                                 .withRotationalRate(driver.DriveTheta())));
-
-
 
                 driver.brake().whileTrue(drivetrain.applyRequest(() -> brake));
 
@@ -109,10 +117,10 @@ public class RobotContainer {
 
                 driver.DriverPrime().whileTrue(subsystems.DriverPrime().repeatedly());
 
-                driver.PrimeClose().whileTrue(subsystems.PrimeHubClose());
-                driver.PrimeFar().whileTrue(subsystems.PrimeHubFar());
-                driver.PrimeLeft().whileTrue(subsystems.PrimeHubLeft());
-                driver.PrimeRight().whileTrue(subsystems.PrimeHubRight());
+                driver.PrimeClose().whileTrue(subsystems.PrimeHubClose().repeatedly());
+                driver.PrimeFar().whileTrue(subsystems.PrimeHubFar().repeatedly());
+                driver.PrimeLeft().whileTrue(subsystems.PrimeHubLeft().repeatedly());
+                driver.PrimeRight().whileTrue(subsystems.PrimeHubRight().repeatedly());
 
                 driver.PrimeClose().onFalse(subsystems.PrimeFalse());
                 driver.PrimeFar().onFalse(subsystems.PrimeFalse());
@@ -142,9 +150,14 @@ public class RobotContainer {
                                 .autoShoot(() -> RotationsPerSecond.of((driver.leftTrigger())).times(130))
                                 .repeatedly());
                 driver.manShoot().onFalse(subsystems.shooter().commands.stopShooter());
-                driver.manHood().whileTrue(subsystems.shooter().commands
-                                .autoAngleNoOffset(() -> Degrees.of(driver.rightTrigger()).times(18)).repeatedly());
-                driver.manHood().onFalse(subsystems.shooter().commands.autoAngleNoOffset(Degrees.of(0)));
+
+                driver.outtakeFloorAndKickerOnly().onTrue(subsystems.SpecialOutake());
+                driver.outtakeFloorAndKickerOnly().onFalse(subsystems.IntakeFalse());
+
+                driver.WiggleAndKick().whileTrue(subsystems.intake().commands.wigglePivot(driver.WiggleAndKick()));
+                driver.WiggleAndKick().whileTrue(subsystems.shoot());
+                driver.WiggleAndKick().onFalse(subsystems.IntakeFalse());
+                driver.WiggleIntake().onFalse(subsystems.manipulation().commands.idleCommand());
 
                 RobotModeTriggers.autonomous()
                                 .onTrue(Commands.runOnce(() -> Elastic.selectTab(1)).ignoringDisable(true));
@@ -156,7 +169,6 @@ public class RobotContainer {
                 driver.resetPose().onTrue(subsystems.vision().commands.resetPose().ignoringDisable(true)
                                 .andThen(Commands.print("Reset Pose due to Button Press")));
 
-
         }
 
         public Command getAutonomousCommand() {
@@ -165,7 +177,7 @@ public class RobotContainer {
 
         public void telePeriodic() {
                 RPM_Tuning = SmartDashboard.getNumber("Tuning Speed", 20);
-                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);           
+                Angle_Tuning = SmartDashboard.getNumber("Tuning Angle", 1.256);
         }
 
         public Command seed() {

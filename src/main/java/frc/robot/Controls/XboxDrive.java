@@ -154,11 +154,6 @@ public class XboxDrive implements ControllerSchemeIO {
     }
 
     @Override
-    public Trigger manHood() {
-        return Xbox.rightTrigger(0.01);
-    }
-
-    @Override
     public Trigger manShoot() {
         return Xbox.leftTrigger(0.01);
     }

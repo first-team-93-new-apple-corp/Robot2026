@@ -1,13 +1,11 @@
 package frc.robot.Subsystems.auto;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -15,14 +13,13 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.Swerve;
-import frc.robot.Constants.ShooterConstants.preset;
 import frc.robot.util.ShootingData;
 import frc.robot.util.subsystems;
 
@@ -30,12 +27,15 @@ public class AutoTracker extends SequentialCommandGroup {
     private subsystems subsystems;
     private final List<Pose2d> previewPoses = new ArrayList<>();
     private final List<Pose2d> previewWaypoints = new ArrayList<>();
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.ApplyFieldSpeeds zeroSpeeds = new SwerveRequest.ApplyFieldSpeeds();
+    private final List<String> pathErrors = new ArrayList<>();
+    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.ApplyFieldSpeeds zeroSpeeds = new SwerveRequest.ApplyFieldSpeeds();
 
     public AutoTracker(subsystems subsystems, Pose2d startPose) {
         this.subsystems = subsystems;
         previewWaypoints.add(startPose);
+        addCommands(subsystems.PrimeHubClose().withDeadline(Commands.waitSeconds(0.1)));
+
     }
 
     public AutoTracker(subsystems subsystems) {
@@ -77,8 +77,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 rememberPreview(path);
                 Intake(path);
             } catch (Exception a) {
-                // a.printStackTrace();
-                DriverStation.reportError("[AutoTracker] Failed to load path: " + pathName, false);
+                reportPathError("intake", pathName, a);
             }
         }
     }
@@ -95,33 +94,33 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(Commands.runOnce(() -> DogLog.timestamp("INTAKE " + path.name)))); 
     }
 
-    public void addShootPath(String pathName, preset preset) {
+    public void addShootPath(String pathName, AngularVelocity preset) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
             followSnapShoot(path, preset);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
-    public void addShootPath(String pathName, preset preset, Time delay) {
+    public void addShootPath(String pathName, AngularVelocity preset, Time delay) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
             followSnapShoot(path, preset, delay);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
-    public void addShootPath2(String pathName, preset preset, Time delay) {
+    public void addShootPath2(String pathName, AngularVelocity preset, Time delay) {
         try {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             rememberPreview(path);
             snapShoot(path, preset, delay);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("shoot", pathName, e);
         }
     }
 
@@ -131,7 +130,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .andThen(subsystems.PrimeHubClose())
+                        .andThen(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .andThen(delayedShoot));
     }
 
@@ -143,7 +142,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -157,7 +156,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot));
     }
 
@@ -167,7 +166,7 @@ public class AutoTracker extends SequentialCommandGroup {
                 .andThen(subsystems.shoot());
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .andThen(delayedShoot));
     }
 
@@ -179,7 +178,7 @@ public class AutoTracker extends SequentialCommandGroup {
 
         addCommands(
                 followPath
-                        .alongWith(subsystems.PrimeHubClose())
+                        .alongWith(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)))
                         .alongWith(delayedShoot)
                         .andThen(subsystems.shootFalse())
                         .andThen(
@@ -188,14 +187,14 @@ public class AutoTracker extends SequentialCommandGroup {
                                         .withTimeout(2)));
     }
 
-    public void followSnapShoot(PathPlannerPath path, preset point) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void followSnapShoot(PathPlannerPath path, AngularVelocity point) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
-        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(6))));
+        Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(Seconds.of(3))));
         addCommands(
                 followPath
-                        .alongWith(shootPreset)
+                        .alongWith(shootPreset.withDeadline(Commands.waitSeconds(0.1)))
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
@@ -204,15 +203,15 @@ public class AutoTracker extends SequentialCommandGroup {
 
     }
 
-    public void followSnapShoot(PathPlannerPath path, preset point, Time delay) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void followSnapShoot(PathPlannerPath path, AngularVelocity point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command followPath = AutoBuilder.pathfindThenFollowPath(path, AutoConstants.constraints);
 
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
 
         addCommands(
                 followPath
-                        .alongWith(shootPreset)
+                        .alongWith(shootPreset.withDeadline(Commands.waitSeconds(0.1)))
                         .andThen(
                                 Commands.run(
                                         () -> subsystems.drivetrain().snapToPose(AutoConstants.getLastPoseInPath(path)))
@@ -221,8 +220,8 @@ public class AutoTracker extends SequentialCommandGroup {
 
     }
 
-    public void snapShoot(PathPlannerPath path, preset point, Time delay) {
-        Command shootPreset = subsystems.shooter().commands.velocityAndHood(point::hoodAngle, point::velocity);
+    public void snapShoot(PathPlannerPath path, AngularVelocity point, Time delay) {
+        Command shootPreset = subsystems.shooter().commands.autoShoot(()-> point);
         Command snap = AutoBuilder.pathfindToPose(AutoConstants.getLastPoseInPath(path), AutoConstants.constraints)
                 .withTimeout(1).andThen(Commands.runOnce(()->subsystems.drivetrain().setControl(new SwerveRequest.SwerveDriveBrake())));
         Command delayedShoot = (subsystems.shoot().alongWith(subsystems.intake().commands.wigglePivot(delay)));
@@ -237,7 +236,7 @@ public class AutoTracker extends SequentialCommandGroup {
         Command delayedShoot = Commands.waitSeconds(1.25)
                 .andThen(subsystems.shoot());
 
-        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().andThen(delayedShoot)));
+        addCommands(driveCmd.andThen(subsystems.PrimeHubClose().alongWith(Commands.waitSeconds(0.5)).andThen(delayedShoot)));
     }
 
     public void addOverBump(String name) {
@@ -246,8 +245,16 @@ public class AutoTracker extends SequentialCommandGroup {
             rememberPreview(path);
             overBump(path);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportPathError("over bump", name, e);
         }
+    }
+
+    private void reportPathError(String action, String pathName, Exception error) {
+        String message = "[AutoTracker] Failed to load " + action + " path: " + pathName + " ("
+                + error.getClass().getSimpleName() + ")";
+        pathErrors.add(message);
+        DriverStation.reportError(message, false);
+        SmartDashboard.putString("Auto Path Error", message);
     }
 
     private void overBump(PathPlannerPath path) {
@@ -294,6 +301,10 @@ public class AutoTracker extends SequentialCommandGroup {
 
     public List<Pose2d> getPreviewWaypoints() {
         return List.copyOf(previewWaypoints);
+    }
+
+    public List<String> getPathErrors() {
+        return List.copyOf(pathErrors);
     }
 
     public void endAuto() {

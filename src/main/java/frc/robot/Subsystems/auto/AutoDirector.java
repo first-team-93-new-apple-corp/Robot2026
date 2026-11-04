@@ -91,13 +91,13 @@ public class AutoDirector {
     }
 
     public record Auto(String name, Command command, Pose2d initPose, List<Pose2d> previewPoses,
-            List<Pose2d> previewWaypoints) {
+            List<Pose2d> previewWaypoints, List<String> pathErrors) {
         public Auto(String name, Command command, Pose2d initPose) {
-            this(name, command, initPose, List.of(), List.of());
+            this(name, command, initPose, List.of(), List.of(), List.of());
         }
 
         public Auto(String name, Command command) {
-            this(name, command, new Pose2d(), List.of(), List.of());
+            this(name, command, new Pose2d(), List.of(), List.of(), List.of());
         }
     }
 
@@ -125,12 +125,46 @@ public class AutoDirector {
             return;
         }
 
-        networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses, selectedAuto.previewWaypoints);
+        networkTables.quest.updateAutoPreview(selectedAuto.name, selectedAuto.previewPoses,
+                selectedAuto.previewWaypoints);
         previewedAutoName = selectedAuto.name;
+        updatePreflightStatus();
     }
 
     public void removePreview(){
         networkTables.quest.clearAutoPreview();
+    }
+
+    public void updatePreflightStatus() {
+        Auto selectedAuto = selection();
+        boolean hasAuto = selectedAuto != null;
+        boolean isDoNothing = hasAuto && selectedAuto.name.equals("Do Nothing");
+        boolean pathsOk = hasAuto && selectedAuto.pathErrors.isEmpty();
+        boolean previewOk = hasAuto && (isDoNothing || !selectedAuto.previewPoses.isEmpty());
+        boolean questReady = autoSubsystems.vision().isQuestConnected()
+                && autoSubsystems.vision().isQuestTracking()
+                && autoSubsystems.vision().hasPoseInit();
+        boolean visionOk = questReady || autoSubsystems.vision().hasPiPoseData();
+        boolean ready = hasAuto && pathsOk && previewOk && visionOk;
+
+        SmartDashboard.putString("Preflight Auto", hasAuto ? selectedAuto.name : "None");
+        SmartDashboard.putBoolean("Preflight Auto Selected", hasAuto);
+        SmartDashboard.putBoolean("Preflight Paths OK", pathsOk);
+        SmartDashboard.putBoolean("Preflight Preview OK", previewOk);
+        SmartDashboard.putBoolean("Preflight Vision OK", visionOk);
+        SmartDashboard.putBoolean("Preflight Ready", ready);
+
+        if (!hasAuto) {
+            SmartDashboard.putString("Preflight Status", "No auto selected");
+        } else if (!pathsOk) {
+            SmartDashboard.putString("Preflight Status", selectedAuto.pathErrors.get(0));
+        } else if (!previewOk) {
+            SmartDashboard.putString("Preflight Status", "No preview poses for " + selectedAuto.name);
+        } else if (!visionOk) {
+            SmartDashboard.putString("Preflight Status", "Waiting for vision pose");
+        } else {
+            SmartDashboard.putString("Preflight Status", "Ready");
+        }
     }
 
     public void addAutos() {
@@ -167,6 +201,8 @@ public class AutoDirector {
         Autos.add(LeftToRightFull());
         Autos.add(RightToLeftFull());
         Autos.add(LeftCenterLeftHalfScoreBump());
+        Autos.add(LeftDoubleDip2());
+        Autos.add(RightDoubleDip2());
 
 
 
@@ -457,6 +493,23 @@ public class AutoDirector {
         return trackedAuto("R Double Center-Behind Hub", tracker);
     }
 
+    public Auto RightDoubleDip2(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addOverBump("RightOverbump");
+        tracker.addIntakePath("R_Center_Intake_2");
+        tracker.addOverBump("RightBackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Right Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("R Double Center Hub", tracker);
+    }
+
     public Auto RightCenterThenOutpost(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
         tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
@@ -492,6 +545,26 @@ public class AutoDirector {
         tracker.endAuto();
         return trackedAuto("L Double Center-Behind Hub", tracker);
     }
+
+    public Auto LeftDoubleDip2(){
+        AutoTracker tracker = new AutoTracker(autoSubsystems);
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addIntakePath("L_Center_Intake");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addOverBump("Overbump");
+        tracker.addCommands(autoSubsystems.intake().commands.autoPivotDown());
+        tracker.addIntakePath("L_Center_Intake_2");
+        tracker.addOverBump("BackOverbump");
+        tracker.addCommands(autoSubsystems.intake().commands.stop());
+        tracker.addShootPath("Left Bump Shoot", Presets.bump, Seconds.of(4));
+        tracker.endAuto();
+        return trackedAuto("L Double Center Hub", tracker);
+    }
+
 
     public Auto LeftCenterThenDepot(){
         AutoTracker tracker = new AutoTracker(autoSubsystems);
@@ -535,6 +608,7 @@ public class AutoDirector {
     }
 
     private Auto trackedAuto(String name, AutoTracker tracker) {
-        return new Auto(name, tracker, new Pose2d(), tracker.getPreviewPoses(), tracker.getPreviewWaypoints());
+        return new Auto(name, tracker, new Pose2d(), tracker.getPreviewPoses(), tracker.getPreviewWaypoints(),
+                tracker.getPathErrors());
     }
 }
